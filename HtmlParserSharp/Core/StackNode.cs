@@ -50,8 +50,10 @@ namespace HtmlParserSharp.Core
         // Only used on the list of formatting elements
         internal HtmlAttributes attributes;
 
-        private int refcount = 1;
-
+#if DEBUG
+        //not used in C#
+        int dbug_refcount = 1;
+#endif
         // [NOCPP[
 
         private readonly Locator locator;
@@ -153,7 +155,7 @@ namespace HtmlParserSharp.Core
             this.ns = ns;
             this.node = node;
             this.attributes = attributes;
-            this.refcount = 1;
+
             // [NOCPP[
             this.locator = locator;
             // ]NOCPP]
@@ -174,7 +176,7 @@ namespace HtmlParserSharp.Core
             this.ns = "http://www.w3.org/1999/xhtml";
             this.node = node;
             this.attributes = null;
-            this.refcount = 1;
+
             Debug.Assert(!elementName.IsCustom, "Don't use this constructor for custom elements.");
             // [NOCPP[
             this.locator = locator;
@@ -196,7 +198,7 @@ namespace HtmlParserSharp.Core
             this.ns = "http://www.w3.org/1999/xhtml";
             this.node = node;
             this.attributes = attributes;
-            this.refcount = 1;
+
             Debug.Assert(!elementName.IsCustom, "Don't use this constructor for custom elements.");
             // [NOCPP[
             this.locator = locator;
@@ -218,7 +220,6 @@ namespace HtmlParserSharp.Core
             this.ns = "http://www.w3.org/1999/xhtml";
             this.node = node;
             this.attributes = null;
-            this.refcount = 1;
             // [NOCPP[
             this.locator = locator;
             // ]NOCPP]
@@ -242,7 +243,6 @@ namespace HtmlParserSharp.Core
             this.ns = "http://www.w3.org/2000/svg";
             this.node = node;
             this.attributes = null;
-            this.refcount = 1;
             // [NOCPP[
             this.locator = locator;
             // ]NOCPP]
@@ -264,7 +264,6 @@ namespace HtmlParserSharp.Core
             this.ns = "http://www.w3.org/1998/Math/MathML";
             this.node = node;
             this.attributes = null;
-            this.refcount = 1;
             // [NOCPP[
             this.locator = locator;
             // ]NOCPP]
@@ -317,14 +316,19 @@ namespace HtmlParserSharp.Core
         // ]NOCPP]
 
         // TODO: probably we won't need these
+        [System.Diagnostics.Conditional("DEBUG")]
         public void Retain()
         {
-            refcount++;
+#if DEBUG
+            dbug_refcount++;
+#endif
         }
-
+        [System.Diagnostics.Conditional("DEBUG")]
         public void Release()
         {
-            refcount--;
+#if DEBUG
+            dbug_refcount--;
+#endif
             /*if (refcount == 0) {
                 Portability.delete(this);
             }*/
