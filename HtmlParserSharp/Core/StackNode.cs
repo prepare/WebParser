@@ -64,11 +64,11 @@ namespace HtmlParserSharp.Core
             }
         }
         bool _isTainted;
-        public void DoTainted()
+        internal void DoTaint()
         {
             this._isTainted = true;
         }
-        public bool IsTainted
+        internal bool IsTainted
         {
             get { return this._isTainted; }
         }

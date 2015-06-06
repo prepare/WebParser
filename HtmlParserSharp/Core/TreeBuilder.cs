@@ -286,7 +286,7 @@ namespace HtmlParserSharp.Core
             {
                 return;
             }
-            node.DoTainted();
+            node.DoTaint();
 
             //TaintableLocator locator = node.Locator;
             //if (locator.IsTainted)
