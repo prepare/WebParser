@@ -473,7 +473,7 @@ namespace HtmlParserSharp.Core
 
         // [NOCPP[
 
-        protected Locator ampersandLocation;
+        protected Location ampersandLocation;
 
         public Tokenizer(ITokenHandler tokenHandler, bool newAttributesEachTime)
         {
@@ -6827,7 +6827,7 @@ namespace HtmlParserSharp.Core
         {
             additional = add;
             // [NOCPP[
-            ampersandLocation = new Locator(this.LineNumber, this.ColumnNumber);
+            ampersandLocation = new Location(this.LineNumber, this.ColumnNumber);
             // ]NOCPP]
         }
 

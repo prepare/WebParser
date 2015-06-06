@@ -56,9 +56,9 @@ namespace HtmlParserSharp.Core
 #endif
         // [NOCPP[
 
-        private readonly Locator locator;
+        private readonly Location locator;
 
-        public Locator Locator
+        public Location Locator
         {
             get
             {
@@ -145,7 +145,7 @@ namespace HtmlParserSharp.Core
         internal StackNode(int flags, [NsUri] String ns, [Local] String name, T node,
                 [Local] String popName, HtmlAttributes attributes
             // [NOCPP[
-                , Locator locator
+                , Location locator
             // ]NOCPP]
         )
         {
@@ -166,7 +166,7 @@ namespace HtmlParserSharp.Core
         /// </summary>
         internal StackNode(ElementName elementName, T node
             // [NOCPP[
-                , Locator locator
+                , Location locator
             // ]NOCPP]
         )
         {
@@ -188,7 +188,7 @@ namespace HtmlParserSharp.Core
         /// </summary>
         internal StackNode(ElementName elementName, T node, HtmlAttributes attributes
             // [NOCPP[
-                , Locator locator
+                , Location locator
             // ]NOCPP]
         )
         {
@@ -210,7 +210,7 @@ namespace HtmlParserSharp.Core
         /// </summary>
         internal StackNode(ElementName elementName, T node, [Local] string popName
             // [NOCPP[
-                , Locator locator
+                , Location locator
             // ]NOCPP]
         )
         {
@@ -233,7 +233,7 @@ namespace HtmlParserSharp.Core
         /// </summary>
         internal StackNode(ElementName elementName, [Local] string popName, T node
             // [NOCPP[
-                , Locator locator
+                , Location locator
             // ]NOCPP]
         )
         {
@@ -254,7 +254,7 @@ namespace HtmlParserSharp.Core
         internal StackNode(ElementName elementName, T node, [Local] string popName,
                 bool markAsIntegrationPoint
             // [NOCPP[
-                , Locator locator
+                , Location locator
             // ]NOCPP]
         )
         {

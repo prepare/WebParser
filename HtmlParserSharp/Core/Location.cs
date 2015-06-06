@@ -28,14 +28,14 @@
 
 namespace HtmlParserSharp.Core
 {
-    public struct Locator
+    public struct Location
     {
 
         public readonly int LineNumber;
         public readonly int ColumnNumber;
-        public static readonly Locator Empty = new Locator(-1, 0);
+        public static readonly Location Empty = new Location(-1, 0);
 
-        public Locator(int lineNumber, int colNumber)
+        public Location(int lineNumber, int colNumber)
         {
             LineNumber = lineNumber;
             ColumnNumber = colNumber;

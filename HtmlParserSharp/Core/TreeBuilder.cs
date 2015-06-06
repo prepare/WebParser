@@ -118,7 +118,7 @@ namespace HtmlParserSharp.Core
         public XmlViolationPolicy NamePolicy { get; set; }
 
         // stores the first occurrences of IDs
-        private readonly Dictionary<string, Locator> idLocations = new Dictionary<string, Locator>();
+        private readonly Dictionary<string, Location> idLocations = new Dictionary<string, Location>();
 
         private bool html4;
 
@@ -315,9 +315,9 @@ namespace HtmlParserSharp.Core
         }
 
         // ]NOCPP]
-        Locator GetCurrentLocation()
+        Location GetCurrentLocation()
         {
-            return ErrorEvent == null ? Locator.Empty : new Locator(this.tokenizer.LineNumber, this.tokenizer.ColumnNumber);
+            return ErrorEvent == null ? Location.Empty : new Location(this.tokenizer.LineNumber, this.tokenizer.ColumnNumber);
         }
         public void StartTokenization(Tokenizer self)
         {
@@ -1396,7 +1396,7 @@ namespace HtmlParserSharp.Core
                 string id = attributes.Id;
                 if (id != null)
                 {
-                    Locator oldLoc;
+                    Location oldLoc;
                     bool success = idLocations.TryGetValue(id, out oldLoc);
                     if (success)
                     {
@@ -1408,7 +1408,7 @@ namespace HtmlParserSharp.Core
                     }
                     else
                     {
-                        idLocations[id] = new Locator(tokenizer.LineNumber, tokenizer.ColumnNumber);
+                        idLocations[id] = new Location(tokenizer.LineNumber, tokenizer.ColumnNumber);
                     }
                 }
             }
@@ -5881,7 +5881,7 @@ namespace HtmlParserSharp.Core
         /// <code>delete</code> on the returned object.
         /// </summary>
         /// <returns>A snapshot</returns>
-        public ITreeBuilderState<T> NewSnapshot()
+        internal ITreeBuilderState<T> NewSnapshot()
         {
             StackNode<T>[] listCopy = new StackNode<T>[listPtr + 1];
             for (int i = 0; i < listCopy.Length; i++)
@@ -5928,7 +5928,7 @@ namespace HtmlParserSharp.Core
             return new StateSnapshot<T>(stackCopy, listCopy, formPointer, headPointer, deepTreeSurrogateParent, mode, originalMode, framesetOk, needToDropLF, quirks);
         }
 
-        public bool SnapshotMatches(ITreeBuilderState<T> snapshot)
+        internal bool SnapshotMatches(ITreeBuilderState<T> snapshot)
         {
             StackNode<T>[] stackCopy = snapshot.Stack;
             int stackLen = snapshot.Stack.Length;
@@ -5976,7 +5976,7 @@ namespace HtmlParserSharp.Core
             return true;
         }
 
-        public void LoadState(ITreeBuilderState<T> snapshot)
+        internal  void LoadState(ITreeBuilderState<T> snapshot)
         {
             StackNode<T>[] stackCopy = snapshot.Stack;
             int stackLen = snapshot.Stack.Length;
