@@ -28,15 +28,17 @@
 
 namespace HtmlParserSharp.Core
 {
-    public class Locator : ILocator
+    public struct Locator
     {
+
+        public readonly int LineNumber;
+        public readonly int ColumnNumber;
+        public static readonly Locator Empty = new Locator(-1, 0);
+
         public Locator(int lineNumber, int colNumber)
         {
             LineNumber = lineNumber;
             ColumnNumber = colNumber;
         }
-        public int ColumnNumber { get; private set; } 
-        public int LineNumber { get; private set; } 
-        
     }
 }

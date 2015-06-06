@@ -48,7 +48,6 @@
     <Compile Include="Core\DispatchGroup.cs" />
     <Compile Include="Core\ElementName.cs" />
     <Compile Include="Core\HtmlAttributes.cs" />
-    <Compile Include="Core\ILocator.cs" />
     <Compile Include="Core\InsertionMode.cs" />
     <Compile Include="Core\ITreeBuilderState.cs" />
     <Compile Include="Core\Locator.cs" />
@@ -58,7 +57,6 @@
     <Compile Include="Core\Portability.cs" />
     <Compile Include="Core\StackNode.cs" />
     <Compile Include="Core\StateSnapshot.cs" />
-    <Compile Include="Core\TaintableLocator.cs" />
     <Compile Include="Core\Tokenizer.cs" />
     <Compile Include="Core\TreeBuilder.cs" />
     <Compile Include="Core\TreeBuilderConstants.cs" />

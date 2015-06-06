@@ -54,14 +54,23 @@ namespace HtmlParserSharp.Core
 
         // [NOCPP[
 
-        private readonly TaintableLocator locator;
+        private readonly Locator locator;
 
-        public TaintableLocator Locator
+        public Locator Locator
         {
             get
             {
                 return locator;
             }
+        }
+        bool _isTainted;
+        public void DoTainted()
+        {
+            this._isTainted = true;
+        }
+        public bool IsTainted
+        {
+            get { return this._isTainted; }
         }
 
         // ]NOCPP]
@@ -134,7 +143,7 @@ namespace HtmlParserSharp.Core
         internal StackNode(int flags, [NsUri] String ns, [Local] String name, T node,
                 [Local] String popName, HtmlAttributes attributes
             // [NOCPP[
-                , TaintableLocator locator
+                , Locator locator
             // ]NOCPP]
         )
         {
@@ -155,7 +164,7 @@ namespace HtmlParserSharp.Core
         /// </summary>
         internal StackNode(ElementName elementName, T node
             // [NOCPP[
-                , TaintableLocator locator
+                , Locator locator
             // ]NOCPP]
         )
         {
@@ -177,7 +186,7 @@ namespace HtmlParserSharp.Core
         /// </summary>
         internal StackNode(ElementName elementName, T node, HtmlAttributes attributes
             // [NOCPP[
-                , TaintableLocator locator
+                , Locator locator
             // ]NOCPP]
         )
         {
@@ -199,7 +208,7 @@ namespace HtmlParserSharp.Core
         /// </summary>
         internal StackNode(ElementName elementName, T node, [Local] string popName
             // [NOCPP[
-                , TaintableLocator locator
+                , Locator locator
             // ]NOCPP]
         )
         {
@@ -223,7 +232,7 @@ namespace HtmlParserSharp.Core
         /// </summary>
         internal StackNode(ElementName elementName, [Local] string popName, T node
             // [NOCPP[
-                , TaintableLocator locator
+                , Locator locator
             // ]NOCPP]
         )
         {
@@ -245,7 +254,7 @@ namespace HtmlParserSharp.Core
         internal StackNode(ElementName elementName, T node, [Local] string popName,
                 bool markAsIntegrationPoint
             // [NOCPP[
-                , TaintableLocator locator
+                , Locator locator
             // ]NOCPP]
         )
         {

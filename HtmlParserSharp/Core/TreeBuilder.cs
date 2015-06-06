@@ -282,12 +282,18 @@ namespace HtmlParserSharp.Core
             {
                 return;
             }
-            TaintableLocator locator = node.Locator;
-            if (locator.IsTainted)
+            if (node.IsTainted)
             {
                 return;
             }
-            locator.MarkTainted();
+            node.DoTainted();
+
+            //TaintableLocator locator = node.Locator;
+            //if (locator.IsTainted)
+            //{
+            //    return;
+            //}
+            //locator.MarkTainted();
             //SAXParseException spe = new SAXParseException(
             //        "Unclosed element \u201C" + node.popName + "\u201D.", locator);
             //errorHandler.error(spe);
@@ -309,9 +315,9 @@ namespace HtmlParserSharp.Core
         }
 
         // ]NOCPP]
-        TaintableLocator GetTaintbleLocator()
+        Locator GetCurrentLocation()
         {
-            return new TaintableLocator(this.tokenizer.LineNumber, this.tokenizer.ColumnNumber);
+            return ErrorEvent == null ? Locator.Empty : new Locator(this.tokenizer.LineNumber, this.tokenizer.ColumnNumber);
         }
         public void StartTokenization(Tokenizer self)
         {
@@ -349,7 +355,7 @@ namespace HtmlParserSharp.Core
                 }
                 StackNode<T> node = new StackNode<T>(ElementName.HTML, elt
                     // [NOCPP[
-                        , ErrorEvent == null ? null : GetTaintbleLocator()
+                        , GetCurrentLocation()
                     // ]NOCPP]
                 );
                 currentPtr++;
@@ -4838,7 +4844,7 @@ namespace HtmlParserSharp.Core
                         formattingElt.name, clone2, formattingElt.popName,
                         formattingElt.attributes
                     // [NOCPP[
-                        , ErrorEvent == null ? null : GetTaintbleLocator()
+                        , GetCurrentLocation()
                     // ]NOCPP]
                 ); // Ownership
                 // transfers
@@ -5005,7 +5011,7 @@ namespace HtmlParserSharp.Core
             Fatal();
             SilentPush(new StackNode<T>(ElementName.HEAD, headPointer
                 // [NOCPP[
-                    , ErrorEvent == null ? null : GetTaintbleLocator()
+                    , GetCurrentLocation()
                 // ]NOCPP]
             ));
         }
@@ -5245,7 +5251,7 @@ namespace HtmlParserSharp.Core
             StackNode<T> node = new StackNode<T>(ElementName.HTML,
                     elt
                 // [NOCPP[
-                    , ErrorEvent == null ? null : GetTaintbleLocator()
+                    , GetCurrentLocation()
                 // ]NOCPP]
             );
             Push(node);
@@ -5268,7 +5274,7 @@ namespace HtmlParserSharp.Core
             StackNode<T> node = new StackNode<T>(ElementName.HEAD,
                     elt
                 // [NOCPP[
-                    , ErrorEvent == null ? null : GetTaintbleLocator()
+                    , GetCurrentLocation()
                 // ]NOCPP]
             );
             Push(node);
@@ -5307,7 +5313,7 @@ namespace HtmlParserSharp.Core
             StackNode<T> node = new StackNode<T>(ElementName.FORM,
                     elt
                 // [NOCPP[
-                    , ErrorEvent == null ? null : GetTaintbleLocator()
+                    , GetCurrentLocation()
                 // ]NOCPP]
             );
             Push(node);
@@ -5332,7 +5338,7 @@ namespace HtmlParserSharp.Core
             }
             StackNode<T> node = new StackNode<T>(elementName, elt, attributes.CloneAttributes()
                 // [NOCPP[
-                    , ErrorEvent == null ? null : GetTaintbleLocator()
+                    , GetCurrentLocation()
                 // ]NOCPP]
             );
             Push(node);
@@ -5350,7 +5356,7 @@ namespace HtmlParserSharp.Core
             AppendElement(elt, stack[currentPtr].node);
             StackNode<T> node = new StackNode<T>(elementName, elt
                 // [NOCPP[
-                    , ErrorEvent == null ? null : GetTaintbleLocator()
+                    , GetCurrentLocation()
                 // ]NOCPP]
             );
             Push(node);
@@ -5381,7 +5387,7 @@ namespace HtmlParserSharp.Core
             }
             StackNode<T> node = new StackNode<T>(elementName, elt, popName
                 // [NOCPP[
-                    , ErrorEvent == null ? null : GetTaintbleLocator()
+                    , GetCurrentLocation()
                 // ]NOCPP]
             );
             Push(node);
@@ -5420,7 +5426,7 @@ namespace HtmlParserSharp.Core
             StackNode<T> node = new StackNode<T>(elementName, elt, popName,
                     markAsHtmlIntegrationPoint
                 // [NOCPP[
-                    , ErrorEvent == null ? null : GetTaintbleLocator()
+                    , GetCurrentLocation()
                 // ]NOCPP]
             );
             Push(node);
@@ -5464,7 +5470,7 @@ namespace HtmlParserSharp.Core
             }
             StackNode<T> node = new StackNode<T>(elementName, popName, elt
                 // [NOCPP[
-                    , ErrorEvent == null ? null : GetTaintbleLocator()
+                    , GetCurrentLocation()
                 // ]NOCPP]
             );
             Push(node);
@@ -5490,7 +5496,7 @@ namespace HtmlParserSharp.Core
             }
             StackNode<T> node = new StackNode<T>(elementName, elt
                 // [NOCPP[
-                    , ErrorEvent == null ? null : GetTaintbleLocator()
+                    , GetCurrentLocation()
                 // ]NOCPP]
             );
             Push(node);
