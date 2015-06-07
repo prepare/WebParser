@@ -300,6 +300,9 @@ namespace HtmlParserSharp.Core
         void NoteUnquotedAttributeValue()
         {
         }
+       
+
+     
 
     }
 
