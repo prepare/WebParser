@@ -204,93 +204,90 @@ namespace HtmlParserSharp.Core
 
     /// <summary>
     /// An implementation of
-    /// http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html
-    /// This class implements the <code>Locator</code> interface. This is not an
-    /// incidental implementation detail: Users of this class are encouraged to make
-    /// use of the <code>Locator</code> nature.
+    /// http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html     
     /// By default, the tokenizer may report data that XML 1.0 bans. The tokenizer
     /// can be configured to treat these conditions as fatal or to coerce the infoset
     /// to something that XML 1.0 allows.
     /// </summary>
-    public class Tokenizer
+    public sealed class Tokenizer
     {
-        private const byte DATA_AND_RCDATA_MASK = (byte)0xF0; 
+        const byte DATA_AND_RCDATA_MASK = (byte)0xF0;
         /// <summary>
         /// Magic value for UTF-16 operations.
         /// </summary>
-        private const int LEAD_OFFSET = (0xD800 - (0x10000 >> 10));
+        const int LEAD_OFFSET = (0xD800 - (0x10000 >> 10));
 
         /// <summary>
         /// UTF-16 code unit array containing less than and greater than for emitting
         /// those characters on certain parse errors.
         /// </summary>
-        private static readonly char[] LT_GT = { '<', '>' };
+        static readonly char[] LT_GT = { '<', '>' };
 
         /// <summary>
         /// UTF-16 code unit array containing less than and solidus for emitting
         /// those characters on certain parse errors.
         /// </summary>
-        private static readonly char[] LT_SOLIDUS = { '<', '/' };
+        static readonly char[] LT_SOLIDUS = { '<', '/' };
 
         /// <summary>
         /// UTF-16 code unit array containing ]] for emitting those characters on
         /// state transitions.
         /// </summary>
-        private static readonly char[] RSQB_RSQB = { ']', ']' };
+        static readonly char[] RSQB_RSQB = { ']', ']' };
 
         /// <summary>
         /// Array version of U+FFFD.
         /// </summary>
-        private static readonly char[] REPLACEMENT_CHARACTER = { '\uFFFD' };
+        static readonly char[] REPLACEMENT_CHARACTER = { '\uFFFD' };
 
         // [NOCPP[
 
         /// <summary>
         /// Array version of space.
         /// </summary>
-        private static readonly char[] SPACE = { ' ' };
+        static readonly char[] SPACE = { ' ' };
 
         // ]NOCPP]
 
         /// <summary>
         /// Array version of line feed.
         /// </summary>
-        private static readonly char[] LF = { '\n' };
+        static readonly char[] LF = { '\n' };
 
         /// <summary>
         /// Buffer growth parameter.
         /// </summary>
-        private const int BUFFER_GROW_BY = 1024;
+        const int BUFFER_GROW_BY = 1024;
 
         /// <summary>
         /// "CDATA[" as <code>char[]</code>
         /// </summary>
-        private static readonly char[] CDATA_LSQB = "CDATA[".ToCharArray();
+        static readonly char[] CDATA_LSQB = "CDATA[".ToCharArray();
 
         /// <summary>
         /// "octype" as <code>char[]</code>
         /// </summary>
-        private static readonly char[] OCTYPE = "octype".ToCharArray();
+        static readonly char[] OCTYPE = "octype".ToCharArray();
 
         /// <summary>
         /// "ublic" as <code>char[]</code>
         /// </summary>
-        private static readonly char[] UBLIC = "ublic".ToCharArray();
+        static readonly char[] UBLIC = "ublic".ToCharArray();
 
         /// <summary>
         /// "ystem" as  <code>char[]</code>
         /// </summary>
-        private static readonly char[] YSTEM = "ystem".ToCharArray();
-        private static readonly char[] TITLE_ARR = "title".ToCharArray();
-        private static readonly char[] SCRIPT_ARR = "script".ToCharArray();
-        private static readonly char[] STYLE_ARR = "style".ToCharArray();
-        private static readonly char[] PLAINTEXT_ARR = "plaintext".ToCharArray();
-        private static readonly char[] XMP_ARR = "xmp".ToCharArray();
-        private static readonly char[] TEXTAREA_ARR = "textarea".ToCharArray();
-        private static readonly char[] IFRAME_ARR = "iframe".ToCharArray();
-        private static readonly char[] NOEMBED_ARR = "noembed".ToCharArray();
-        private static readonly char[] NOSCRIPT_ARR = "noscript".ToCharArray();
-        private static readonly char[] NOFRAMES_ARR = "noframes".ToCharArray();
+        static readonly char[] YSTEM = "ystem".ToCharArray();
+        static readonly char[] TITLE_ARR = "title".ToCharArray();
+        static readonly char[] SCRIPT_ARR = "script".ToCharArray();
+        static readonly char[] STYLE_ARR = "style".ToCharArray();
+        static readonly char[] PLAINTEXT_ARR = "plaintext".ToCharArray();
+        static readonly char[] XMP_ARR = "xmp".ToCharArray();
+        static readonly char[] TEXTAREA_ARR = "textarea".ToCharArray();
+        static readonly char[] IFRAME_ARR = "iframe".ToCharArray();
+        static readonly char[] NOEMBED_ARR = "noembed".ToCharArray();
+        static readonly char[] NOSCRIPT_ARR = "noscript".ToCharArray();
+        static readonly char[] NOFRAMES_ARR = "noframes".ToCharArray();
 
         public ITokenHandler TokenHandler { get; private set; }
 
@@ -303,50 +300,50 @@ namespace HtmlParserSharp.Core
 
         // ]NOCPP]
 
-        /**
-         * Whether the previous char read was CR.
-         */
-        protected bool lastCR;
+        /// <summary>
+        /// Whether the previous char read was CR.
+        /// </summary>
+        bool lastCR;
 
-        protected TokenizerState stateSave;
+        TokenizerState stateSave;
 
-        private TokenizerState returnStateSave;
+        TokenizerState returnStateSave;
 
-        protected int index;
+        int index;
 
-        private bool forceQuirks;
+        bool forceQuirks;
 
-        private char additional;
+        char additional;
 
-        private int entCol;
+        int entCol;
 
-        private int firstCharKey;
+        int firstCharKey;
 
-        private int lo;
+        int lo;
 
-        private int hi;
+        int hi;
 
-        private int candidate;
+        int candidate;
 
-        private int strBufMark;
+        int strBufMark;
 
-        private int prevValue;
+        int prevValue;
 
-        protected int value;
+        int value;
 
-        private bool seenDigits;
+        bool seenDigits;
 
-        protected int cstart;
+        int cstart;
 
         /**
          * Buffer for short identifiers.
          */
-        private char[] strBuf;
+        char[] strBuf;
 
         /**
          * Number of significant <code>char</code>s in <code>strBuf</code>.
          */
-        private int strBufLen;
+        int strBufLen;
 
         /**
          * <code>-1</code> to indicate that <code>strBuf</code> is used or otherwise
@@ -356,12 +353,12 @@ namespace HtmlParserSharp.Core
         /**
          * Buffer for long strings.
          */
-        private char[] longStrBuf;
+        char[] longStrBuf;
 
         /**
          * Number of significant <code>char</code>s in <code>longStrBuf</code>.
          */
-        private int longStrBufLen;
+        int longStrBufLen;
 
         /**
          * <code>-1</code> to indicate that <code>longStrBuf</code> is used or
@@ -372,51 +369,51 @@ namespace HtmlParserSharp.Core
         /**
          * Buffer for expanding NCRs falling into the Basic Multilingual Plane.
          */
-        private readonly char[] bmpChar;
+        readonly char[] bmpChar;
 
         /**
          * Buffer for expanding astral NCRs.
          */
-        private readonly char[] astralChar;
+        readonly char[] astralChar;
 
         /**
          * The element whose end tag closes the current CDATA or RCDATA element.
          */
-        protected ElementName endTagExpectation = null;
+        ElementName endTagExpectation = null;
 
-        private char[] endTagExpectationAsArray; // not @Auto!
+        char[] endTagExpectationAsArray; // not @Auto!
 
         /**
          * <code>true</code> if tokenizing an end tag
          */
-        protected bool endTag;
+        bool endTag;
 
         /**
          * The current tag token name.
          */
-        private ElementName tagName = null;
+        ElementName tagName = null;
 
         /**
          * The current attribute name.
          */
-        protected AttributeName attributeName = null;
+        AttributeName attributeName = null;
 
         // [NOCPP[
 
         /**
          * Whether comment tokens are emitted.
          */
-        private bool wantsComments = false;
+        bool wantsComments = false;
 
         /**
          * <code>true</code> when HTML4-specific additional errors are requested.
          */
-        protected bool html4;
+        bool html4;
 
         /**
          * Whether the stream is past the first 512 bytes.
          */
-        private bool metaBoundaryPassed;
+        bool metaBoundaryPassed;
 
         // ]NOCPP]
 
@@ -424,56 +421,56 @@ namespace HtmlParserSharp.Core
          * The name of the current doctype token.
          */
         [Local]
-        private string doctypeName;
+        string doctypeName;
 
         /**
          * The public id of the current doctype token.
          */
-        private string publicIdentifier;
+        string publicIdentifier;
 
         /**
          * The system id of the current doctype token.
          */
-        private string systemIdentifier;
+        string systemIdentifier;
 
         /**
          * The attribute holder.
          */
-        private HtmlAttributes attributes;
+        HtmlAttributes attributes;
 
         // [NOCPP[
 
         /**
          * The policy for vertical tab and form feed.
          */
-        private XmlViolationPolicy contentSpacePolicy = XmlViolationPolicy.AlterInfoset;
+        XmlViolationPolicy contentSpacePolicy = XmlViolationPolicy.AlterInfoset;
 
         /**
          * The policy for comments.
          */
-        private XmlViolationPolicy commentPolicy = XmlViolationPolicy.AlterInfoset;
+        XmlViolationPolicy commentPolicy = XmlViolationPolicy.AlterInfoset;
 
-        private XmlViolationPolicy xmlnsPolicy = XmlViolationPolicy.AlterInfoset;
+        XmlViolationPolicy xmlnsPolicy = XmlViolationPolicy.AlterInfoset;
 
-        private XmlViolationPolicy namePolicy = XmlViolationPolicy.AlterInfoset;
+        XmlViolationPolicy namePolicy = XmlViolationPolicy.AlterInfoset;
 
-        private bool html4ModeCompatibleWithXhtml1Schemata;
+        bool html4ModeCompatibleWithXhtml1Schemata;
 
-        private readonly bool newAttributesEachTime;
+        readonly bool newAttributesEachTime;
 
         // ]NOCPP]
 
-        private int mappingLangToXmlLang;
+        int mappingLangToXmlLang;
 
-        private bool shouldSuspend;
+        bool shouldSuspend;
 
-        protected bool confident;
+      
 
-        private int line;
+        int line;
 
         // [NOCPP[
 
-        protected Location ampersandLocation;
+        Location ampersandLocation;
 
         public Tokenizer(ITokenHandler tokenHandler, bool newAttributesEachTime)
         {
@@ -721,11 +718,10 @@ namespace HtmlParserSharp.Core
             }
         }
 
-        #region Locator implementation
 
         /**
-		 * @see org.xml.sax.Locator#getLineNumber()
-		 */
+         * @see org.xml.sax.Locator#getLineNumber()
+         */
         public int LineNumber
         {
             get
@@ -751,7 +747,6 @@ namespace HtmlParserSharp.Core
             }
         }
 
-        #endregion // locator implementation
 
         // end of public API
 
@@ -7679,11 +7674,7 @@ namespace HtmlParserSharp.Core
 
         // [NOCPP[
 
-        public void BecomeConfident()
-        {
-            confident = true;
-        }
-
+        
         /**
          * Returns the nextCharOnNewLine.
          * 
@@ -7881,7 +7872,7 @@ namespace HtmlParserSharp.Core
 
         public void InitializeWithoutStarting()
         {
-            confident = false;
+          
             strBuf = new char[64];
             longStrBuf = new char[1024];
             line = 1;
