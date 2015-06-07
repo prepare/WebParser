@@ -35,7 +35,7 @@
  */
 
 
- 
+
 
 namespace HtmlParserSharp.Core
 {
@@ -300,9 +300,13 @@ namespace HtmlParserSharp.Core
         void NoteUnquotedAttributeValue()
         {
         }
-       
 
-     
+        void StartErrorReporting()
+        {
+
+        }
+
+
 
     }
 

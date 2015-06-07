@@ -46,7 +46,7 @@ using HtmlParserSharp.Common;
 #pragma warning disable 1570 // XML comment on 'construct' has badly formed XML — 'reason'
 #pragma warning disable 1587 // XML comment is not placed on a valid element
 
-using LayoutFarm.WebLexer;
+
 
 namespace HtmlParserSharp.Core
 {
@@ -461,38 +461,6 @@ namespace HtmlParserSharp.Core
             this.systemIdentifier = null;
             this.attributes = null;
         }
-
-        // ]NOCPP]
-
-        ///**
-        // * The constructor.
-        // * 
-        // * @param tokenHandler
-        // *            the handler for receiving tokens
-        // */
-        //public Tokenizer(ITokenListener tokenHandler)
-        //{
-        //    this.TokenListener = tokenHandler;
-        //    // [NOCPP[
-        //    this.newAttributesEachTime = false;
-        //    // ]NOCPP]
-        //    this.bmpChar = new char[1];
-        //    this.astralChar = new char[2];
-        //    this.tagName = null;
-        //    this.attributeName = null;
-        //    this.doctypeName = null;
-        //    this.publicIdentifier = null;
-        //    this.systemIdentifier = null;
-        //    this.attributes = null;
-        //}
-
-        // [NOCPP[
-
-        /**
-         * Returns the mappingLangToXmlLang.
-         * 
-         * @return the mappingLangToXmlLang
-         */
         public bool IsMappingLangToXmlLang
         {
             get
@@ -505,12 +473,6 @@ namespace HtmlParserSharp.Core
             }
         }
 
-        /**
-         * Sets the commentPolicy.
-         * 
-         * @param commentPolicy
-         *            the commentPolicy to set
-         */
         public XmlViolationPolicy CommentPolicy
         {
             get
@@ -523,12 +485,6 @@ namespace HtmlParserSharp.Core
             }
         }
 
-        /**
-         * Sets the contentNonXmlCharPolicy.
-         * 
-         * @param contentNonXmlCharPolicy
-         *            the contentNonXmlCharPolicy to set
-         */
         public XmlViolationPolicy ContentNonXmlCharPolicy
         {
             set
@@ -539,13 +495,6 @@ namespace HtmlParserSharp.Core
                 }
             }
         }
-
-        /**
-         * Sets the contentSpacePolicy.
-         * 
-         * @param contentSpacePolicy
-         *            the contentSpacePolicy to set
-         */
         public XmlViolationPolicy ContentSpacePolicy
         {
             get
@@ -558,12 +507,6 @@ namespace HtmlParserSharp.Core
             }
         }
 
-        /**
-         * Sets the xmlnsPolicy.
-         * 
-         * @param xmlnsPolicy
-         *            the xmlnsPolicy to set
-         */
         public XmlViolationPolicy XmlnsPolicy
         {
             get
@@ -591,13 +534,9 @@ namespace HtmlParserSharp.Core
                 this.namePolicy = value;
             }
         }
-
-        /**
-         * Sets the html4ModeCompatibleWithXhtml1Schemata.
-         * 
-         * @param html4ModeCompatibleWithXhtml1Schemata
-         *            the html4ModeCompatibleWithXhtml1Schemata to set
-         */
+        /// <summary>
+        ///   the html4ModeCompatibleWithXhtml1Schemata.
+        /// </summary>
         public bool Html4ModeCompatibleWithXhtml1Schemata
         {
             get
@@ -692,28 +631,13 @@ namespace HtmlParserSharp.Core
                     return;
             }
         }
-
-
-        /**
-         * @see org.xml.sax.Locator#getLineNumber()
-         */
         public int LineNumber
         {
             get
             {
                 return line;
             }
-            //set
-            //{
-            //    this.line = value;
-            //}
         }
-
-        // [NOCPP[
-
-        /**
-         * @see org.xml.sax.Locator#getColumnNumber()
-         */
         public int ColumnNumber
         {
             get
@@ -723,19 +647,18 @@ namespace HtmlParserSharp.Core
         }
 
 
-        // end of public API
 
         public void NotifyAboutMetaBoundary()
         {
             metaBoundaryPassed = true;
         }
 
+        // end of public API
+
         internal void TurnOnAdditionalHtml4Errors()
         {
             html4 = true;
         }
-
-        // ]NOCPP]
 
         internal HtmlAttributes EmptyAttributes()
         {
@@ -781,15 +704,12 @@ namespace HtmlParserSharp.Core
          * 
          * @return the smaller buffer as local name
          */
-        private void StrBufToDoctypeName()
+        void StrBufToDoctypeName()
         {
             doctypeName = Portability.NewLocalNameFromBuffer(this.strBuffer.ToString());
         }
-
-
-
         /*@Inline*/
-        private void ClearLongStrBuf()
+        void ClearLongStrBuf()
         {
 
             longStrBuffer.Length = 0;
@@ -808,16 +728,16 @@ namespace HtmlParserSharp.Core
          * @param c
          *            the UTF-16 code unit to append
          */
-        private void AppendLongStrBuf(char c)
+        void AppendLongStrBuf(char c)
         {
             this.longStrBuffer.Append(c);
         }
-        private void AppendLongStrBuf(StringBuilder stBuilder)
+        void AppendLongStrBuf(StringBuilder stBuilder)
         {
             this.longStrBuffer.Append(stBuilder.ToString());
         }
         /*@Inline*/
-        private void AppendSecondHyphenToBogusComment()
+        void AppendSecondHyphenToBogusComment()
         {
             // [NOCPP[
             switch (commentPolicy)
@@ -841,7 +761,7 @@ namespace HtmlParserSharp.Core
         }
 
         // [NOCPP[
-        private void MaybeAppendSpaceToBogusComment()
+        void MaybeAppendSpaceToBogusComment()
         {
             switch (commentPolicy)
             {
@@ -862,7 +782,7 @@ namespace HtmlParserSharp.Core
         // ]NOCPP]
 
         /*@Inline*/
-        private void AdjustDoubleHyphenAndAppendToLongStrBufAndErr(char c)
+        void AdjustDoubleHyphenAndAppendToLongStrBufAndErr(char c)
         {
             ErrConsecutiveHyphens();
             // [NOCPP[
@@ -889,7 +809,7 @@ namespace HtmlParserSharp.Core
             // ]NOCPP]
         }
 
-        private void AppendLongStrBuf(char[] buffer, int offset, int length)
+        void AppendLongStrBuf(char[] buffer, int offset, int length)
         {
 
             this.longStrBuffer.Append(buffer, offset, length);
@@ -898,7 +818,7 @@ namespace HtmlParserSharp.Core
         /// <summary>
         /// Append the contents of the smaller buffer to the larger one.
         /// </summary>
-        private void AppendStrBufToLongStrBuf()
+        void AppendStrBufToLongStrBuf()
         {
             /*@Inline*/
 
@@ -913,12 +833,10 @@ namespace HtmlParserSharp.Core
          * 
          * @return the larger buffer as a string
          */
-        private string LongStrBufToString()
+        string LongStrBufToString()
         {
             return this.longStrBuffer.ToString();
         }
-
-
 
         /// <summary>
         /// Flushes coalesced character tokens.
@@ -1022,7 +940,7 @@ namespace HtmlParserSharp.Core
             // ]NOCPP]
         }
 
-        private void StrBufToElementNameString()
+        void StrBufToElementNameString()
         {
             // if (strBufOffset != -1) {
             // return ElementName.elementNameByBuffer(buf, strBufOffset, strBufLen);
@@ -1033,7 +951,7 @@ namespace HtmlParserSharp.Core
         }
 
 
-        private void AttributeNameComplete()
+        void AttributeNameComplete()
         {
             // if (strBufOffset != -1) {
             // attributeName = AttributeName.nameByBuffer(buf, strBufOffset,
@@ -1065,7 +983,7 @@ namespace HtmlParserSharp.Core
             }
         }
 
-        private void AddAttributeWithoutValue()
+        void AddAttributeWithoutValue()
         {
             NoteAttributeWithoutValue();
 
@@ -1125,7 +1043,7 @@ namespace HtmlParserSharp.Core
             }
         }
 
-        private void AddAttributeWithValue()
+        void AddAttributeWithValue()
         {
             // [NOCPP[
             if (metaBoundaryPassed && ElementName.META == tagName
@@ -1158,7 +1076,7 @@ namespace HtmlParserSharp.Core
 
         // [NOCPP[
 
-        private static String NewAsciiLowerCaseStringFromString(String str)
+        static String NewAsciiLowerCaseStringFromString(String str)
         {
             if (str == null)
             {
@@ -1177,10 +1095,6 @@ namespace HtmlParserSharp.Core
             return new String(buf);
         }
 
-        protected void StartErrorReporting()
-        {
-
-        }
 
         // ]NOCPP]
 
@@ -1261,32 +1175,30 @@ namespace HtmlParserSharp.Core
         }
 
 
-        private void InitDoctypeFields()
+        void InitDoctypeFields()
         {
             doctypeName = "";
-
             systemIdentifier = null;
             publicIdentifier = null;
-
             forceQuirks = false;
         }
 
         /*@Inline*/
-        private void AdjustDoubleHyphenAndAppendToLongStrBufCarriageReturn()
+        void AdjustDoubleHyphenAndAppendToLongStrBufCarriageReturn()
         {
             SilentCarriageReturn();
             AdjustDoubleHyphenAndAppendToLongStrBufAndErr('\n');
         }
 
         /*@Inline*/
-        private void AdjustDoubleHyphenAndAppendToLongStrBufLineFeed()
+        void AdjustDoubleHyphenAndAppendToLongStrBufLineFeed()
         {
             SilentLineFeed();
             AdjustDoubleHyphenAndAppendToLongStrBufAndErr('\n');
         }
 
         /*@Inline*/
-        private void AppendLongStrBufLineFeed()
+        void AppendLongStrBufLineFeed()
         {
             SilentLineFeed();
             AppendLongStrBuf('\n');
@@ -1304,33 +1216,33 @@ namespace HtmlParserSharp.Core
         {
             ++line;
             lastCR = true;
-        } 
+        }
         /*@Inline*/
         void SilentLineFeed()
         {
             ++line;
-        } 
-        private void SetAdditionalAndRememberAmpersandLocation(char add)
+        }
+        void SetAdditionalAndRememberAmpersandLocation(char add)
         {
             additional = add;
             // [NOCPP[
             //ampersandLocation = new Location(this.LineNumber, this.ColumnNumber);
             // ]NOCPP]
         }
-        private void BogusDoctype()
+        void BogusDoctype()
         {
             ErrBogusDoctype();
             forceQuirks = true;
         }
 
-        private void BogusDoctypeWithoutQuirks()
+        void BogusDoctypeWithoutQuirks()
         {
             ErrBogusDoctype();
             forceQuirks = false;
         }
 
 
-        private void HandleNcrValue(TokenizerState returnState)
+        void HandleNcrValue(TokenizerState returnState)
         {
             /*
              * If one or more characters match the range, then take them all and
@@ -2113,63 +2025,12 @@ namespace HtmlParserSharp.Core
             shouldSuspend = true;
         }
 
-        // [NOCPP[
-
-
-        /**
-         * Returns the nextCharOnNewLine.
-         * 
-         * @return the nextCharOnNewLine
-         */
-        public bool IsNextCharOnNewLine
-        {
-            get
-            {
-                return false;
-            }
-        }
 
         public bool IsPrevCR
         {
             get
             {
                 return lastCR;
-            }
-        }
-
-        /**
-         * Returns the line.
-         * 
-         * @return the line
-         */
-        public int Line
-        {
-            get
-            {
-                return -1;
-            }
-        }
-
-        /**
-         * Returns the col.
-         * 
-         * @return the col
-         */
-        public int Col
-        {
-            get
-            {
-                return -1;
-            }
-        }
-
-        // ]NOCPP]
-
-        public bool IsInDataState
-        {
-            get
-            {
-                return (stateSave == TokenizerState.DATA);
             }
         }
 

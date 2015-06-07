@@ -61,6 +61,7 @@
     <Compile Include="Core\Portability.cs" />
     <Compile Include="Core\StackNode.cs" />
     <Compile Include="Core\StateSnapshot.cs" />
+    <Compile Include="Core\TextSnapshot.cs" />
     <Compile Include="Core\Tokenizer.cs" />
     <Compile Include="Core\Tokenizer.Emit.cs" />
     <Compile Include="Core\Tokenizer.ErrHandling.cs" />
