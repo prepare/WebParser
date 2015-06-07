@@ -36,6 +36,9 @@
 
 
 using System;
+using System.Text;
+using System.Collections.Generic;
+
 using System.Diagnostics;
 using HtmlParserSharp.Common;
 
@@ -209,7 +212,7 @@ namespace HtmlParserSharp.Core
     /// can be configured to treat these conditions as fatal or to coerce the infoset
     /// to something that XML 1.0 allows.
     /// </summary>
-    public sealed class Tokenizer
+    public sealed partial class Tokenizer
     {
         const byte DATA_AND_RCDATA_MASK = (byte)0xF0;
         /// <summary>
@@ -344,20 +347,21 @@ namespace HtmlParserSharp.Core
          */
         int strBufLen;
 
-        /**
-         * <code>-1</code> to indicate that <code>strBuf</code> is used or otherwise
-         * an offset to the main buffer.
-         */
-        // private int strBufOffset = -1;
-        /**
-         * Buffer for long strings.
-         */
-        char[] longStrBuf;
+        ///**
+        // * <code>-1</code> to indicate that <code>strBuf</code> is used or otherwise
+        // * an offset to the main buffer.
+        // */
+        //// private int strBufOffset = -1;
+        ///**
+        // * Buffer for long strings.
+        // */
+        //char[] longStrBuf;
 
-        /**
-         * Number of significant <code>char</code>s in <code>longStrBuf</code>.
-         */
-        int longStrBufLen;
+        ///**
+        // * Number of significant <code>char</code>s in <code>longStrBuf</code>.
+        // */
+        //int longStrBufLen;
+        StringBuilder longStrBuffer = new StringBuilder();
 
         /**
          * <code>-1</code> to indicate that <code>longStrBuf</code> is used or
@@ -835,14 +839,15 @@ namespace HtmlParserSharp.Core
         /*@Inline*/
         private void ClearLongStrBuf()
         {
-            longStrBufLen = 0;
+
+            longStrBuffer.Length = 0;
         }
 
         /*@Inline*/
         private void ClearLongStrBufAndAppend(char c)
         {
-            longStrBuf[0] = c;
-            longStrBufLen = 1;
+            longStrBuffer.Length = 0;
+            longStrBuffer.Append(c);
         }
 
         /**
@@ -853,18 +858,7 @@ namespace HtmlParserSharp.Core
          */
         private void AppendLongStrBuf(char c)
         {
-            if (longStrBufLen == longStrBuf.Length)
-            {
-                char[] newBuf = new char[longStrBufLen + (longStrBufLen >> 1)];
-
-
-                Buffer.BlockCopy(longStrBuf, 0, newBuf, 0, longStrBuf.Length << 1);
-
-                //Array.Copy(longStrBuf, newBuf, longStrBuf.Length);
-                // 
-                longStrBuf = newBuf;
-            }
-            longStrBuf[longStrBufLen++] = c;
+            this.longStrBuffer.Append(c);
         }
 
         /*@Inline*/
@@ -921,9 +915,10 @@ namespace HtmlParserSharp.Core
             {
                 case XmlViolationPolicy.AlterInfoset:
                     // detachLongStrBuf();
-                    longStrBufLen--;
+                    longStrBuffer.Length--;
                     AppendLongStrBuf(' ');
                     AppendLongStrBuf('-');
+
                     // FALLTHROUGH
                     goto case XmlViolationPolicy.Allow;
                 case XmlViolationPolicy.Allow:
@@ -941,25 +936,16 @@ namespace HtmlParserSharp.Core
 
         private void AppendLongStrBuf(char[] buffer, int offset, int length)
         {
-            int reqLen = longStrBufLen + length;
-            if (longStrBuf.Length < reqLen)
-            {
-                char[] newBuf = new char[reqLen + (reqLen >> 1)];
-                //Array.Copy(longStrBuf, newBuf, longStrBuf.Length);
-                Buffer.BlockCopy(longStrBuf, 0, newBuf, 0, longStrBuf.Length << 1);
-                longStrBuf = newBuf;
-            }
-            //Array.Copy(buffer, offset, longStrBuf, longStrBufLen, length);
-            Buffer.BlockCopy(buffer, offset << 1, longStrBuf, longStrBufLen << 1, length << 1);
-            longStrBufLen = reqLen;
+
+            this.longStrBuffer.Append(buffer, offset, length);
         }
 
-        /**
-         * Append the contents of the smaller buffer to the larger one.
-         */
-        /*@Inline*/
+        /// <summary>
+        /// Append the contents of the smaller buffer to the larger one.
+        /// </summary>
         private void AppendStrBufToLongStrBuf()
         {
+            /*@Inline*/
             AppendLongStrBuf(strBuf, 0, strBufLen);
         }
 
@@ -973,7 +959,7 @@ namespace HtmlParserSharp.Core
          */
         private string LongStrBufToString()
         {
-            return new String(longStrBuf, 0, longStrBufLen);
+            return this.longStrBuffer.ToString();
         }
 
         /// <summary>
@@ -991,7 +977,11 @@ namespace HtmlParserSharp.Core
                 // tokenHandler.comment(buf, longStrBufOffset, longStrBufLen
                 // - provisionalHyphens);
                 // } else {
-                TokenListener.Comment(longStrBuf, 0, longStrBufLen - provisionalHyphens);
+
+                int copyLen = this.longStrBuffer.Length - provisionalHyphens;
+                char[] copyBuffer = new char[copyLen];
+                longStrBuffer.CopyTo(0, copyBuffer, 0, copyLen);
+                TokenListener.Comment(copyBuffer, 0, copyLen);
                 // }
                 // [NOCPP[
             }
@@ -7651,7 +7641,8 @@ namespace HtmlParserSharp.Core
         public void End()
         {
             strBuf = null;
-            longStrBuf = null;
+            this.longStrBuffer.Length = 0;
+            this.longStrBuffer = null;
             doctypeName = null;
             systemIdentifier = null;
             publicIdentifier = null;
@@ -7733,7 +7724,7 @@ namespace HtmlParserSharp.Core
         public void ResetToDataState()
         {
             strBufLen = 0;
-            longStrBufLen = 0;
+            this.longStrBuffer = new StringBuilder();
             stateSave = TokenizerState.DATA;
             // line = 1; XXX line numbers
             lastCR = false;
@@ -7774,106 +7765,12 @@ namespace HtmlParserSharp.Core
             // ]NOCPP]
         }
 
-        public void LoadState(Tokenizer other)
-        {
-            strBufLen = other.strBufLen;
-            if (strBufLen > strBuf.Length)
-            {
-                strBuf = new char[strBufLen];
-            }
-            //Array.Copy(other.strBuf, strBuf, strBufLen);
-            Buffer.BlockCopy(other.strBuf, 0, strBuf, 0, strBufLen << 1);
-
-            longStrBufLen = other.longStrBufLen;
-            if (longStrBufLen > longStrBuf.Length)
-            {
-                longStrBuf = new char[longStrBufLen];
-            }
-            //Array.Copy(other.longStrBuf, longStrBuf, longStrBufLen);
-            Buffer.BlockCopy(other.longStrBuf, 0, longStrBuf, 0, longStrBufLen << 1);
-
-            stateSave = other.stateSave;
-            returnStateSave = other.returnStateSave;
-            endTagExpectation = other.endTagExpectation;
-            endTagExpectationAsArray = other.endTagExpectationAsArray;
-            // line = 1; XXX line numbers
-            lastCR = other.lastCR;
-            index = other.index;
-            forceQuirks = other.forceQuirks;
-            additional = other.additional;
-            entCol = other.entCol;
-            firstCharKey = other.firstCharKey;
-            lo = other.lo;
-            hi = other.hi;
-            candidate = other.candidate;
-            strBufMark = other.strBufMark;
-            prevValue = other.prevValue;
-            value = other.value;
-            seenDigits = other.seenDigits;
-            endTag = other.endTag;
-            shouldSuspend = false;
-
-            if (other.doctypeName == null)
-            {
-                doctypeName = null;
-            }
-            else
-            {
-                doctypeName = other.doctypeName;
-            }
-
-            if (other.systemIdentifier == null)
-            {
-                systemIdentifier = null;
-            }
-            else
-            {
-                systemIdentifier = other.systemIdentifier;
-            }
-
-            if (other.publicIdentifier == null)
-            {
-                publicIdentifier = null;
-            }
-            else
-            {
-                publicIdentifier = other.publicIdentifier;
-            }
-
-            if (other.tagName == null)
-            {
-                tagName = null;
-            }
-            else
-            {
-                tagName = other.tagName.CloneElementName();
-            }
-
-            if (other.attributeName == null)
-            {
-                attributeName = null;
-            }
-            else
-            {
-                attributeName = other.attributeName.CloneAttributeName();
-            }
-
-            if (other.attributes == null)
-            {
-                attributes = null;
-            }
-            else
-            {
-                attributes = other.attributes.CloneAttributes();
-            }
-        }
-
         public void InitializeWithoutStarting()
         {
 
             strBuf = new char[64];
-            longStrBuf = new char[1024];
             line = 1;
+            this.longStrBuffer = new StringBuilder();
             // [NOCPP[
             html4 = false;
             metaBoundaryPassed = false;
@@ -7887,267 +7784,6 @@ namespace HtmlParserSharp.Core
             ResetToDataState();
         }
 
-        #region Mostly unused error/warning handlers (What are they for?)
-
-        protected void ErrGarbageAfterLtSlash()
-        {
-        }
-
-        protected void ErrLtSlashGt()
-        {
-        }
-
-        protected void ErrWarnLtSlashInRcdata()
-        {
-        }
-
-        protected void ErrHtml4LtSlashInRcdata(char folded)
-        {
-        }
-
-        protected void ErrCharRefLacksSemicolon()
-        {
-        }
-
-        protected void ErrNoDigitsInNCR()
-        {
-        }
-
-        protected void ErrGtInSystemId()
-        {
-        }
-
-        protected void ErrGtInPublicId()
-        {
-        }
-
-        protected void ErrNamelessDoctype()
-        {
-        }
-
-        protected void ErrConsecutiveHyphens()
-        {
-        }
-
-        protected void ErrPrematureEndOfComment()
-        {
-        }
-
-        protected void ErrBogusComment()
-        {
-        }
-
-        protected void ErrUnquotedAttributeValOrNull(char c)
-        {
-        }
-
-        protected void ErrSlashNotFollowedByGt()
-        {
-        }
-
-        protected void ErrHtml4XmlVoidSyntax()
-        {
-        }
-
-        protected void ErrNoSpaceBetweenAttributes()
-        {
-        }
-
-        protected void ErrHtml4NonNameInUnquotedAttribute(char c)
-        {
-        }
-
-        protected void ErrLtOrEqualsOrGraveInUnquotedAttributeOrNull(char c)
-        {
-        }
-
-        protected void ErrAttributeValueMissing()
-        {
-        }
-
-        protected void ErrBadCharBeforeAttributeNameOrNull(char c)
-        {
-        }
-
-        protected void ErrEqualsSignBeforeAttributeName()
-        {
-        }
-
-        protected void ErrBadCharAfterLt(char c)
-        {
-        }
-
-        protected void ErrLtGt()
-        {
-        }
-
-        protected void ErrProcessingInstruction()
-        {
-        }
-
-        protected void ErrUnescapedAmpersandInterpretedAsCharacterReference()
-        {
-        }
-
-        protected void ErrNotSemicolonTerminated()
-        {
-        }
-
-        protected void ErrNoNamedCharacterMatch()
-        {
-        }
-
-        protected void ErrQuoteBeforeAttributeName(char c)
-        {
-        }
-
-        protected void ErrQuoteOrLtInAttributeNameOrNull(char c)
-        {
-        }
-
-        protected void ErrExpectedPublicId()
-        {
-        }
-
-        protected void ErrBogusDoctype()
-        {
-        }
-
-        protected void MaybeWarnPrivateUseAstral()
-        {
-        }
-
-        protected void MaybeWarnPrivateUse(char ch)
-        {
-        }
-
-        protected void MaybeErrAttributesOnEndTag(HtmlAttributes attrs)
-        {
-        }
-
-        protected void MaybeErrSlashInEndTag(bool selfClosing)
-        {
-        }
-
-        protected char ErrNcrNonCharacter(char ch)
-        {
-            return ch;
-        }
-
-        protected void ErrAstralNonCharacter(int ch)
-        {
-        }
-
-        protected void ErrNcrSurrogate()
-        {
-        }
-
-        protected char ErrNcrControlChar(char ch)
-        {
-            return ch;
-        }
-
-        protected void ErrNcrCr()
-        {
-        }
-
-        protected void ErrNcrInC1Range()
-        {
-        }
-
-        protected void ErrEofInPublicId()
-        {
-        }
-
-        protected void ErrEofInComment()
-        {
-        }
-
-        protected void ErrEofInDoctype()
-        {
-        }
-
-        protected void ErrEofInAttributeValue()
-        {
-        }
-
-        protected void ErrEofInAttributeName()
-        {
-        }
-
-        protected void ErrEofWithoutGt()
-        {
-        }
-
-        protected void ErrEofInTagName()
-        {
-        }
-
-        protected void ErrEofInEndTag()
-        {
-        }
-
-        protected void ErrEofAfterLt()
-        {
-        }
-
-        protected void ErrNcrOutOfRange()
-        {
-        }
-
-        protected void ErrNcrUnassigned()
-        {
-        }
-
-        protected void ErrDuplicateAttribute()
-        {
-        }
-
-        protected void ErrEofInSystemId()
-        {
-        }
-
-        protected void ErrExpectedSystemId()
-        {
-        }
-
-        protected void ErrMissingSpaceBeforeDoctypeName()
-        {
-        }
-
-        protected void ErrHyphenHyphenBang()
-        {
-        }
-
-        protected void ErrNcrControlChar()
-        {
-        }
-
-        protected void ErrNcrZero()
-        {
-        }
-
-        protected void ErrNoSpaceBetweenDoctypeSystemKeywordAndQuote()
-        {
-        }
-
-        protected void ErrNoSpaceBetweenPublicAndSystemIds()
-        {
-        }
-
-        protected void ErrNoSpaceBetweenDoctypePublicKeywordAndQuote()
-        {
-        }
-
-        protected void NoteAttributeWithoutValue()
-        {
-        }
-
-        protected void NoteUnquotedAttributeValue()
-        {
-        }
-
-        #endregion
 
         // [NOCPP[
 
