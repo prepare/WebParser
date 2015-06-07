@@ -66,6 +66,7 @@
     <Compile Include="Core\Tokenizer.Emit.cs" />
     <Compile Include="Core\Tokenizer.ErrHandling.cs" />
     <Compile Include="Core\Tokenizer.StateLoop.cs" />
+    <Compile Include="Core\Tokenizer.StateLoop2.cs" />
     <Compile Include="Core\TreeBuilder.cs" />
     <Compile Include="Core\TreeBuilder.Snapshot.cs" />
     <Compile Include="Core\TreeBuilderConstants.cs" />

@@ -94,8 +94,8 @@ namespace HtmlParserSharp.Core
             FlushChars(buf, pos);
             TokenListener.Characters(REPLACEMENT_CHARACTER, 0, 1);
             cstart = pos + 1;
-        }
 
+        } 
         void EmitCarriageReturn(char[] buf, int pos)
         {
             SilentCarriageReturn();
@@ -157,6 +157,7 @@ namespace HtmlParserSharp.Core
 
         void EmitOrAppendTwo(char[] val, TokenizerState returnState)
         {
+            //TODO: review here=>   use != or == ?
             //if ((returnState & DATA_AND_RCDATA_MASK) != 0)
             if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
             {

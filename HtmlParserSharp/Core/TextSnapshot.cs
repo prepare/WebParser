@@ -3,7 +3,68 @@ using System;
 namespace HtmlParserSharp.Core
 {
 
-    public class TextSnapshot
+    class TextSnapshotReader
+    {
+        int _start;
+        int _end;
+        int _length;
+        char[] _textBuffer;
+        int _position;
+        bool isEndOfFile = false;
+        char currentChar;
+        public TextSnapshotReader(char[] textBuffer, int start, int length)
+        {
+            this._position = start;
+            this._start = start;
+            this._length = length;
+            this._end = start + length;
+            this._textBuffer = textBuffer;
+            this.isEndOfFile = this._start >= this._end;
+            if (!this.isEndOfFile)
+            {
+                currentChar = textBuffer[start];
+            }
+        }
+        public int Position
+        {
+            get { return this._position; }
+        }
+        public bool ReadNext(out char c)
+        {
+            if (this._start < this._end)
+            {
+                this._position++;
+                this.currentChar = c = this._textBuffer[this._position];
+                return true;
+            }
+            else
+            {
+                c = '\0';
+                return false;
+            }
+        }
+        public void StepBack()
+        {
+            if (this._position > _start)
+            {
+                this._position--;
+            }
+        }
+        public char CurrentChar
+        {
+            get { return this.currentChar; }
+        }
+        public bool EndOfStream
+        {
+            get { return this._position >= this._end; }
+        }
+        internal char[] InteralBuff
+        {
+            get { return this._textBuffer; }
+        }
+    }
+
+    class TextSnapshot
     {
         readonly char[] textBuffer;
         readonly int length;
@@ -106,5 +167,8 @@ namespace HtmlParserSharp.Core
             return -1;
         }
     }
+
+
+
 
 }

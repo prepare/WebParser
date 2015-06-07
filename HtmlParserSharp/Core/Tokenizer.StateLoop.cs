@@ -55,7 +55,7 @@ namespace HtmlParserSharp.Core
            int endPos)
         {
 
-            TextSnapshot textSnapshot = new TextSnapshot(buf);
+            
 
             /*
              * Idioms used in this code:
@@ -2896,9 +2896,8 @@ namespace HtmlParserSharp.Core
                                 }
                                 if (folded != e)
                                 {
-                                    // [NOCPP[
-                                    ErrHtml4LtSlashInRcdata(folded);
-                                    // ]NOCPP]
+                                   
+                                    ErrHtml4LtSlashInRcdata(folded); 
                                     TokenListener.Characters(Tokenizer.LT_SOLIDUS,
                                             0, 2);
                                     EmitStrBuf();

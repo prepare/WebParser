@@ -147,6 +147,9 @@ namespace HtmlParserSharp.Core
 
         CONSUME_CHARACTER_REFERENCE = 46,
 
+        /// <summary>
+        /// numeric character reference
+        /// </summary>
         CONSUME_NCR = 47,
 
         CHARACTER_REFERENCE_TAIL = 48,
@@ -201,7 +204,7 @@ namespace HtmlParserSharp.Core
 
         PROCESSING_INSTRUCTION = 73,
 
-        PROCESSING_INSTRUCTION_QUESTION_MARK = 74 
+        PROCESSING_INSTRUCTION_QUESTION_MARK = 74
     }
 
     /// <summary>
@@ -848,7 +851,14 @@ namespace HtmlParserSharp.Core
             }
             cstart = int.MaxValue;
         }
-
+        void FlushChars(TextSnapshotReader reader)
+        {
+            if (reader.Position > cstart)
+            {
+                TokenListener.Characters(reader.InteralBuff, cstart, reader.Position - cstart);
+            }
+            cstart = int.MaxValue;
+        }
         /**
          * Reports an condition that would make the infoset incompatible with XML
          * 1.0 as fatal.
