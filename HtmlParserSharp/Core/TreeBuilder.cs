@@ -46,7 +46,7 @@ using System.Text;
 
 namespace HtmlParserSharp.Core
 {
-    public abstract class TreeBuilder<T> : ITokenHandler, ITreeBuilderState<T> where T : class
+    public abstract class TreeBuilder<T> : ITokenListener, ITreeBuilderState<T> where T : class
     {
         private InsertionMode mode = InsertionMode.INITIAL;
 

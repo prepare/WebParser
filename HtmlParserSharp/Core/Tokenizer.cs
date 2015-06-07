@@ -289,7 +289,7 @@ namespace HtmlParserSharp.Core
         static readonly char[] NOSCRIPT_ARR = "noscript".ToCharArray();
         static readonly char[] NOFRAMES_ARR = "noframes".ToCharArray();
 
-        public ITokenHandler TokenHandler { get; private set; }
+        public ITokenListener TokenListener { get; private set; }
 
 
         public event EventHandler<EncodingDetectedEventArgs> EncodingDeclared;
@@ -470,9 +470,9 @@ namespace HtmlParserSharp.Core
         // [NOCPP[ 
         Location ampersandLocation;
 
-        public Tokenizer(ITokenHandler tokenHandler, bool newAttributesEachTime)
+        public Tokenizer(ITokenListener tokenHandler, bool newAttributesEachTime)
         {
-            this.TokenHandler = tokenHandler;
+            this.TokenListener = tokenHandler;
             this.newAttributesEachTime = newAttributesEachTime;
             this.bmpChar = new char[1];
             this.astralChar = new char[2];
@@ -492,9 +492,9 @@ namespace HtmlParserSharp.Core
          * @param tokenHandler
          *            the handler for receiving tokens
          */
-        public Tokenizer(ITokenHandler tokenHandler)
+        public Tokenizer(ITokenListener tokenHandler)
         {
-            this.TokenHandler = tokenHandler;
+            this.TokenListener = tokenHandler;
             // [NOCPP[
             this.newAttributesEachTime = false;
             // ]NOCPP]
@@ -828,7 +828,7 @@ namespace HtmlParserSharp.Core
         {
             if (strBufLen > 0)
             {
-                TokenHandler.Characters(strBuf, 0, strBufLen);
+                TokenListener.Characters(strBuf, 0, strBufLen);
             }
         }
 
@@ -991,7 +991,7 @@ namespace HtmlParserSharp.Core
                 // tokenHandler.comment(buf, longStrBufOffset, longStrBufLen
                 // - provisionalHyphens);
                 // } else {
-                TokenHandler.Comment(longStrBuf, 0, longStrBufLen - provisionalHyphens);
+                TokenListener.Comment(longStrBuf, 0, longStrBufLen - provisionalHyphens);
                 // }
                 // [NOCPP[
             }
@@ -1008,7 +1008,7 @@ namespace HtmlParserSharp.Core
         {
             if (pos > cstart)
             {
-                TokenHandler.Characters(buf, cstart, pos - cstart);
+                TokenListener.Characters(buf, cstart, pos - cstart);
             }
             cstart = int.MaxValue;
         }
@@ -1124,11 +1124,11 @@ namespace HtmlParserSharp.Core
                  * switched to the PCDATA state.
                  */
                 MaybeErrAttributesOnEndTag(attrs);
-                TokenHandler.EndTag(tagName);
+                TokenListener.EndTag(tagName);
             }
             else
             {
-                TokenHandler.StartTag(tagName, attrs, selfClosing);
+                TokenListener.StartTag(tagName, attrs, selfClosing);
             }
             tagName = null;
             ResetAttributes();
@@ -1296,7 +1296,7 @@ namespace HtmlParserSharp.Core
         public void Start()
         {
             InitializeWithoutStarting();
-            TokenHandler.StartTokenization(this);
+            TokenListener.StartTokenization(this);
             // [NOCPP[
             StartErrorReporting();
             // ]NOCPP]
@@ -1623,7 +1623,7 @@ namespace HtmlParserSharp.Core
                                      * and a U+003E GREATER-THAN SIGN character
                                      * token.
                                      */
-                                    TokenHandler.Characters(LT_GT, 0, 2);
+                                    TokenListener.Characters(LT_GT, 0, 2);
                                     /* Switch to the data state. */
                                     cstart = pos + 1;
                                     //state = Transition(state, Tokenizer.DATA, reconsume, pos);
@@ -1637,7 +1637,7 @@ namespace HtmlParserSharp.Core
                                     /*
                                      * Emit a U+003C LESS-THAN SIGN character token
                                      */
-                                    TokenHandler.Characters(LT_GT, 0, 1);
+                                    TokenListener.Characters(LT_GT, 0, 1);
                                     /*
                                      * and reconsume the current input character in
                                      * the data state.
@@ -2561,7 +2561,7 @@ namespace HtmlParserSharp.Core
                                     state = TokenizerState.MARKUP_DECLARATION_OCTYPE;
                                     goto continueStateloop;
                                 case '[':
-                                    if (TokenHandler.IsCDataSectionAllowed)
+                                    if (TokenListener.IsCDataSectionAllowed)
                                     {
                                         ClearLongStrBufAndAppend(c);
                                         index = 0;
@@ -3092,7 +3092,7 @@ namespace HtmlParserSharp.Core
 
                                     goto breakCdatarsqb;
                                 default:
-                                    TokenHandler.Characters(Tokenizer.RSQB_RSQB, 0, 1);
+                                    TokenListener.Characters(Tokenizer.RSQB_RSQB, 0, 1);
                                     cstart = pos;
                                     //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
                                     state = TokenizerState.CDATA_SECTION;
@@ -3117,7 +3117,7 @@ namespace HtmlParserSharp.Core
                                 state = TokenizerState.DATA;
                                 goto continueStateloop;
                             default:
-                                TokenHandler.Characters(Tokenizer.RSQB_RSQB, 0, 2);
+                                TokenListener.Characters(Tokenizer.RSQB_RSQB, 0, 2);
                                 cstart = pos;
                                 //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
                                 state = TokenizerState.CDATA_SECTION;
@@ -3604,7 +3604,7 @@ namespace HtmlParserSharp.Core
                                 }
                                 else
                                 {
-                                    TokenHandler.Characters(strBuf, strBufMark,
+                                    TokenListener.Characters(strBuf, strBufMark,
                                             strBufLen - strBufMark);
                                 }
                                 // }
@@ -4177,7 +4177,7 @@ namespace HtmlParserSharp.Core
                                      * Otherwise, emit a U+003C LESS-THAN SIGN
                                      * character token
                                      */
-                                    TokenHandler.Characters(Tokenizer.LT_GT, 0, 1);
+                                    TokenListener.Characters(Tokenizer.LT_GT, 0, 1);
                                     /*
                                      * and reconsume the current input character in
                                      * the data state.
@@ -4219,7 +4219,7 @@ namespace HtmlParserSharp.Core
                                     // [NOCPP[
                                     ErrHtml4LtSlashInRcdata(folded);
                                     // ]NOCPP]
-                                    TokenHandler.Characters(Tokenizer.LT_SOLIDUS,
+                                    TokenListener.Characters(Tokenizer.LT_SOLIDUS,
                                             0, 2);
                                     EmitStrBuf();
                                     cstart = pos;
@@ -4300,7 +4300,7 @@ namespace HtmlParserSharp.Core
                                         // [NOCPP[
                                         ErrWarnLtSlashInRcdata();
                                         // ]NOCPP]
-                                        TokenHandler.Characters(LT_SOLIDUS, 0, 2);
+                                        TokenListener.Characters(LT_SOLIDUS, 0, 2);
                                         EmitStrBuf();
                                         if (c == '\u0000')
                                         {
@@ -4503,7 +4503,7 @@ namespace HtmlParserSharp.Core
                                     state = TokenizerState.NON_DATA_END_TAG_NAME;
                                     goto continueStateloop;
                                 case '!':
-                                    TokenHandler.Characters(LT_GT, 0, 1);
+                                    TokenListener.Characters(LT_GT, 0, 1);
                                     cstart = pos;
                                     //state = Transition(state, Tokenizer.SCRIPT_DATA_ESCAPE_START, reconsume, pos);
                                     state = TokenizerState.SCRIPT_DATA_ESCAPE_START;
@@ -4516,7 +4516,7 @@ namespace HtmlParserSharp.Core
                                      * Otherwise, emit a U+003C LESS-THAN SIGN
                                      * character token
                                      */
-                                    TokenHandler.Characters(LT_GT, 0, 1);
+                                    TokenListener.Characters(LT_GT, 0, 1);
                                     /*
                                      * and reconsume the current input character in
                                      * the data state.
@@ -4832,7 +4832,7 @@ namespace HtmlParserSharp.Core
                                      * LESS-THAN SIGN character token and the
                                      * current input character as a character token.
                                      */
-                                    TokenHandler.Characters(LT_GT, 0, 1);
+                                    TokenListener.Characters(LT_GT, 0, 1);
                                     cstart = pos;
                                     index = 1;
                                     /*
@@ -4854,7 +4854,7 @@ namespace HtmlParserSharp.Core
                                      * input character in the script data escaped
                                      * state.
                                      */
-                                    TokenHandler.Characters(LT_GT, 0, 1);
+                                    TokenListener.Characters(LT_GT, 0, 1);
                                     cstart = pos;
                                     reconsume = true;
                                     //state = Transition(state, Tokenizer.SCRIPT_DATA_ESCAPED, reconsume, pos);
@@ -6798,21 +6798,21 @@ namespace HtmlParserSharp.Core
         {
             SilentCarriageReturn();
             FlushChars(buf, pos);
-            TokenHandler.Characters(LF, 0, 1);
+            TokenListener.Characters(LF, 0, 1);
             cstart = int.MaxValue;
         }
 
         private void EmitReplacementCharacter(char[] buf, int pos)
         {
             FlushChars(buf, pos);
-            TokenHandler.ZeroOriginatingReplacementCharacter();
+            TokenListener.ZeroOriginatingReplacementCharacter();
             cstart = pos + 1;
         }
 
         private void EmitPlaintextReplacementCharacter(char[] buf, int pos)
         {
             FlushChars(buf, pos);
-            TokenHandler.Characters(REPLACEMENT_CHARACTER, 0, 1);
+            TokenListener.Characters(REPLACEMENT_CHARACTER, 0, 1);
             cstart = pos + 1;
         }
 
@@ -6970,7 +6970,7 @@ namespace HtmlParserSharp.Core
                         /*
                          * Otherwise, emit a U+003C LESS-THAN SIGN character token
                          */
-                        TokenHandler.Characters(LT_GT, 0, 1);
+                        TokenListener.Characters(LT_GT, 0, 1);
                         /*
                          * and reconsume the current input character in the data
                          * state.
@@ -6988,7 +6988,7 @@ namespace HtmlParserSharp.Core
                         /*
                          * Emit a U+003C LESS-THAN SIGN character token
                          */
-                        TokenHandler.Characters(LT_GT, 0, 1);
+                        TokenListener.Characters(LT_GT, 0, 1);
                         /*
                          * and reconsume the current input character in the data
                          * state.
@@ -6998,7 +6998,7 @@ namespace HtmlParserSharp.Core
                         /*
                          * Emit a U+003C LESS-THAN SIGN character token
                          */
-                        TokenHandler.Characters(LT_GT, 0, 1);
+                        TokenListener.Characters(LT_GT, 0, 1);
                         /*
                          * and reconsume the current input character in the RCDATA
                          * state.
@@ -7009,7 +7009,7 @@ namespace HtmlParserSharp.Core
                          * Emit a U+003C LESS-THAN SIGN character token, a U+002F
                          * SOLIDUS character token,
                          */
-                        TokenHandler.Characters(LT_SOLIDUS, 0, 2);
+                        TokenListener.Characters(LT_SOLIDUS, 0, 2);
                         /*
                          * a character token for each of the characters in the
                          * temporary buffer (in the order they were added to the
@@ -7028,7 +7028,7 @@ namespace HtmlParserSharp.Core
                          * Emit a U+003C LESS-THAN SIGN character token and a U+002F
                          * SOLIDUS character token.
                          */
-                        TokenHandler.Characters(LT_SOLIDUS, 0, 2);
+                        TokenListener.Characters(LT_SOLIDUS, 0, 2);
                         /*
                          * Reconsume the EOF character in the data state.
                          */
@@ -7496,7 +7496,7 @@ namespace HtmlParserSharp.Core
                                 }
                                 else
                                 {
-                                    TokenHandler.Characters(strBuf, strBufMark,
+                                    TokenListener.Characters(strBuf, strBufMark,
                                             strBufLen - strBufMark);
                                 }
                             }
@@ -7538,10 +7538,10 @@ namespace HtmlParserSharp.Core
                         state = returnState;
                         continue;
                     case TokenizerState.CDATA_RSQB:
-                        TokenHandler.Characters(RSQB_RSQB, 0, 1);
+                        TokenListener.Characters(RSQB_RSQB, 0, 1);
                         goto breakEofloop;
                     case TokenizerState.CDATA_RSQB_RSQB:
-                        TokenHandler.Characters(RSQB_RSQB, 0, 2);
+                        TokenListener.Characters(RSQB_RSQB, 0, 2);
                         goto breakEofloop;
                     case TokenizerState.DATA:
                     default:
@@ -7557,14 +7557,14 @@ namespace HtmlParserSharp.Core
             /*
              * EOF Emit an end-of-file token.
              */
-            TokenHandler.Eof();
+            TokenListener.Eof();
             return;
         }
 
         private void EmitDoctypeToken(int pos)
         {
             cstart = pos + 1;
-            TokenHandler.Doctype(doctypeName, publicIdentifier, systemIdentifier,
+            TokenListener.Doctype(doctypeName, publicIdentifier, systemIdentifier,
                     forceQuirks);
             // It is OK and sufficient to release these here, since
             // there's no way out of the doctype states than through paths
@@ -7631,7 +7631,7 @@ namespace HtmlParserSharp.Core
             }
             else
             {
-                TokenHandler.Characters(val, 0, 2);
+                TokenListener.Characters(val, 0, 2);
             }
         }
 
@@ -7644,7 +7644,7 @@ namespace HtmlParserSharp.Core
             }
             else
             {
-                TokenHandler.Characters(val, 0, 1);
+                TokenListener.Characters(val, 0, 1);
             }
         }
 
@@ -7657,7 +7657,7 @@ namespace HtmlParserSharp.Core
             publicIdentifier = null;
             tagName = null;
             attributeName = null;
-            TokenHandler.EndTokenization();
+            TokenListener.EndTokenization();
             if (attributes != null)
             {
                 attributes.Clear(mappingLangToXmlLang);
@@ -7877,7 +7877,7 @@ namespace HtmlParserSharp.Core
             // [NOCPP[
             html4 = false;
             metaBoundaryPassed = false;
-            wantsComments = TokenHandler.WantsComments;
+            wantsComments = TokenListener.WantsComments;
 
             if (!newAttributesEachTime)
             {

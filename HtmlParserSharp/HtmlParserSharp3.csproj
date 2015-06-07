@@ -40,12 +40,13 @@
     <Compile Include="Common\DocumentMode.cs" />
     <Compile Include="Common\DocumentModeEventArgs.cs" />
     <Compile Include="Common\EncodingDetectedEventArgs.cs" />
-    <Compile Include="Common\ITokenHandler.cs" />
+    <Compile Include="Common\ITokenListener.cs" />
     <Compile Include="Common\ParserErrorEventArgs.cs" />
     <Compile Include="Common\XmlViolationPolicy.cs" />
     <Compile Include="Core\AttributeName.cs" />
     <Compile Include="Core\CharsetState.cs" />
     <Compile Include="Core\CoalescingTreeBuilder.cs" />
+    <Compile Include="Core\OldTokenizer.cs" />
     <Compile Include="Core\DispatchGroup.cs" />
     <Compile Include="Core\ElementName.cs" />
     <Compile Include="Core\HtmlAttributes.cs" />

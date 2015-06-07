@@ -31,7 +31,7 @@ namespace HtmlParserSharp.Common
 	/// <summary>
 	/// <code>Tokenizer</code> reports tokens through this interface.
 	/// </summary>
-	public interface ITokenHandler
+	public interface ITokenListener
 	{
 
 		/// <summary>
