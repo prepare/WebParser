@@ -44,6 +44,8 @@
     <Compile Include="Common\ParserErrorEventArgs.cs" />
     <Compile Include="Common\XmlViolationPolicy.cs" />
     <Compile Include="Core\AttributeName.cs" />
+    <Compile Include="Core\AttributeName.Generated.cs" />
+    <Compile Include="Core\AttributeName.static.cs" />
     <Compile Include="Core\CharsetState.cs" />
     <Compile Include="Core\CoalescingTreeBuilder.cs" />
     <Compile Include="Core\OldTokenizer.cs" />

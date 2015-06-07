@@ -337,18 +337,10 @@ namespace HtmlParserSharp.Core
 
         int cstart;
 
-        ///**
-        // * Buffer for short identifiers.
-        // */
-        //char[] strBuf;
 
-        ///**
-        // * Number of significant <code>char</code>s in <code>strBuf</code>.
-        // */
-        //int strBufLen;
 
         /// <summary>
-        /// buffer for short str
+        ///  Buffer for short identifiers.
         /// </summary>
         StringBuilder strBuffer = new StringBuilder();
         /// <summary>
@@ -356,15 +348,6 @@ namespace HtmlParserSharp.Core
         /// </summary>
         StringBuilder longStrBuffer = new StringBuilder();
 
-        /**
-         * <code>-1</code> to indicate that <code>longStrBuf</code> is used or
-         * otherwise an offset to the main buffer.
-         */
-        // private int longStrBufOffset = -1;
-
-        /**
-         * Buffer for expanding NCRs falling into the Basic Multilingual Plane.
-         */
         readonly char[] bmpChar;
 
         /**
@@ -389,26 +372,26 @@ namespace HtmlParserSharp.Core
          */
         ElementName tagName = null;
 
-        /**
-         * The current attribute name.
-         */
+        /// <summary>
+        /// The current attribute name.
+        /// </summary>
         AttributeName attributeName = null;
 
         // [NOCPP[
 
-        /**
-         * Whether comment tokens are emitted.
-         */
+        /// <summary>
+        /// Whether comment tokens are emitted.
+        /// </summary>
         bool wantsComments = false;
 
-        /**
-         * <code>true</code> when HTML4-specific additional errors are requested.
-         */
+        /// <summary>
+        /// true when HTML4-specific additional errors are requested
+        /// </summary>
         bool html4;
 
-        /**
-         * Whether the stream is past the first 512 bytes.
-         */
+        /// <summary>
+        /// Whether the stream is past the first 512 bytes.
+        /// </summary>
         bool metaBoundaryPassed;
 
         // ]NOCPP]
@@ -441,9 +424,7 @@ namespace HtmlParserSharp.Core
          */
         XmlViolationPolicy contentSpacePolicy = XmlViolationPolicy.AlterInfoset;
 
-        /**
-         * The policy for comments.
-         */
+
         XmlViolationPolicy commentPolicy = XmlViolationPolicy.AlterInfoset;
 
         XmlViolationPolicy xmlnsPolicy = XmlViolationPolicy.AlterInfoset;
