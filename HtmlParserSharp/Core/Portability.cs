@@ -46,7 +46,10 @@ namespace HtmlParserSharp.Core
         {
             return string.Intern(new String(buf, offset, length));
         }
-
+        public static String NewLocalNameFromBuffer(string str)
+        {
+            return string.Intern(str);
+        }
         // Comparison methods
 
         public static bool LocalEqualsBuffer([Local] string local, char[] buf, int offset, int length)

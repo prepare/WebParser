@@ -712,7 +712,10 @@ namespace HtmlParserSharp.Core
             AppendComment(stack[currentPtr].node, buf, start, length);
             return;
         }
-
+        public void Characters(char[] buf)
+        {
+            Characters(buf, 0, buf.Length);
+        }
         /// <summary>
         /// Receive character tokens. This method has the same semantics as the SAX
         /// method of the same name.
@@ -5976,7 +5979,7 @@ namespace HtmlParserSharp.Core
             return true;
         }
 
-        internal  void LoadState(ITreeBuilderState<T> snapshot)
+        internal void LoadState(ITreeBuilderState<T> snapshot)
         {
             StackNode<T>[] stackCopy = snapshot.Stack;
             int stackLen = snapshot.Stack.Length;

@@ -337,30 +337,23 @@ namespace HtmlParserSharp.Core
 
         int cstart;
 
-        /**
-         * Buffer for short identifiers.
-         */
-        char[] strBuf;
-
-        /**
-         * Number of significant <code>char</code>s in <code>strBuf</code>.
-         */
-        int strBufLen;
+        ///**
+        // * Buffer for short identifiers.
+        // */
+        //char[] strBuf;
 
         ///**
-        // * <code>-1</code> to indicate that <code>strBuf</code> is used or otherwise
-        // * an offset to the main buffer.
+        // * Number of significant <code>char</code>s in <code>strBuf</code>.
         // */
-        //// private int strBufOffset = -1;
-        ///**
-        // * Buffer for long strings.
-        // */
-        //char[] longStrBuf;
+        //int strBufLen;
 
-        ///**
-        // * Number of significant <code>char</code>s in <code>longStrBuf</code>.
-        // */
-        //int longStrBufLen;
+        /// <summary>
+        /// buffer for short str
+        /// </summary>
+        StringBuilder strBuffer = new StringBuilder();
+        /// <summary>
+        /// buffer for long string
+        /// </summary>
         StringBuilder longStrBuffer = new StringBuilder();
 
         /**
@@ -657,8 +650,7 @@ namespace HtmlParserSharp.Core
             {
                 return;
             }
-            char[] asArray = endTagExpectation.ToCharArray();
-            this.endTagExpectation = ElementName.ElementNameByBuffer(asArray, 0, asArray.Length);
+            this.endTagExpectation = ElementName.ElementNameByBuffer(endTagExpectation.ToCharArray());
             EndTagExpectationToArray();
         }
 
@@ -781,34 +773,25 @@ namespace HtmlParserSharp.Core
         }
 
         /*@Inline*/
-        private void ClearStrBufAndAppend(char c)
+        void ClearStrBufAndAppend(char c)
         {
-            strBuf[0] = c;
-            strBufLen = 1;
+            this.strBuffer.Length = 0;
+            this.strBuffer.Append(c);
+
         }
 
         /*@Inline*/
-        private void ClearStrBuf()
+        void ClearStrBuf()
         {
-            strBufLen = 0;
+            this.strBuffer.Length = 0;
         }
-
-        /**
-         * Appends to the smaller buffer.
-         * 
-         * @param c
-         *            the UTF-16 code unit to append
-         */
-        private void AppendStrBuf(char c)
+        /// <summary>
+        /// Appends to the smaller buffer.
+        /// </summary>
+        /// <param name="c"></param>
+        void AppendStrBuf(char c)
         {
-            if (strBufLen == strBuf.Length)
-            {
-                char[] newBuf = new char[strBuf.Length + BUFFER_GROW_BY];
-                //Array.Copy(strBuf, newBuf, strBuf.Length);
-                Buffer.BlockCopy(strBuf, 0, newBuf, 0, strBuf.Length << 1);
-                strBuf = newBuf;
-            }
-            strBuf[strBufLen++] = c;
+            this.strBuffer.Append(c);
         }
 
         /**
@@ -819,7 +802,7 @@ namespace HtmlParserSharp.Core
          */
         private void StrBufToDoctypeName()
         {
-            doctypeName = Portability.NewLocalNameFromBuffer(strBuf, 0, strBufLen);
+            doctypeName = Portability.NewLocalNameFromBuffer(this.strBuffer.ToString());
         }
 
         /**
@@ -830,9 +813,11 @@ namespace HtmlParserSharp.Core
          */
         private void EmitStrBuf()
         {
-            if (strBufLen > 0)
+
+            int j = this.strBuffer.Length;
+            if (j > 0)
             {
-                TokenListener.Characters(strBuf, 0, strBufLen);
+                TokenListener.Characters(CopyFromStringBuiler(strBuffer, 0, j));
             }
         }
 
@@ -860,7 +845,10 @@ namespace HtmlParserSharp.Core
         {
             this.longStrBuffer.Append(c);
         }
-
+        private void AppendLongStrBuf(StringBuilder stBuilder)
+        {
+            this.longStrBuffer.Append(stBuilder.ToString());
+        }
         /*@Inline*/
         private void AppendSecondHyphenToBogusComment()
         {
@@ -946,7 +934,8 @@ namespace HtmlParserSharp.Core
         private void AppendStrBufToLongStrBuf()
         {
             /*@Inline*/
-            AppendLongStrBuf(strBuf, 0, strBufLen);
+
+            AppendLongStrBuf(this.strBuffer);
         }
 
         /**
@@ -1096,7 +1085,8 @@ namespace HtmlParserSharp.Core
             // if (strBufOffset != -1) {
             // return ElementName.elementNameByBuffer(buf, strBufOffset, strBufLen);
             // } else {
-            tagName = ElementName.ElementNameByBuffer(strBuf, 0, strBufLen);
+
+            tagName = ElementName.ElementNameByBuffer(CopyFromStringBuiler(strBuffer, 0, this.strBuffer.Length));
             // }
         }
 
@@ -1135,10 +1125,9 @@ namespace HtmlParserSharp.Core
             // attributeName = AttributeName.nameByBuffer(buf, strBufOffset,
             // strBufLen, namePolicy != XmlViolationPolicy.ALLOW);
             // } else {
-            attributeName = AttributeName.NameByBuffer(strBuf, 0, strBufLen
-                // [NOCPP[
+            char[] copyBuffer = CopyFromStringBuiler(this.strBuffer, 0, this.strBuffer.Length);
+            attributeName = AttributeName.NameByBuffer(copyBuffer, 0, copyBuffer.Length
                     , namePolicy != XmlViolationPolicy.Allow
-                // ]NOCPP]
                     );
             // }
 
@@ -3408,7 +3397,7 @@ namespace HtmlParserSharp.Core
                                 if (entCol == NamedCharacters.NAMES[lo].Length)
                                 {
                                     candidate = lo;
-                                    strBufMark = strBufLen;
+                                    strBufMark = this.strBuffer.Length;
                                     lo++;
                                 }
                                 else if (entCol > NamedCharacters.NAMES[lo].Length)
@@ -3502,7 +3491,7 @@ namespace HtmlParserSharp.Core
                                      * not a U+003B SEMICOLON (;),
                                      */
                                     char ch;
-                                    if (strBufMark == strBufLen)
+                                    if (strBufMark == this.strBuffer.Length)
                                     {
                                         ch = c;
                                     }
@@ -3511,7 +3500,7 @@ namespace HtmlParserSharp.Core
                                         // if (strBufOffset != -1) {
                                         // ch = buf[strBufOffset + strBufMark];
                                         // } else {
-                                        ch = strBuf[strBufMark];
+                                        ch = this.strBuffer[strBufMark];
                                         // }
                                     }
                                     if (ch == '=' || (ch >= '0' && ch <= '9')
@@ -3571,7 +3560,7 @@ namespace HtmlParserSharp.Core
                                 EmitOrAppendTwo(val, returnState);
                             }
                             // this is so complicated!
-                            if (strBufMark < strBufLen)
+                            if (strBufMark < this.strBuffer.Length)
                             {
                                 // if (strBufOffset != -1) {
                                 // if ((returnState & (~1)) != 0) {
@@ -3587,15 +3576,15 @@ namespace HtmlParserSharp.Core
                                 //if ((returnState & DATA_AND_RCDATA_MASK) != 0)
                                 if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
                                 {
-                                    for (int i = strBufMark; i < strBufLen; i++)
+                                    int j = this.strBuffer.Length;
+                                    for (int i = strBufMark; i < j; i++)
                                     {
-                                        AppendLongStrBuf(strBuf[i]);
+                                        AppendLongStrBuf(strBuffer[i]);
                                     }
                                 }
                                 else
                                 {
-                                    TokenListener.Characters(strBuf, strBufMark,
-                                            strBufLen - strBufMark);
+                                    TokenListener.Characters(CopyFromStringBuiler(this.strBuffer, strBufMark, this.strBuffer.Length - strBufMark));
                                 }
                                 // }
                             }
@@ -7356,7 +7345,7 @@ namespace HtmlParserSharp.Core
                                 if (entCol == NamedCharacters.NAMES[lo].Length)
                                 {
                                     candidate = lo;
-                                    strBufMark = strBufLen;
+                                    strBufMark = this.strBuffer.Length;
                                     lo++;
                                 }
                                 else if (entCol > NamedCharacters.NAMES[lo].Length)
@@ -7413,13 +7402,13 @@ namespace HtmlParserSharp.Core
                                      * not a U+003B SEMICOLON (;),
                                      */
                                     char ch;
-                                    if (strBufMark == strBufLen)
+                                    if (strBufMark == this.strBuffer.Length)
                                     {
                                         ch = '\u0000';
                                     }
                                     else
                                     {
-                                        ch = strBuf[strBufMark];
+                                        ch = strBuffer[strBufMark];
                                     }
                                     if ((ch >= '0' && ch <= '9')
                                             || (ch >= 'A' && ch <= 'Z')
@@ -7474,6 +7463,7 @@ namespace HtmlParserSharp.Core
                                 EmitOrAppendTwo(val, returnState);
                             }
                             // this is so complicated!
+                            int strBufLen = this.strBuffer.Length;
                             if (strBufMark < strBufLen)
                             {
                                 //if ((returnState & DATA_AND_RCDATA_MASK) != 0)
@@ -7481,13 +7471,14 @@ namespace HtmlParserSharp.Core
                                 {
                                     for (int i = strBufMark; i < strBufLen; i++)
                                     {
-                                        AppendLongStrBuf(strBuf[i]);
+                                        AppendLongStrBuf(strBuffer[i]);
                                     }
                                 }
                                 else
                                 {
-                                    TokenListener.Characters(strBuf, strBufMark,
-                                            strBufLen - strBufMark);
+
+                                    TokenListener.Characters(
+                                            CopyFromStringBuiler(this.strBuffer, strBufMark, strBufLen - strBufMark));
                                 }
                             }
                             state = returnState;
@@ -7563,7 +7554,12 @@ namespace HtmlParserSharp.Core
             publicIdentifier = null;
             systemIdentifier = null;
         }
-
+        static char[] CopyFromStringBuiler(StringBuilder stBuilder, int start, int len)
+        {
+            char[] copyBuff = new char[len];
+            stBuilder.CopyTo(start, copyBuff, 0, len);
+            return copyBuff;
+        }
         /*@Inline*/
 
         /* Note - the C# compiler can't be forced to inline (until 4.5) so this was just inlined to improve performance */
@@ -7640,7 +7636,7 @@ namespace HtmlParserSharp.Core
 
         public void End()
         {
-            strBuf = null;
+            this.strBuffer = null;
             this.longStrBuffer.Length = 0;
             this.longStrBuffer = null;
             doctypeName = null;
@@ -7723,7 +7719,7 @@ namespace HtmlParserSharp.Core
 
         public void ResetToDataState()
         {
-            strBufLen = 0;
+            this.strBuffer = new StringBuilder();
             this.longStrBuffer = new StringBuilder();
             stateSave = TokenizerState.DATA;
             // line = 1; XXX line numbers
@@ -7768,7 +7764,7 @@ namespace HtmlParserSharp.Core
         public void InitializeWithoutStarting()
         {
 
-            strBuf = new char[64];
+            this.strBuffer = new StringBuilder();
             line = 1;
             this.longStrBuffer = new StringBuilder();
             // [NOCPP[

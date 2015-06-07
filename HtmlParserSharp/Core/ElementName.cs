@@ -126,6 +126,10 @@ namespace HtmlParserSharp.Core
 
 		// ]NOCPP]
 
+        internal static ElementName ElementNameByBuffer(char[] buf)
+        {
+            return ElementNameByBuffer(buf, 0, buf.Length);
+        }
 		internal static ElementName ElementNameByBuffer(char[] buf, int offset, int length)
 		{
 			int hash = ElementName.BufToHash(buf, length);

@@ -90,6 +90,7 @@ namespace HtmlParserSharp.Common
 		/// <param name="start">The offset into the buffer.</param>
 		/// <param name="length">The number of code units to read.</param>
 		void Characters(char[] buf, int start, int length);
+        void Characters(char[] buf);
 
 		/// <summary>
 		/// Reports a U+0000 that's being turned into a U+FFFD.
