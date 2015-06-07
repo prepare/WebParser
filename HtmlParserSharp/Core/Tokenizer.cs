@@ -201,10 +201,7 @@ namespace HtmlParserSharp.Core
 
         PROCESSING_INSTRUCTION = 73,
 
-        PROCESSING_INSTRUCTION_QUESTION_MARK = 74
-
-
-
+        PROCESSING_INSTRUCTION_QUESTION_MARK = 74 
     }
 
     /// <summary>

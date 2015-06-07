@@ -55,6 +55,7 @@ namespace HtmlParserSharp.Core
            int endPos)
         {
 
+            TextSnapshot textSnapshot = new TextSnapshot(buf);
 
             /*
              * Idioms used in this code:
@@ -1266,6 +1267,7 @@ namespace HtmlParserSharp.Core
                                     goto continueStateloop;
                             }
                         }
+
                     breakMarkupdeclarationopenloop:
                         goto case TokenizerState.MARKUP_DECLARATION_HYPHEN;
                     // FALLTHRU DON'T REORDER

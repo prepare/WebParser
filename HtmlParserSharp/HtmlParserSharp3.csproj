@@ -67,6 +67,7 @@
     <Compile Include="Core\Tokenizer.ErrHandling.cs" />
     <Compile Include="Core\Tokenizer.StateLoop.cs" />
     <Compile Include="Core\TreeBuilder.cs" />
+    <Compile Include="Core\TreeBuilder.Snapshot.cs" />
     <Compile Include="Core\TreeBuilderConstants.cs" />
     <Compile Include="Core\UTF16Buffer.cs" />
     <Compile Include="LayoutFarm.WebLexer\CssLexer.cs" />
