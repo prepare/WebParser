@@ -291,14 +291,13 @@ namespace HtmlParserSharp.Core
 
         public ITokenHandler TokenHandler { get; private set; }
 
-        //public IEncodingDeclarationHandler EncodingDeclarationHandler { get; set; }
+
         public event EventHandler<EncodingDetectedEventArgs> EncodingDeclared;
 
-        // [NOCPP[
 
         public event EventHandler<ParserErrorEventArgs> ErrorEvent;
 
-        // ]NOCPP]
+
 
         /// <summary>
         /// Whether the previous char read was CR.
@@ -464,12 +463,11 @@ namespace HtmlParserSharp.Core
 
         bool shouldSuspend;
 
-      
+
 
         int line;
 
-        // [NOCPP[
-
+        // [NOCPP[ 
         Location ampersandLocation;
 
         public Tokenizer(ITokenHandler tokenHandler, bool newAttributesEachTime)
@@ -7674,7 +7672,7 @@ namespace HtmlParserSharp.Core
 
         // [NOCPP[
 
-        
+
         /**
          * Returns the nextCharOnNewLine.
          * 
@@ -7872,7 +7870,7 @@ namespace HtmlParserSharp.Core
 
         public void InitializeWithoutStarting()
         {
-          
+
             strBuf = new char[64];
             longStrBuf = new char[1024];
             line = 1;

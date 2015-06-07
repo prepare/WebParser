@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -61,6 +62,11 @@
     <Compile Include="Core\TreeBuilder.cs" />
     <Compile Include="Core\TreeBuilderConstants.cs" />
     <Compile Include="Core\UTF16Buffer.cs" />
+    <Compile Include="LayoutFarm.WebLexer\CssLexer.cs" />
+    <Compile Include="LayoutFarm.WebLexer\dbugLexerReport.cs" />
+    <Compile Include="LayoutFarm.WebLexer\HtmlLexer.cs" />
+    <Compile Include="LayoutFarm.WebLexer\HtmlLexer_dbug.cs" />
+    <Compile Include="LayoutFarm.WebLexer\TextSnapshot.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
