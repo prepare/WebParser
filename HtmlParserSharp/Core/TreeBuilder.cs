@@ -712,6 +712,7 @@ namespace HtmlParserSharp.Core
             AppendComment(stack[currentPtr].node, buf, start, length);
             return;
         }
+        
         public void Characters(char[] buf)
         {
             Characters(buf, 0, buf.Length);
@@ -738,7 +739,6 @@ namespace HtmlParserSharp.Core
                     }
                 }
             }
-
             // optimize the most common case
             switch (mode)
             {

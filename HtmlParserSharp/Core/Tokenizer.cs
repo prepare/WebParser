@@ -441,12 +441,10 @@ namespace HtmlParserSharp.Core
 
         bool shouldSuspend;
 
-
-
         int line;
 
         // [NOCPP[ 
-        Location ampersandLocation;
+        //Location ampersandLocation;
 
         public Tokenizer(ITokenListener tokenHandler, bool newAttributesEachTime)
         {
@@ -464,27 +462,27 @@ namespace HtmlParserSharp.Core
 
         // ]NOCPP]
 
-        /**
-         * The constructor.
-         * 
-         * @param tokenHandler
-         *            the handler for receiving tokens
-         */
-        public Tokenizer(ITokenListener tokenHandler)
-        {
-            this.TokenListener = tokenHandler;
-            // [NOCPP[
-            this.newAttributesEachTime = false;
-            // ]NOCPP]
-            this.bmpChar = new char[1];
-            this.astralChar = new char[2];
-            this.tagName = null;
-            this.attributeName = null;
-            this.doctypeName = null;
-            this.publicIdentifier = null;
-            this.systemIdentifier = null;
-            this.attributes = null;
-        }
+        ///**
+        // * The constructor.
+        // * 
+        // * @param tokenHandler
+        // *            the handler for receiving tokens
+        // */
+        //public Tokenizer(ITokenListener tokenHandler)
+        //{
+        //    this.TokenListener = tokenHandler;
+        //    // [NOCPP[
+        //    this.newAttributesEachTime = false;
+        //    // ]NOCPP]
+        //    this.bmpChar = new char[1];
+        //    this.astralChar = new char[2];
+        //    this.tagName = null;
+        //    this.attributeName = null;
+        //    this.doctypeName = null;
+        //    this.publicIdentifier = null;
+        //    this.systemIdentifier = null;
+        //    this.attributes = null;
+        //}
 
         // [NOCPP[
 
@@ -6780,10 +6778,9 @@ namespace HtmlParserSharp.Core
         {
             additional = add;
             // [NOCPP[
-            ampersandLocation = new Location(this.LineNumber, this.ColumnNumber);
+            //ampersandLocation = new Location(this.LineNumber, this.ColumnNumber);
             // ]NOCPP]
         }
-
         private void BogusDoctype()
         {
             ErrBogusDoctype();
@@ -7430,12 +7427,7 @@ namespace HtmlParserSharp.Core
                              * table).
                              */
                             char[] val = NamedCharacters.VALUES[candidate];
-                            if (
-                                // [NOCPP[
-                            val.Length == 1
-                                // ]NOCPP]
-                                // CPPONLY: val[1] == 0
-                            )
+                            if (val.Length == 1)
                             {
                                 EmitOrAppendOne(val, returnState);
                             }
@@ -7523,7 +7515,7 @@ namespace HtmlParserSharp.Core
             return;
         }
 
-        private void EmitDoctypeToken(int pos)
+        void EmitDoctypeToken(int pos)
         {
             cstart = pos + 1;
             TokenListener.Doctype(doctypeName, publicIdentifier, systemIdentifier,
@@ -7604,7 +7596,6 @@ namespace HtmlParserSharp.Core
 
         private void EmitOrAppendOne(char[] val, TokenizerState returnState)
         {
-            //if ((returnState & DATA_AND_RCDATA_MASK) != 0)
             if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
             {
                 AppendLongStrBuf(val[0]);
