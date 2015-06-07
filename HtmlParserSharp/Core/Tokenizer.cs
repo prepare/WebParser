@@ -46,6 +46,8 @@ using HtmlParserSharp.Common;
 #pragma warning disable 1570 // XML comment on 'construct' has badly formed XML — 'reason'
 #pragma warning disable 1587 // XML comment is not placed on a valid element
 
+using LayoutFarm.WebLexer;
+
 namespace HtmlParserSharp.Core
 {
 
@@ -149,7 +151,7 @@ namespace HtmlParserSharp.Core
 
         CHARACTER_REFERENCE_TAIL = 48,
 
-        HEX_NCR_LOOP = 49,
+        HEX_NCR_LOOP = 49,//ncr -> numeric character reference
 
         DECIMAL_NRC_LOOP = 50,
 
@@ -784,21 +786,7 @@ namespace HtmlParserSharp.Core
             doctypeName = Portability.NewLocalNameFromBuffer(this.strBuffer.ToString());
         }
 
-        /**
-         * Emits the smaller buffer as character tokens.
-         * 
-         * @throws SAXException
-         *             if the token handler threw
-         */
-        private void EmitStrBuf()
-        {
 
-            int j = this.strBuffer.Length;
-            if (j > 0)
-            {
-                TokenListener.Characters(CopyFromStringBuiler(strBuffer, 0, j));
-            }
-        }
 
         /*@Inline*/
         private void ClearLongStrBuf()
@@ -930,39 +918,14 @@ namespace HtmlParserSharp.Core
             return this.longStrBuffer.ToString();
         }
 
-        /// <summary>
-        /// Emits the current comment token.
-        /// </summary>
-        /// <param name="provisionalHyphens">The provisional hyphens.</param>
-        /// <param name="pos">The position.</param>
-        private void EmitComment(int provisionalHyphens, int pos)
-        {
-            // [NOCPP[
-            if (wantsComments)
-            {
-                // ]NOCPP]
-                // if (longStrBufOffset != -1) {
-                // tokenHandler.comment(buf, longStrBufOffset, longStrBufLen
-                // - provisionalHyphens);
-                // } else {
-
-                int copyLen = this.longStrBuffer.Length - provisionalHyphens;
-                char[] copyBuffer = new char[copyLen];
-                longStrBuffer.CopyTo(0, copyBuffer, 0, copyLen);
-                TokenListener.Comment(copyBuffer, 0, copyLen);
-                // }
-                // [NOCPP[
-            }
-            // ]NOCPP]
-            cstart = pos + 1;
-        }
+       
 
         /// <summary>
         /// Flushes coalesced character tokens.
         /// </summary>
         /// <param name="buf">The buffer.</param>
         /// <param name="pos">The position.</param>
-        protected void FlushChars(char[] buf, int pos)
+        void FlushChars(char[] buf, int pos)
         {
             if (pos > cstart)
             {
@@ -1069,35 +1032,7 @@ namespace HtmlParserSharp.Core
             // }
         }
 
-        private TokenizerState EmitCurrentTagToken(bool selfClosing, int pos)
-        {
-            cstart = pos + 1;
-            MaybeErrSlashInEndTag(selfClosing);
-            stateSave = TokenizerState.DATA;
-            HtmlAttributes attrs = attributes ?? HtmlAttributes.EMPTY_ATTRIBUTES;
-
-            if (endTag)
-            {
-                /*
-                 * When an end tag token is emitted, the content model flag must be
-                 * switched to the PCDATA state.
-                 */
-                MaybeErrAttributesOnEndTag(attrs);
-                TokenListener.EndTag(tagName);
-            }
-            else
-            {
-                TokenListener.StartTag(tagName, attrs, selfClosing);
-            }
-            tagName = null;
-            ResetAttributes();
-            /*
-             * The token handler may have called setStateAndEndTagExpectation
-             * and changed stateSave since the start of this method.
-             */
-            return stateSave;
-        }
-
+       
         private void AttributeNameComplete()
         {
             // if (strBufOffset != -1) {
@@ -6733,47 +6668,27 @@ namespace HtmlParserSharp.Core
         }
 
         /*@Inline*/
-        private void AppendLongStrBufCarriageReturn()
+        void AppendLongStrBufCarriageReturn()
         {
             SilentCarriageReturn();
             AppendLongStrBuf('\n');
         }
 
         /*@Inline*/
-        protected void SilentCarriageReturn()
+        void SilentCarriageReturn()
         {
             ++line;
             lastCR = true;
         }
 
         /*@Inline*/
-        protected void SilentLineFeed()
+        void SilentLineFeed()
         {
             ++line;
         }
+       
 
-        private void EmitCarriageReturn(char[] buf, int pos)
-        {
-            SilentCarriageReturn();
-            FlushChars(buf, pos);
-            TokenListener.Characters(LF, 0, 1);
-            cstart = int.MaxValue;
-        }
-
-        private void EmitReplacementCharacter(char[] buf, int pos)
-        {
-            FlushChars(buf, pos);
-            TokenListener.ZeroOriginatingReplacementCharacter();
-            cstart = pos + 1;
-        }
-
-        private void EmitPlaintextReplacementCharacter(char[] buf, int pos)
-        {
-            FlushChars(buf, pos);
-            TokenListener.Characters(REPLACEMENT_CHARACTER, 0, 1);
-            cstart = pos + 1;
-        }
-
+       
         private void SetAdditionalAndRememberAmpersandLocation(char add)
         {
             additional = add;
@@ -6793,18 +6708,6 @@ namespace HtmlParserSharp.Core
             forceQuirks = false;
         }
 
-        private void EmitOrAppendStrBuf(TokenizerState returnState)
-        {
-            //if ((returnState & DATA_AND_RCDATA_MASK) != 0)
-            if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
-            {
-                AppendStrBufToLongStrBuf();
-            }
-            else
-            {
-                EmitStrBuf();
-            }
-        }
 
         private void HandleNcrValue(TokenizerState returnState)
         {
@@ -7515,18 +7418,7 @@ namespace HtmlParserSharp.Core
             return;
         }
 
-        void EmitDoctypeToken(int pos)
-        {
-            cstart = pos + 1;
-            TokenListener.Doctype(doctypeName, publicIdentifier, systemIdentifier,
-                    forceQuirks);
-            // It is OK and sufficient to release these here, since
-            // there's no way out of the doctype states than through paths
-            // that call this method.
-            doctypeName = null;
-            publicIdentifier = null;
-            systemIdentifier = null;
-        }
+
         static char[] CopyFromStringBuiler(StringBuilder stBuilder, int start, int len)
         {
             char[] copyBuff = new char[len];
@@ -7576,35 +7468,6 @@ namespace HtmlParserSharp.Core
             return accept;
         }
 
-        /**
-         * @param val
-         * @throws SAXException
-         */
-        private void EmitOrAppendTwo(char[] val, TokenizerState returnState)
-        {
-            //if ((returnState & DATA_AND_RCDATA_MASK) != 0)
-            if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
-            {
-                AppendLongStrBuf(val[0]);
-                AppendLongStrBuf(val[1]);
-            }
-            else
-            {
-                TokenListener.Characters(val, 0, 2);
-            }
-        }
-
-        private void EmitOrAppendOne(char[] val, TokenizerState returnState)
-        {
-            if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
-            {
-                AppendLongStrBuf(val[0]);
-            }
-            else
-            {
-                TokenListener.Characters(val, 0, 1);
-            }
-        }
 
         public void End()
         {
