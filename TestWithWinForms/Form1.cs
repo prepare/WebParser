@@ -4,6 +4,9 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
+
+using LayoutFarm.WebDom.Parser;
+
 using HtmlKit;
 using NUnit.Framework;
 
@@ -15,7 +18,15 @@ namespace TestWithWinForms
         {
             InitializeComponent();
         }
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //test our html lexer
+             
+             
 
+
+
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             VerifyHtmlTokenizerOutput(CombinePath("..", "..", "TestData", "html", "test.html"));
@@ -154,5 +165,7 @@ namespace TestWithWinForms
 
             Assert.AreEqual(expected, actual.ToString(), "The token stream does not match the expected tokens.");
         }
+
+     
     }
 }
