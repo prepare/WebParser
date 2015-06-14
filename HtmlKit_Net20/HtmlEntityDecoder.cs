@@ -27,7 +27,6 @@
 using System;
 
 namespace HtmlKit {
-
 	/// <summary>
 	/// An HTML entity decoder.
 	/// </summary>

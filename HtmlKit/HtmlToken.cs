@@ -26,7 +26,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Collections.Generic;
 
 namespace HtmlKit {
@@ -59,6 +58,34 @@ namespace HtmlKit {
 		/// <value>The kind of token.</value>
 		public HtmlTokenKind Kind {
 			get; private set;
+		}
+
+		/// <summary>
+		/// Write the HTML token to a <see cref="System.IO.TextWriter"/>.
+		/// </summary>
+		/// <remarks>
+		/// Writes the HTML token to a <see cref="System.IO.TextWriter"/>.
+		/// </remarks>
+		/// <param name="output">The output.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="output"/> is <c>null</c>.
+		/// </exception>
+		public abstract void WriteTo (TextWriter output);
+
+		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlToken"/>.
+		/// </summary>
+		/// <remarks>
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlToken"/>.
+		/// </remarks>
+		/// <returns>A <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlToken"/>.</returns>
+		public override string ToString ()
+		{
+			using (var output = new StringWriter ()) {
+				WriteTo (output);
+
+				return output.ToString ();
+			}
 		}
 	}
 
@@ -100,15 +127,23 @@ namespace HtmlKit {
 		}
 
 		/// <summary>
-		/// Returns a <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlCommentToken"/>.
+		/// Write the HTML comment to a <see cref="System.IO.TextWriter"/>.
 		/// </summary>
 		/// <remarks>
-		/// Returns a <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlCommentToken"/>.
+		/// Writes the HTML comment to a <see cref="System.IO.TextWriter"/>.
 		/// </remarks>
-		/// <returns>A <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlCommentToken"/>.</returns>
-		public override string ToString ()
+		/// <param name="output">The output.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="output"/> is <c>null</c>.
+		/// </exception>
+		public override void WriteTo (TextWriter output)
 		{
-			return string.Format ("<!--{0}-->", Comment);
+			if (output == null)
+				throw new ArgumentNullException ("output");
+
+			output.Write ("<!--");
+			output.Write (Comment);
+			output.Write ("-->");
 		}
 	}
 
@@ -138,6 +173,10 @@ namespace HtmlKit {
 			Data = data;
 		}
 
+		internal bool EncodeEntities {
+			get; set;
+		}
+
 		/// <summary>
 		/// Get the character data.
 		/// </summary>
@@ -150,15 +189,27 @@ namespace HtmlKit {
 		}
 
 		/// <summary>
-		/// Returns a <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlDataToken"/>.
+		/// Write the HTML character data to a <see cref="System.IO.TextWriter"/>.
 		/// </summary>
 		/// <remarks>
-		/// Returns a <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlDataToken"/>.
+		/// Writes the HTML character data to a <see cref="System.IO.TextWriter"/>,
+		/// encoding it if it isn't already encoded.
 		/// </remarks>
-		/// <returns>A <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlDataToken"/>.</returns>
-		public override string ToString ()
+		/// <param name="output">The output.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="output"/> is <c>null</c>.
+		/// </exception>
+		public override void WriteTo (TextWriter output)
 		{
-			return HtmlUtils.HtmlEncode (Data);
+			if (output == null)
+				throw new ArgumentNullException ("output");
+
+			if (!EncodeEntities) {
+				output.Write (Data);
+				return;
+			}
+
+			HtmlUtils.HtmlEncode (output, Data);
 		}
 	}
 
@@ -276,35 +327,35 @@ namespace HtmlKit {
 		}
 
 		/// <summary>
-		/// Returns a <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlTagToken"/>.
+		/// Write the HTML tag to a <see cref="System.IO.TextWriter"/>.
 		/// </summary>
 		/// <remarks>
-		/// Returns a <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlTagToken"/>.
+		/// Writes the HTML tag to a <see cref="System.IO.TextWriter"/>.
 		/// </remarks>
-		/// <returns>A <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlTagToken"/>.</returns>
-		public override string ToString ()
+		/// <param name="output">The output.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="output"/> is <c>null</c>.
+		/// </exception>
+		public override void WriteTo (TextWriter output)
 		{
-			var encoded = new StringBuilder ();
+			if (output == null)
+				throw new ArgumentNullException ("output");
 
-			using (var output = new StringWriter (encoded)) {
-				output.Write ('<');
-				if (IsEndTag)
-					output.Write ('/');
-				output.Write (Name);
-				for (int i = 0; i < Attributes.Count; i++) {
-					output.Write (' ');
-					output.Write (Attributes[i].Name);
-					if (Attributes[i].Value != null) {
-						output.Write ('=');
-						HtmlUtils.HtmlEncodeAttribute (output, Attributes[i].Value);
-					}
+			output.Write ('<');
+			if (IsEndTag)
+				output.Write ('/');
+			output.Write (Name);
+			for (int i = 0; i < Attributes.Count; i++) {
+				output.Write (' ');
+				output.Write (Attributes[i].Name);
+				if (Attributes[i].Value != null) {
+					output.Write ('=');
+					HtmlUtils.HtmlEncodeAttribute (output, Attributes[i].Value);
 				}
-				if (IsEmptyElement)
-					output.Write ('/');
-				output.Write ('>');
 			}
-
-			return encoded.ToString ();
+			if (IsEmptyElement)
+				output.Write ('/');
+			output.Write ('>');
 		}
 	}
 
@@ -318,18 +369,6 @@ namespace HtmlKit {
 	{
 		string publicIdentifier;
 		string systemIdentifier;
-		string tagName;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="HtmlKit.HtmlDocTypeToken"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="HtmlDocTypeToken"/>.
-		/// </remarks>
-		internal HtmlDocTypeToken (string doctype) : base (HtmlTokenKind.DocType)
-		{
-			tagName = doctype;
-		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HtmlKit.HtmlDocTypeToken"/> class.
@@ -339,7 +378,11 @@ namespace HtmlKit {
 		/// </remarks>
 		public HtmlDocTypeToken () : base (HtmlTokenKind.DocType)
 		{
-			tagName = "DOCTYPE";
+			RawTagName = "DOCTYPE";
+		}
+
+		internal string RawTagName {
+			get; set;
 		}
 
 		/// <summary>
@@ -428,43 +471,45 @@ namespace HtmlKit {
 		}
 
 		/// <summary>
-		/// Returns a <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlDocTypeToken"/>.
+		/// Write the DOCTYPE tag to a <see cref="System.IO.TextWriter"/>.
 		/// </summary>
 		/// <remarks>
-		/// Returns a <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlDocTypeToken"/>.
+		/// Writes the DOCTYPE tag to a <see cref="System.IO.TextWriter"/>.
 		/// </remarks>
-		/// <returns>A <see cref="System.String"/> that represents the current <see cref="HtmlKit.HtmlDocTypeToken"/>.</returns>
-		public override string ToString ()
+		/// <param name="output">The output.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="output"/> is <c>null</c>.
+		/// </exception>
+		public override void WriteTo (TextWriter output)
 		{
-			var encoded = new StringBuilder ();
+			if (output == null)
+				throw new ArgumentNullException ("output");
 
-			encoded.Append ("<!");
-			encoded.Append (tagName);
+			output.Write ("<!");
+			output.Write (RawTagName);
 			if (Name != null) {
-				encoded.Append (' ');
-				encoded.Append (Name);
+				output.Write (' ');
+				output.Write (Name);
 			}
 			if (PublicIdentifier != null) {
-				encoded.Append (' ');
-				encoded.Append (PublicKeyword);
-				encoded.Append (" \"");
-				encoded.Append (PublicIdentifier);
-				encoded.Append ('"');
+				output.Write (' ');
+				output.Write (PublicKeyword);
+				output.Write (" \"");
+				output.Write (PublicIdentifier);
+				output.Write ('"');
 				if (SystemIdentifier != null) {
-					encoded.Append (" \"");
-					encoded.Append (SystemIdentifier);
-					encoded.Append ('"');
+					output.Write (" \"");
+					output.Write (SystemIdentifier);
+					output.Write ('"');
 				}
 			} else if (SystemIdentifier != null) {
-				encoded.Append (' ');
-				encoded.Append (SystemKeyword);
-				encoded.Append (" \"");
-				encoded.Append (SystemIdentifier);
-				encoded.Append ('"');
+				output.Write (' ');
+				output.Write (SystemKeyword);
+				output.Write (" \"");
+				output.Write (SystemIdentifier);
+				output.Write ('"');
 			}
-			encoded.Append ('>');
-
-			return encoded.ToString ();
+			output.Write ('>');
 		}
 	}
 }
