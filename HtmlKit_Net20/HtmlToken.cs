@@ -174,33 +174,33 @@ namespace HtmlKit
     /// </remarks>
     public class HtmlTagToken : HtmlToken
     {
-        ///// <summary>
-        ///// Initializes a new instance of the <see cref="HtmlKit.HtmlTagToken"/> class.
-        ///// </summary>
-        ///// <remarks>
-        ///// Creates a new <see cref="HtmlTagToken"/>.
-        ///// </remarks>
-        ///// <param name="name">The name of the tag.</param>
-        ///// <param name="attributes">The attributes.</param>
-        ///// <param name="isEmptyElement"><c>true</c> if the tag is an empty element; otherwise, <c>false</c>.</param>
-        ///// <exception cref="System.ArgumentNullException">
-        ///// <para><paramref name="name"/> is <c>null</c>.</para>
-        ///// <para>-or-</para>
-        ///// <para><paramref name="attributes"/> is <c>null</c>.</para>
-        ///// </exception>
-        //public HtmlTagToken(string name, IEnumerable<HtmlAttribute> attributes, bool isEmptyElement) : base(HtmlTokenKind.Tag)
-        //{
-        //    if (name == null)
-        //        throw new ArgumentNullException("name");
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HtmlKit.HtmlTagToken"/> class.
+        /// </summary>
+        /// <remarks>
+        /// Creates a new <see cref="HtmlTagToken"/>.
+        /// </remarks>
+        /// <param name="name">The name of the tag.</param>
+        /// <param name="attributes">The attributes.</param>
+        /// <param name="isEmptyElement"><c>true</c> if the tag is an empty element; otherwise, <c>false</c>.</param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <para><paramref name="name"/> is <c>null</c>.</para>
+        /// <para>-or-</para>
+        /// <para><paramref name="attributes"/> is <c>null</c>.</para>
+        /// </exception>
+        public HtmlTagToken(string name, IEnumerable<HtmlAttribute> attributes, bool isEmptyElement) : base(HtmlTokenKind.Tag)
+        {
+            if (name == null)
+                throw new ArgumentNullException("name");
 
-        //    if (attributes == null)
-        //        throw new ArgumentNullException("attributes");
+            if (attributes == null)
+                throw new ArgumentNullException("attributes");
 
-        //    Attributes = new HtmlAttributeCollection(attributes);
-        //    IsEmptyElement = isEmptyElement;
-        //    Id = name.ToHtmlTagId();
-        //    Name = name;
-        //}
+            Attributes = new HtmlAttributeCollection(attributes);
+            IsEmptyElement = isEmptyElement;
+            Id = name.ToHtmlTagId();
+            Name = name;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HtmlKit.HtmlTagToken"/> class.
@@ -332,16 +332,16 @@ namespace HtmlKit
         string systemIdentifier;
         string tagName;
 
-        ///// <summary>
-        ///// Initializes a new instance of the <see cref="HtmlKit.HtmlDocTypeToken"/> class.
-        ///// </summary>
-        ///// <remarks>
-        ///// Creates a new <see cref="HtmlDocTypeToken"/>.
-        ///// </remarks>
-        //internal HtmlDocTypeToken(string doctype) : base(HtmlTokenKind.DocType)
-        //{
-        //    tagName = doctype;
-        //}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HtmlKit.HtmlDocTypeToken"/> class.
+        /// </summary>
+        /// <remarks>
+        /// Creates a new <see cref="HtmlDocTypeToken"/>.
+        /// </remarks>
+        internal HtmlDocTypeToken(string doctype) : base(HtmlTokenKind.DocType)
+        {
+            tagName = doctype;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HtmlKit.HtmlDocTypeToken"/> class.

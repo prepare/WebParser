@@ -9,7 +9,7 @@ namespace HtmlKit
         public abstract HtmlToken CreateCommentToken(string comment);
         public abstract HtmlToken CreateHtmlDataToken(string data);
         public abstract HtmlToken CreateHtmlTagToken(string name, bool isEndTag);
-        public abstract HtmlToken CreateHtmlDocTypeToken();
+        public abstract HtmlToken CreateHtmlDocTypeToken(string name);
 
     }
 
@@ -25,9 +25,9 @@ namespace HtmlKit
             return new HtmlDataToken(data);
         }
 
-        public override HtmlToken CreateHtmlDocTypeToken()
+        public override HtmlToken CreateHtmlDocTypeToken(string name)
         {
-            return new HtmlDocTypeToken();
+            return new HtmlDocTypeToken(name);
         }
 
         public override HtmlToken CreateHtmlTagToken(string name, bool isEndTag)

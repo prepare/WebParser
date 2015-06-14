@@ -43,6 +43,7 @@
     <Compile Include="HtmlToken.cs" />
     <Compile Include="HtmlTokenFactory.cs" />
     <Compile Include="HtmlTokenizer.cs" />
+    <Compile Include="HtmlTokenizer.Factory.cs" />
     <Compile Include="HtmlTokenizerState.cs" />
     <Compile Include="HtmlTokenKind.cs" />
     <Compile Include="HtmlUtils.cs" />

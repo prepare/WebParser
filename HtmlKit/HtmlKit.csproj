@@ -46,6 +46,7 @@
     <Compile Include="HtmlTokenizer.cs" />
     <Compile Include="HtmlTokenizerState.cs" />
     <Compile Include="HtmlUtils.cs" />
+    <Compile Include="HtmlTokenizer.Factory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>
