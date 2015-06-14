@@ -53,6 +53,7 @@ namespace HtmlKit
         char quote;
 
         TextReader text;
+        HtmlTokenFactory tokenFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HtmlKit.HtmlTokenizer"/> class.
@@ -61,10 +62,11 @@ namespace HtmlKit
         /// Creates a new <see cref="HtmlTokenizer"/>.
         /// </remarks>
         /// <param name="reader">The <see cref="TextReader"/>.</param>
-        public HtmlTokenizer(TextReader reader)
+        public HtmlTokenizer(TextReader reader, HtmlTokenFactory tokenFactory)
         {
             DecodeCharacterReferences = true;
             text = reader;
+            this.tokenFactory = tokenFactory;
         }
 
         /// <summary>
@@ -129,7 +131,7 @@ namespace HtmlKit
         {
             if (data.Length > 0)
             {
-                token = new HtmlDataToken(data.ToString());
+                token = CreateDataToken(data);
                 data.Clear();
                 return true;
             }
@@ -347,7 +349,7 @@ namespace HtmlKit
                     case '>':
                         if (name.ToString() == activeTagName)
                         {
-                            token = new HtmlTagToken(name.ToString(), true);
+                            token = CreateTagToken(name, true);
                             TokenizerState = HtmlTokenizerState.Data;
                             data.Clear();
                             name.Clear();
@@ -367,7 +369,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == current);
 
-            tag = new HtmlTagToken(name.ToString(), true);
+            tag = CreateTagToken(name, true);
             name.Clear();
             token = null;
 
@@ -589,7 +591,7 @@ namespace HtmlKit
             if (nc == -1)
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
-                token = new HtmlDataToken("<");
+                token = CreateDataToken("<");
                 return true;
             }
 
@@ -701,7 +703,7 @@ namespace HtmlKit
                         TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
                         break;
                     case '>':
-                        token = new HtmlTagToken(name.ToString(), isEndTag);
+                        token = CreateTagToken(name, isEndTag);
                         TokenizerState = HtmlTokenizerState.Data;
                         data.Clear();
                         name.Clear();
@@ -712,7 +714,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.TagName);
 
-            tag = new HtmlTagToken(name.ToString(), isEndTag);
+            tag = CreateTagToken(name, isEndTag);
             name.Clear();
             token = null;
 
@@ -851,7 +853,7 @@ namespace HtmlKit
                     case '>':
                         if (name.ToString() == "script")
                         {
-                            token = new HtmlTagToken(name.ToString(), true);
+                            token = CreateTagToken(name, true); 
                             TokenizerState = HtmlTokenizerState.Data;
                             data.Clear();
                             name.Clear();
@@ -871,7 +873,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.ScriptDataEndTagName);
 
-            tag = new HtmlTagToken(name.ToString(), true);
+            tag = CreateTagToken(name, true); 
             name.Clear();
             token = null;
 
@@ -1126,7 +1128,7 @@ namespace HtmlKit
                     case '>':
                         if (name.ToString() == "script")
                         {
-                            token = new HtmlTagToken(name.ToString(), true);
+                            token = CreateTagToken(name, true); 
                             TokenizerState = HtmlTokenizerState.Data;
                             data.Clear();
                             name.Clear();
@@ -1147,7 +1149,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.ScriptDataEscapedEndTagName);
 
-            tag = new HtmlTagToken(name.ToString(), true);
+            tag = CreateTagToken(name, true);
             name.Clear();
             token = null;
 
@@ -1857,7 +1859,7 @@ namespace HtmlKit
                 data.Append(c == '\0' ? '\uFFFD' : c);
             } while (true);
 
-            token = new HtmlCommentToken(data.ToString());
+            token = CreateCommentToken(data);
             data.Clear();
 
             return true;
@@ -1974,7 +1976,7 @@ namespace HtmlKit
             if (nc == -1)
             {
                 TokenizerState = HtmlTokenizerState.Data;
-                token = new HtmlCommentToken(string.Empty);
+                token = CreateCommentToken(string.Empty);
                 return true;
             }
 
@@ -1989,7 +1991,7 @@ namespace HtmlKit
                     break;
                 case '>': // parse error
                     TokenizerState = HtmlTokenizerState.Data;
-                    token = new HtmlCommentToken(string.Empty);
+                    token = CreateCommentToken(string.Empty);
                     data.Clear();
                     return true;
                 default: // parse error
@@ -2011,7 +2013,7 @@ namespace HtmlKit
             if (nc == -1)
             {
                 TokenizerState = HtmlTokenizerState.Data;
-                token = new HtmlCommentToken(name.ToString());
+                token = CreateCommentToken(name);
                 name.Clear();
                 return true;
             }
@@ -2027,7 +2029,7 @@ namespace HtmlKit
                     break;
                 case '>': // parse error
                     TokenizerState = HtmlTokenizerState.Data;
-                    token = new HtmlCommentToken(name.ToString());
+                    token = CreateCommentToken(name);
                     data.Clear();
                     name.Clear();
                     return true;
@@ -2055,7 +2057,7 @@ namespace HtmlKit
                 if (nc == -1)
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
-                    token = new HtmlCommentToken(name.ToString());
+                    token = CreateCommentToken(name);
                     data.Clear();
                     name.Clear();
                     return true;
@@ -2087,7 +2089,7 @@ namespace HtmlKit
             if (nc == -1)
             {
                 TokenizerState = HtmlTokenizerState.Data;
-                token = new HtmlCommentToken(name.ToString());
+                token = CreateCommentToken(name);
                 name.Clear();
                 return true;
             }
@@ -2103,7 +2105,7 @@ namespace HtmlKit
                     break;
                 case '>': // parse error
                     TokenizerState = HtmlTokenizerState.Data;
-                    token = new HtmlCommentToken(name.ToString());
+                    token = CreateCommentToken(name);
                     data.Clear();
                     name.Clear();
                     return true;
@@ -2131,7 +2133,7 @@ namespace HtmlKit
                 if (nc == -1)
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
-                    token = new HtmlCommentToken(name.ToString());
+                    token = CreateCommentToken(name);
                     data.Clear();
                     name.Clear();
                     return true;
@@ -2146,7 +2148,7 @@ namespace HtmlKit
                 {
                     case '>':
                         TokenizerState = HtmlTokenizerState.Data;
-                        token = new HtmlCommentToken(name.ToString());
+                        token = CreateCommentToken(name);
                         data.Clear();
                         name.Clear();
                         return true;
@@ -2172,7 +2174,7 @@ namespace HtmlKit
             if (nc == -1)
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
-                token = new HtmlCommentToken(name.ToString());
+                token = CreateCommentToken(name);
                 data.Clear();
                 name.Clear();
                 return true;
@@ -2190,7 +2192,7 @@ namespace HtmlKit
                     break;
                 case '>':
                     TokenizerState = HtmlTokenizerState.Data;
-                    token = new HtmlCommentToken(name.ToString());
+                    token = CreateCommentToken(name);
                     data.Clear();
                     name.Clear();
                     return true;
@@ -2213,7 +2215,7 @@ namespace HtmlKit
 
             if (nc == -1)
             {
-                token = new HtmlDocTypeToken { ForceQuirksMode = true };
+                token = CreateDocTypeToken(true);
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 data.Clear();
                 return true;
@@ -2248,7 +2250,7 @@ namespace HtmlKit
 
                 if (nc == -1)
                 {
-                    token = new HtmlDocTypeToken { ForceQuirksMode = true };
+                    token = CreateDocTypeToken(true);
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     data.Clear();
                     return true;
@@ -2267,18 +2269,18 @@ namespace HtmlKit
                     case ' ':
                         break;
                     case '>':
-                        token = new HtmlDocTypeToken { ForceQuirksMode = true };
+                        token = CreateDocTypeToken(true);
                         TokenizerState = HtmlTokenizerState.Data;
                         data.Clear();
                         return true;
                     case '\0':
                         TokenizerState = HtmlTokenizerState.DocTypeName;
-                        doctype = new HtmlDocTypeToken();
+                        doctype = CreateDocTypeToken();
                         name.Append('\uFFFD');
                         return false;
                     default:
                         TokenizerState = HtmlTokenizerState.DocTypeName;
-                        doctype = new HtmlDocTypeToken();
+                        doctype = CreateDocTypeToken();
                         name.Append(ToLower(c));
                         return false;
                 }
@@ -2944,7 +2946,36 @@ namespace HtmlKit
 
             return EmitDataToken(out token);
         }
-
+        HtmlToken CreateCommentToken(string comment)
+        {
+            return tokenFactory.CreateCommentToken(comment);
+        }
+        HtmlToken CreateCommentToken(StringBuilder stbuilder)
+        {
+            return tokenFactory.CreateCommentToken(stbuilder.ToString());
+        }
+        HtmlToken CreateDataToken(string data)
+        {
+            return tokenFactory.CreateHtmlDataToken(data);
+        }
+        HtmlToken CreateDataToken(StringBuilder stbuilder)
+        {
+            return tokenFactory.CreateHtmlDataToken(stbuilder.ToString());
+        }
+        HtmlDocTypeToken CreateDocTypeToken(bool forceQuirksMode = false)
+        {
+            HtmlDocTypeToken tk = (HtmlDocTypeToken)tokenFactory.CreateHtmlDocTypeToken();
+            tk.ForceQuirksMode = forceQuirksMode;
+            return tk;
+        }
+        HtmlTagToken CreateTagToken(string name, bool isEndTag)
+        {
+            return (HtmlTagToken)tokenFactory.CreateHtmlTagToken(name, isEndTag);
+        }
+        HtmlTagToken CreateTagToken(StringBuilder stbuilder, bool isEndTag)
+        {
+            return (HtmlTagToken)tokenFactory.CreateHtmlTagToken(stbuilder.ToString(), isEndTag);
+        }
         public bool ReadNextToken(out HtmlToken token)
         {
             do

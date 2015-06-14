@@ -41,6 +41,7 @@
     <Compile Include="HtmlNamespace.cs" />
     <Compile Include="HtmlTagId.cs" />
     <Compile Include="HtmlToken.cs" />
+    <Compile Include="HtmlTokenFactory.cs" />
     <Compile Include="HtmlTokenizer.cs" />
     <Compile Include="HtmlTokenizerState.cs" />
     <Compile Include="HtmlTokenKind.cs" />

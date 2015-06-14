@@ -21,8 +21,8 @@ namespace TestWithWinForms
         private void button2_Click(object sender, EventArgs e)
         {
             //test our html lexer
-             
-             
+
+
 
 
 
@@ -75,10 +75,10 @@ namespace TestWithWinForms
             var tokens = Path.ChangeExtension(path, ".tokens");
             var expected = File.Exists(tokens) ? File.ReadAllText(tokens) : string.Empty;
             var actual = new StringBuilder();
-
+            var htmlTokenFactory = new MyHtmlTokenFactory();
             using (var textReader = File.OpenText(path))
             {
-                var tokenizer = new HtmlTokenizer(textReader);
+                var tokenizer = new HtmlTokenizer(textReader, htmlTokenFactory);
                 HtmlToken token;
 
                 Assert.AreEqual(HtmlTokenizerState.Data, tokenizer.TokenizerState);
@@ -166,6 +166,6 @@ namespace TestWithWinForms
             Assert.AreEqual(expected, actual.ToString(), "The token stream does not match the expected tokens.");
         }
 
-     
+
     }
 }
