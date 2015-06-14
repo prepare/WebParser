@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests_Net20", "UnitTest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWithWinForms", "TestWithWinForms\TestWithWinForms.csproj", "{6AE96C3A-F02F-4D63-8351-6DAFD5B2375E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LayoutFarm.WebLexer", "LayoutFarm.WebLexer\LayoutFarm.WebLexer.csproj", "{48B4B5F3-2F56-49EA-8A6D-C07523DCB03E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{6AE96C3A-F02F-4D63-8351-6DAFD5B2375E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AE96C3A-F02F-4D63-8351-6DAFD5B2375E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AE96C3A-F02F-4D63-8351-6DAFD5B2375E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48B4B5F3-2F56-49EA-8A6D-C07523DCB03E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48B4B5F3-2F56-49EA-8A6D-C07523DCB03E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48B4B5F3-2F56-49EA-8A6D-C07523DCB03E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48B4B5F3-2F56-49EA-8A6D-C07523DCB03E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,5 +73,6 @@ Global
 		{3D561B6C-C738-4A33-A392-5630CA9A0AA7} = {7F0456D5-A6D6-4C1B-9F09-BAB14E741162}
 		{26E1463A-5962-481E-B247-8CFBEFD2A87C} = {7F0456D5-A6D6-4C1B-9F09-BAB14E741162}
 		{6AE96C3A-F02F-4D63-8351-6DAFD5B2375E} = {7F0456D5-A6D6-4C1B-9F09-BAB14E741162}
+		{48B4B5F3-2F56-49EA-8A6D-C07523DCB03E} = {7F0456D5-A6D6-4C1B-9F09-BAB14E741162}
 	EndGlobalSection
 EndGlobal
