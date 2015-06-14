@@ -59,9 +59,9 @@ namespace UnitTests {
 			var tokens = Path.ChangeExtension (path, ".tokens");
 			var expected = File.Exists (tokens) ? File.ReadAllText (tokens) : string.Empty;
 			var actual = new StringBuilder ();
-
+            var tokenFactory = new MyHtmlTokenFactory();
 			using (var textReader = File.OpenText (path)) {
-				var tokenizer = new HtmlTokenizer (textReader);
+				var tokenizer = new HtmlTokenizer (textReader,tokenFactory);
 				HtmlToken token;
 
 				Assert.AreEqual (HtmlTokenizerState.Data, tokenizer.TokenizerState);
