@@ -65,11 +65,6 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.BEFORE_ATTRIBUTE_NAME:
                         {
                             MyParseBeforeAttribute(textSnapshot, ref state);
-
-                        } break;
-                    case TokenizerState.SELF_CLOSING_START_TAG:
-                        {
-                            MyParseSelfClosingTag(textSnapshot, ref state);
                         } break;
                     case TokenizerState.ATTRIBUTE_NAME:
                         {
@@ -87,6 +82,18 @@ namespace HtmlParserSharp.Core
                         {
                             MyParseAfterAttributeValueQuote(textSnapshot, ref state);
                         } break;
+                    case TokenizerState.SELF_CLOSING_START_TAG:
+                        {
+                            MyParseSelfClosingTag(textSnapshot, ref state);
+                        } break;
+                    case TokenizerState.CLOSE_TAG_OPEN:
+                        {
+                            MyParseBogusComment(textSnapshot, ref state);
+                        } break;
+                    case TokenizerState.BOGUS_COMMENT:
+                        {
+
+                        } break;
                     default:
                         {
                             throw new NotSupportedException();
@@ -95,6 +102,94 @@ namespace HtmlParserSharp.Core
 
             } while (textSnapshot.ReadNext(out c));
             return 0;
+        }
+        void MyParseBogusComment(TextSnapshotReader textSnapshot, ref TokenizerState state)
+        {
+        }
+        void MyParseCloseTagOpen(TextSnapshotReader textSnapshot, ref TokenizerState state)
+        {
+
+            char c = textSnapshot.CurrentChar;
+
+            switch (c)
+            {
+                case '>':
+                    /* U+003E GREATER-THAN SIGN (>) Parse error. */
+                    ErrLtSlashGt();
+                    /*
+                     * Switch to the data state.
+                     */
+                    cstart = textSnapshot.Position + 1;
+                    //state = Transition(state, Tokenizer.DATA, reconsume, pos);
+                    state = TokenizerState.DATA;
+                    return;
+                case '\r':
+                    SilentCarriageReturn();
+                    /* Anything else Parse error. */
+                    ErrGarbageAfterLtSlash();
+                    /*
+                     * Switch to the bogus comment state.
+                     */
+                    ClearLongStrBufAndAppend('\n');
+                    //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
+                    state = TokenizerState.BOGUS_COMMENT;
+                    return;
+                case '\n':
+                    SilentLineFeed();
+                    /* Anything else Parse error. */
+                    ErrGarbageAfterLtSlash();
+                    /*
+                     * Switch to the bogus comment state.
+                     */
+                    ClearLongStrBufAndAppend('\n');
+                    //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
+                    state = TokenizerState.BOGUS_COMMENT;
+                    return;
+                case '\u0000':
+                    c = '\uFFFD';
+                    // fall thru
+                    goto default;
+                default:
+                    if (c >= 'A' && c <= 'Z')
+                    {
+                        c += (char)0x20;
+                    }
+                    if (c >= 'a' && c <= 'z')
+                    {
+                        /*
+                         * U+0061 LATIN SMALL LETTER A through to U+007A
+                         * LATIN SMALL LETTER Z Create a new end tag
+                         * token,
+                         */
+                        endTag = true;
+                        /*
+                         * set its tag name to the input character,
+                         */
+                        ClearStrBufAndAppend(c);
+                        /*
+                         * then switch to the tag name state. (Don't
+                         * emit the token yet; further details will be
+                         * filled in before it is emitted.)
+                         */
+                        //state = Transition(state, Tokenizer.TAG_NAME, reconsume, pos);
+                        state = TokenizerState.TAG_NAME;
+                        return;
+                    }
+                    else
+                    {
+                        /* Anything else Parse error. */
+                        ErrGarbageAfterLtSlash();
+                        /*
+                         * Switch to the bogus comment state.
+                         */
+                        ClearLongStrBufAndAppend(c);
+                        //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
+                        state = TokenizerState.BOGUS_COMMENT;
+                        return;
+                    }
+            }
+
+
         }
         void MyParseAfterAttributeValueQuote(TextSnapshotReader textSnapshot, ref TokenizerState state)
         {
@@ -161,7 +256,7 @@ namespace HtmlParserSharp.Core
                     //goto continueStateloop;
                     textSnapshot.StepBack();
                     return;
-            } 
+            }
         }
         void MyParseAttributeValueDoubleQuote(TextSnapshotReader textSnapshot, ref TokenizerState state)
         {
