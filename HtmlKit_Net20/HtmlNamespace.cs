@@ -98,7 +98,7 @@ namespace HtmlKit
         {
             int index = (int)value;
 
-            if (value < 0 || index >= NamespaceValues.Length)
+            if (value < 0 || (int)value >= NamespaceValues.Length)
                 throw new ArgumentOutOfRangeException("value");
 
             return NamespaceValues[index];
