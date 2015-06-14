@@ -13,6 +13,5 @@ namespace System.Text
             stbuilder.Length = 0;
         }
     } 
-}
-
+} 
 #endif
