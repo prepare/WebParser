@@ -167,11 +167,24 @@ namespace HtmlParserSharp.Core
                                     state = TokenizerState.DATA;
                                     reconsume = true;
                                     break;
-                            } 
+                            }
                         } break;
                     case TokenizerState.TAG_NAME:
                         {
-                            MyParseTagName(textSnapshot, ref state); 
+                            MyParseTagName(textSnapshot, ref state);
+                        } break;
+                    case TokenizerState.BEFORE_ATTRIBUTE_NAME:
+                        {
+                            MyParseBeforeAttribute(textSnapshot, ref state);
+
+                        } break;
+                    case TokenizerState.SELF_CLOSING_START_TAG:
+                        {
+
+                        } break;
+                    case TokenizerState.ATTRIBUTE_NAME:
+                        {
+
                         } break;
                 }
 
@@ -239,7 +252,6 @@ namespace HtmlParserSharp.Core
         void MyParseCharacterReference(TextSnapshotReader textSnapshot, ref TokenizerState state)
         {
             throw new MyNotImplementException();
-
             char c = textSnapshot.CurrentChar;
             do
             {
@@ -260,7 +272,7 @@ namespace HtmlParserSharp.Core
                         StrBufToElementNameString();
                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
                         state = TokenizerState.BEFORE_ATTRIBUTE_NAME;
-                        goto breakStateloop;
+                        return;
                     case '\n':
                         SilentLineFeed();
                         goto case ' ';
@@ -275,7 +287,7 @@ namespace HtmlParserSharp.Core
                         StrBufToElementNameString();
                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
                         state = TokenizerState.BEFORE_ATTRIBUTE_NAME;
-                        goto breakTagnameloop;
+                        return;
                     // goto continueStateloop;
                     case '/':
                         /*
@@ -285,7 +297,7 @@ namespace HtmlParserSharp.Core
                         StrBufToElementNameString();
                         //state = Transition(state, Tokenizer.SELF_CLOSING_START_TAG, reconsume, pos);
                         state = TokenizerState.SELF_CLOSING_START_TAG;
-                        goto continueStateloop;
+                        return;
                     case '>':
                         /*
                          * U+003E GREATER-THAN SIGN (>) Emit the current
@@ -293,46 +305,152 @@ namespace HtmlParserSharp.Core
                          */
                         StrBufToElementNameString();
                         //state = Transition(state, EmitCurrentTagToken(false, pos), reconsume, pos);
-                        state = EmitCurrentTagToken(false, pos);
+                        state = EmitCurrentTagToken(false, textSnapshot.Position);
                         if (shouldSuspend)
                         {
-                            goto breakStateloop;
+                            return;
                         }
                         /*
                          * Switch to the data state.
                          */
-                        goto continueStateloop;
+                        return;
                     case '\u0000':
                         c = '\uFFFD';
                         goto default;
                     // fall thru
                     default:
-                        if (c >= 'A' && c <= 'Z')
                         {
+                            if (c >= 'A' && c <= 'Z')
+                            {
+                                /*
+                                 * U+0041 LATIN CAPITAL LETTER A through to
+                                 * U+005A LATIN CAPITAL LETTER Z Append the
+                                 * lowercase TokenizerState.version of the current input
+                                 * character (add 0x0020 to the character's
+                                 * code point) to the current tag token's
+                                 * tag name.
+                                 */
+                                c += (char)0x20;
+                            }
                             /*
-                             * U+0041 LATIN CAPITAL LETTER A through to
-                             * U+005A LATIN CAPITAL LETTER Z Append the
-                             * lowercase TokenizerState.version of the current input
-                             * character (add 0x0020 to the character's
-                             * code point) to the current tag token's
-                             * tag name.
+                             * Anything else Append the current input
+                             * character to the current tag token's tag
+                             * name.
                              */
-                            c += (char)0x20;
-                        }
-                        /*
-                         * Anything else Append the current input
-                         * character to the current tag token's tag
-                         * name.
-                         */
-                        AppendStrBuf(c);
-                        /*
-                         * Stay in the tag name state.
-                         */
-                        continue;
+                            AppendStrBuf(c);
+                            /*
+                             * Stay in the tag name state.
+                             */
+                        } break;
                 }
 
-            } while (textSnapshot.ReadNext(out c)); 
-        } 
+            } while (textSnapshot.ReadNext(out c));
+        }
+
+        void MyParseBeforeAttribute(TextSnapshotReader textSnapshot, ref TokenizerState state)
+        {
+            char c = textSnapshot.CurrentChar;
+            do
+            {
+                switch (c)
+                {
+
+                    case '\r':
+                        SilentCarriageReturn();
+                        break;
+                    case '\n':
+                        SilentLineFeed();
+                        // fall thru
+                        goto case ' ';
+                    case ' ':
+                    case '\t':
+                    case '\u000C':
+                        /*
+                         * U+0009 CHARACTER TABULATION U+000A LINE FEED
+                         * (LF) U+000C FORM FEED (FF) U+0020 SPACE Stay
+                         * in the before attribute name state.
+                         */
+                        break;
+                    case '/':
+                        /*
+                         * U+002F SOLIDUS (/) Switch to the self-closing
+                         * start tag state.
+                         */
+                        //state = Transition(state, Tokenizer.SELF_CLOSING_START_TAG, reconsume, pos);
+                        state = TokenizerState.SELF_CLOSING_START_TAG;
+                        return;
+                    case '>':
+                        /*
+                         * U+003E GREATER-THAN SIGN (>) Emit the current
+                         * tag token.
+                         */
+                        //state = Transition(state, EmitCurrentTagToken(false, pos), reconsume, pos);
+                        state = EmitCurrentTagToken(false, textSnapshot.Position);
+                        if (shouldSuspend)
+                        {
+                            return;
+                        }
+                        /*
+                         * Switch to the data state.
+                         */
+                        return;
+                    case '\u0000':
+                        c = '\uFFFD';
+                        // fall thru
+                        goto case '\"';
+                    case '\"':
+                    case '\'':
+                    case '<':
+                    case '=':
+                        /*
+                         * U+0022 QUOTATION MARK (") U+0027 APOSTROPHE
+                         * (') U+003C LESS-THAN SIGN (<) U+003D EQUALS
+                         * SIGN (=) Parse error.
+                         */
+                        ErrBadCharBeforeAttributeNameOrNull(c);
+                        /*
+                         * Treat it as per the "anything else" entry
+                         * below.
+                         */
+                        goto default;
+                    default:
+                        {
+                            /*
+                        * Anything else Start a new attribute in the
+                        * current tag token.
+                        */
+                            if (c >= 'A' && c <= 'Z')
+                            {
+                                /*
+                                 * U+0041 LATIN CAPITAL LETTER A through to
+                                 * U+005A LATIN CAPITAL LETTER Z Set that
+                                 * attribute's name to the lowercase TokenizerState.version
+                                 * of the current input character (add
+                                 * 0x0020 to the character's code point)
+                                 */
+                                c += (char)0x20;
+                            }
+                            /*
+                             * Set that attribute's name to the current
+                             * input character,
+                             */
+                            ClearStrBufAndAppend(c);
+                            /*
+                             * and its value to the empty string.
+                             */
+                            // Will do later.
+                            /*
+                             * Switch to the attribute name state.
+                             */
+                            //state = Transition(state, Tokenizer.ATTRIBUTE_NAME, reconsume, pos);
+                            state = TokenizerState.ATTRIBUTE_NAME;
+
+                        } return;
+                }
+            } while (textSnapshot.ReadNext(out c));
+
+
+        }
 
         //TODO: remove  MyNotImplementException
 
