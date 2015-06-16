@@ -2,7 +2,7 @@
 #if NET20
 namespace System.Runtime.CompilerServices
 {
-    public class ExtensionAttribute { }
+    public class ExtensionAttribute : Attribute { }
 }
 namespace System.Text
 {
@@ -12,6 +12,6 @@ namespace System.Text
         {
             stbuilder.Length = 0;
         }
-    } 
-} 
+    }
+}
 #endif
