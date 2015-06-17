@@ -175,17 +175,41 @@ namespace HtmlKit {
 		{
 			return new HtmlDataToken (data);
 		}
+        /// <summary>
+        /// Create an HTML character data token.
+        /// </summary>
+        /// <remarks>
+        /// Creates an HTML character data token.
+        /// </remarks>
+        /// <returns>The HTML character data token.</returns>
+        /// <param name="data">The character data.</param>
+        protected virtual HtmlCDataToken CreateCDataToken(string data)
+        {
+            return new HtmlCDataToken(data);
+        }
 
-		/// <summary>
-		/// Create an HTML tag token.
-		/// </summary>
-		/// <remarks>
-		/// Creates an HTML tag token.
-		/// </remarks>
-		/// <returns>The HTML tag token.</returns>
-		/// <param name="name">The tag name.</param>
-		/// <param name="isEndTag"><c>true</c> if the tag is an end tag; otherwise, <c>false</c>.</param>
-		protected virtual HtmlTagToken CreateTagToken (string name, bool isEndTag = false)
+        /// <summary>
+        /// Create an HTML script data token.
+        /// </summary>
+        /// <remarks>
+        /// Creates an HTML script data token.
+        /// </remarks>
+        /// <returns>The HTML script data token.</returns>
+        /// <param name="data">The script data.</param>
+        protected virtual HtmlScriptDataToken CreateScriptDataToken(string data)
+        {
+            return new HtmlScriptDataToken(data);
+        }
+        /// <summary>
+        /// Create an HTML tag token.
+        /// </summary>
+        /// <remarks>
+        /// Creates an HTML tag token.
+        /// </remarks>
+        /// <returns>The HTML tag token.</returns>
+        /// <param name="name">The tag name.</param>
+        /// <param name="isEndTag"><c>true</c> if the tag is an end tag; otherwise, <c>false</c>.</param>
+        protected virtual HtmlTagToken CreateTagToken (string name, bool isEndTag = false)
 		{
 			return new HtmlTagToken (name, isEndTag);
 		}
@@ -285,8 +309,31 @@ namespace HtmlKit {
 			}
 			token = null;
 		}
+        void EmitCDataToken()
+        {
+            if (data.Length > 0)
+            {
+                token = CreateCDataToken(data.ToString());
+                data.Length = 0;
+                return;
+            }
+            token = null;            
+        }
 
-		void EmitTagToken ()
+        void EmitScriptDataToken()
+        {
+            if (data.Length > 0)
+            {
+                token = CreateScriptDataToken(data.ToString());
+                data.Length = 0;
+                return;
+            }
+
+            token = null;
+
+            return;
+        }
+        void EmitTagToken ()
 		{
 			if (!tag.IsEndTag && !tag.IsEmptyElement) {
 				switch (tag.Id) {
@@ -652,16 +699,16 @@ namespace HtmlKit {
 				switch (c) {
 				case '<':
 					TokenizerState = HtmlTokenizerState.ScriptDataLessThan;
-					EmitDataToken (false);                     
-                    return;
+                    EmitScriptDataToken();
+                     return;
 				default:
 					data.Append (c == '\0' ? '\uFFFD' : c);
 
 					// Note: we emit at 1024 characters simply to avoid
 					// consuming too much memory.
-					if (data.Length >= 1024) { 
-					    EmitDataToken (false);
-                        return;
+					if (data.Length >= 1024) {
+                       EmitScriptDataToken();
+                       return;
                     }
 					break;
 				}
@@ -843,7 +890,7 @@ namespace HtmlKit {
 
 		void ReadRawTextEndTagName ()
 		{
-			ReadGenericRawTextEndTagName (false, HtmlTokenizerState.RawText);
+			 ReadGenericRawTextEndTagName (false, HtmlTokenizerState.RawText);
 		}
 
 		void ReadScriptDataLessThan ()
@@ -879,7 +926,7 @@ namespace HtmlKit {
 
 			if (nc == -1) {
 				TokenizerState = HtmlTokenizerState.EndOfFile;
-			    EmitDataToken ( false);
+                EmitScriptDataToken();
                 return;
 			}
 
@@ -905,9 +952,8 @@ namespace HtmlKit {
 
 				if (nc == -1) {
 					TokenizerState = HtmlTokenizerState.EndOfFile;
-					name.Length = 0;
-
-					EmitDataToken (false);
+					name.Length = 0; 
+                    EmitScriptDataToken();
                     return;
 				}
 
@@ -992,7 +1038,7 @@ namespace HtmlKit {
 
 				if (nc == -1) {
 					TokenizerState = HtmlTokenizerState.EndOfFile;
-					EmitDataToken (false);
+                    EmitScriptDataToken();
                     return;
 				}
 
@@ -1022,7 +1068,7 @@ namespace HtmlKit {
 
 			if (nc == -1) {
 				TokenizerState = HtmlTokenizerState.EndOfFile;
-				EmitDataToken (false);
+                EmitScriptDataToken();
                 return;
 			}
 
@@ -1051,7 +1097,7 @@ namespace HtmlKit {
 
 				if (nc == -1) {
 					TokenizerState = HtmlTokenizerState.EndOfFile;
-					EmitDataToken (false);
+                    EmitScriptDataToken();
                     return;
 				}
 
@@ -1115,7 +1161,7 @@ namespace HtmlKit {
 
 			if (nc == -1) {
 				TokenizerState = HtmlTokenizerState.EndOfFile;
-				EmitDataToken (false);
+                EmitScriptDataToken();
                 return;
 			}
 
@@ -1144,7 +1190,7 @@ namespace HtmlKit {
 					TokenizerState = HtmlTokenizerState.EndOfFile;
 					name.Length = 0;
 
-			        EmitDataToken (false);
+                    EmitScriptDataToken();
                     return;
 				}
 
@@ -1206,7 +1252,7 @@ namespace HtmlKit {
 					TokenizerState = HtmlTokenizerState.EndOfFile;
 					name.Length = 0;
 
-					EmitDataToken (false);
+                    EmitScriptDataToken();
                     return;
 				}
 
@@ -1244,7 +1290,7 @@ namespace HtmlKit {
 
 				if (nc == -1) {
 					TokenizerState = HtmlTokenizerState.EndOfFile;
-					EmitDataToken (false);
+                    EmitScriptDataToken();
                     return;
 				}
 
@@ -1276,7 +1322,7 @@ namespace HtmlKit {
 
 			if (nc == -1) {
 				TokenizerState = HtmlTokenizerState.EndOfFile;
-			    EmitDataToken ( false);
+                EmitScriptDataToken();
                 return;
 			}
 
@@ -1306,8 +1352,8 @@ namespace HtmlKit {
 				char c;
 
 				if (nc == -1) {
-					TokenizerState = HtmlTokenizerState.EndOfFile;
-					EmitDataToken (false);
+					TokenizerState = HtmlTokenizerState.EndOfFile;					 
+                    EmitScriptDataToken();
                     return;
 				}
 
@@ -2755,47 +2801,46 @@ namespace HtmlKit {
 
 		void ReadCDataSection ()
 		{
-			// FIXME: maybe we should have a CDATA token?
-			int nc = Read ();
+            int nc = Read();
 
-			while (nc != -1) {
-				char c = (char) nc;
+            while (nc != -1)
+            {
+                char c = (char)nc;
 
-                if (cdataIndex >= 3) {
+                if (cdataIndex >= 3)
+                {
                     data.Append(cdata[0]);
                     cdata[0] = cdata[1];
                     cdata[1] = cdata[2];
                     cdata[2] = c;
 
-                    if (cdata[0] == ']' && cdata[1] == ']' && cdata[2] == '>') {
+                    if (cdata[0] == ']' && cdata[1] == ']' && cdata[2] == '>')
+                    {
                         TokenizerState = HtmlTokenizerState.Data;
                         cdataIndex = 0;
 
-                        EmitDataToken(true);
+                        EmitCDataToken();
                         return;
                     }
+                }
+                else
+                {
+                    cdata[cdataIndex++] = c;
+                }
 
-                    if (data.Length > 1024)
-                    {
-                        EmitDataToken(true);
-                        return;
-                    }
-				} else {
-					cdata[cdataIndex++] = c;
-				}
+                nc = Read();
+            }
 
-				nc = Read ();
-			}
+            TokenizerState = HtmlTokenizerState.EndOfFile;
 
-			TokenizerState = HtmlTokenizerState.EndOfFile;
+            for (int i = 0; i < cdataIndex; i++)
+                data.Append(cdata[i]);
 
-			for (int i = 0; i < cdataIndex; i++)
-				data.Append (cdata[i]);
+            cdataIndex = 0;
 
-			cdataIndex = 0;
-
-			EmitDataToken ( true);
-		}
+            EmitCDataToken();
+            return;
+        }
 
 		
 	}

@@ -32,132 +32,155 @@ using HtmlKit;
 
 using NUnit.Framework;
 
-namespace UnitTests {
+namespace UnitTests
+{
+    [TestFixture]
+    public class HtmlTokenizerTests
+    {
+        static string Quote(string text)
+        {
+            if (text == null)
+                throw new ArgumentNullException("text");
 
-	[TestFixture]
-	public class HtmlTokenizerTests
-	{
-		static string Quote (string text)
-		{
-			if (text == null)
-				throw new ArgumentNullException ("text");
+            var quoted = new StringBuilder(text.Length + 2, (text.Length * 2) + 2);
 
-			var quoted = new StringBuilder (text.Length + 2, (text.Length * 2) + 2);
+            quoted.Append("\"");
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (text[i] == '\\' || text[i] == '"')
+                    quoted.Append('\\');
+                quoted.Append(text[i]);
+            }
+            quoted.Append("\"");
 
-			quoted.Append ("\"");
-			for (int i = 0; i < text.Length; i++) {
-				if (text[i] == '\\' || text[i] == '"')
-					quoted.Append ('\\');
-				quoted.Append (text[i]);
-			}
-			quoted.Append ("\"");
+            return quoted.ToString();
+        }
 
-			return quoted.ToString ();
-		}
+        static void VerifyHtmlTokenizerOutput(string path)
+        {
+            var tokens = Path.ChangeExtension(path, ".tokens");
+            var expected = File.Exists(tokens) ? File.ReadAllText(tokens) : string.Empty;
+            var actual = new StringBuilder();
 
-		static void VerifyHtmlTokenizerOutput (string path)
-		{
-			var tokens = Path.ChangeExtension (path, ".tokens");
-			var expected = File.Exists (tokens) ? File.ReadAllText (tokens) : string.Empty;
-			var actual = new StringBuilder ();
-        
-			using (var textReader = File.OpenText (path)) {
-				var tokenizer = new HtmlTokenizer (textReader);
-				HtmlToken token;
+            using (var textReader = File.OpenText(path))
+            {
+                var tokenizer = new HtmlTokenizer(textReader);
+                HtmlToken token;
 
-				Assert.AreEqual (HtmlTokenizerState.Data, tokenizer.TokenizerState);
+                Assert.AreEqual(HtmlTokenizerState.Data, tokenizer.TokenizerState);
 
-				while (tokenizer.ReadNextToken (out token)) {
-					actual.AppendFormat ("{0}: ", token.Kind);
+                while (tokenizer.ReadNextToken(out token))
+                {
+                    actual.AppendFormat("{0}: ", token.Kind);
 
-					switch (token.Kind) {
-					case HtmlTokenKind.Data:
-						var text = (HtmlDataToken) token;
+                    switch (token.Kind)
+                    {
+                        case HtmlTokenKind.ScriptData:
+                        case HtmlTokenKind.CData:
+                        case HtmlTokenKind.Data:
+                            var text = (HtmlDataToken)token;
 
-						for (int i = 0; i < text.Data.Length; i++) {
-							switch (text.Data[i]) {
-							case '\f': actual.Append ("\\f"); break;
-							case '\t': actual.Append ("\\t"); break;
-							case '\r': actual.Append ("\\r"); break;
-							case '\n': actual.Append ("\\n"); break;
-							default: actual.Append (text.Data[i]); break;
-							}
-						}
-						actual.AppendLine ();
-						break;
-					case HtmlTokenKind.Tag:
-						var tag = (HtmlTagToken) token;
+                            for (int i = 0; i < text.Data.Length; i++)
+                            {
+                                switch (text.Data[i])
+                                {
+                                    case '\f': actual.Append("\\f"); break;
+                                    case '\t': actual.Append("\\t"); break;
+                                    case '\r': actual.Append("\\r"); break;
+                                    case '\n': actual.Append("\\n"); break;
+                                    default: actual.Append(text.Data[i]); break;
+                                }
+                            }
+                            actual.AppendLine();
+                            break;
+                        case HtmlTokenKind.Tag:
+                            var tag = (HtmlTagToken)token;
 
-						actual.AppendFormat ("<{0}{1}", tag.IsEndTag ? "/" : "", tag.Name);
+                            actual.AppendFormat("<{0}{1}", tag.IsEndTag ? "/" : "", tag.Name);
 
-						foreach (var attribute in tag.Attributes) {
-							if (attribute.Value != null)
-								actual.AppendFormat (" {0}={1}", attribute.Name, Quote (attribute.Value));
-							else
-								actual.AppendFormat (" {0}", attribute.Name);
-						}
+                            foreach (var attribute in tag.Attributes)
+                            {
+                                if (attribute.Value != null)
+                                    actual.AppendFormat(" {0}={1}", attribute.Name, Quote(attribute.Value));
+                                else
+                                    actual.AppendFormat(" {0}", attribute.Name);
+                            }
 
-						actual.Append (tag.IsEmptyElement ? "/>" : ">");
+                            actual.Append(tag.IsEmptyElement ? "/>" : ">");
 
-						actual.AppendLine ();
-						break;
-					case HtmlTokenKind.Comment:
-						var comment = (HtmlCommentToken) token;
-						actual.AppendLine (comment.Comment);
-						break;
-					case HtmlTokenKind.DocType:
-						var doctype = (HtmlDocTypeToken) token;
+                            actual.AppendLine();
+                            break;
+                        case HtmlTokenKind.Comment:
+                            var comment = (HtmlCommentToken)token;
+                            actual.AppendLine(comment.Comment);
+                            break;
+                        case HtmlTokenKind.DocType:
+                            var doctype = (HtmlDocTypeToken)token;
 
-						if (doctype.ForceQuirksMode)
-							actual.Append ("<!-- force quirks mode -->");
+                            if (doctype.ForceQuirksMode)
+                                actual.Append("<!-- force quirks mode -->");
 
-						actual.Append ("<!DOCTYPE");
+                            actual.Append("<!DOCTYPE");
 
-						if (doctype.Name != null)
-							actual.AppendFormat (" {0}", doctype.Name.ToUpperInvariant ());
+                            if (doctype.Name != null)
+                                actual.AppendFormat(" {0}", doctype.Name.ToUpperInvariant());
 
-						if (doctype.PublicIdentifier != null) {
-							actual.AppendFormat (" PUBLIC {0}", Quote (doctype.PublicIdentifier));
-							if (doctype.SystemIdentifier != null)
-								actual.AppendFormat (" {0}", Quote (doctype.SystemIdentifier));
-						} else if (doctype.SystemIdentifier != null) {
-							actual.AppendFormat (" SYSTEM {0}", Quote (doctype.SystemIdentifier));
-						}
+                            if (doctype.PublicIdentifier != null)
+                            {
+                                actual.AppendFormat(" PUBLIC {0}", Quote(doctype.PublicIdentifier));
+                                if (doctype.SystemIdentifier != null)
+                                    actual.AppendFormat(" {0}", Quote(doctype.SystemIdentifier));
+                            }
+                            else if (doctype.SystemIdentifier != null)
+                            {
+                                actual.AppendFormat(" SYSTEM {0}", Quote(doctype.SystemIdentifier));
+                            }
 
-						actual.Append (">");
-						actual.AppendLine ();
-						break;
-					default:
-						Assert.Fail ("Unhandled token type: {0}", token.Kind);
-						break;
-					}
-				}
+                            actual.Append(">");
+                            actual.AppendLine();
+                            break;
+                        default:
+                            Assert.Fail("Unhandled token type: {0}", token.Kind);
+                            break;
+                    }
+                }
 
-				Assert.AreEqual (HtmlTokenizerState.EndOfFile, tokenizer.TokenizerState);
-			}
+                Assert.AreEqual(HtmlTokenizerState.EndOfFile, tokenizer.TokenizerState);
+            }
 
-			if (!File.Exists (tokens))
-				File.WriteAllText (tokens, actual.ToString ());
+            if (!File.Exists(tokens))
+                File.WriteAllText(tokens, actual.ToString());
 
-			Assert.AreEqual (expected, actual.ToString (), "The token stream does not match the expected tokens.");
-		}
+            Assert.AreEqual(expected, actual.ToString(), "The token stream does not match the expected tokens.");
+        }
 
-		[Test]
-		public void TestGoogleSignInAttemptBlocked ()
-		{
-			VerifyHtmlTokenizerOutput (Path.Combine ("..", "..", "TestData", "html", "blocked.html"));
-		}
+        [Test]
+        public void TestGoogleSignInAttemptBlocked()
+        {
+            VerifyHtmlTokenizerOutput(Path.Combine("..", "..", "TestData", "html", "blocked.html"));
+        }
 
-		[Test]
-		public void TestXamarin3SampleHtml ()
-		{
-			VerifyHtmlTokenizerOutput (Path.Combine ("..", "..", "TestData", "html", "xamarin3.html"));
-		}
+        [Test]
+        public void TestXamarin3SampleHtml()
+        {
+            VerifyHtmlTokenizerOutput(Path.Combine("..", "..", "TestData", "html", "xamarin3.html"));
+        }
 
-		[Test]
-		public void TestTokenizer ()
-		{
-			VerifyHtmlTokenizerOutput (Path.Combine ("..", "..", "TestData", "html", "test.html"));
-		}
-	}
+        [Test]
+        public void TestTokenizer()
+        {
+            VerifyHtmlTokenizerOutput(Path.Combine("..", "..", "TestData", "html", "test.html"));
+        }
+
+        [Test]
+        public void TestHtmlDecode()
+        {
+            const string encoded = "&lt;&pound;&euro;&cent;&yen;&nbsp;&copy;&reg;&gt;";
+            const string expected = "<£€¢¥\u00a0©®>";
+
+            var decoded = HtmlUtils.HtmlDecode(encoded);
+
+            Assert.AreEqual(expected, decoded);
+        }
+    }
 }
