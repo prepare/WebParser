@@ -31,7 +31,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="HtmlTokenizer_CreateAndEmit.cs" />
+    <Compile Include="HtmlTokenizer_ReadAttribute.cs" />
+    <Compile Include="HtmlTokenizer_ReadComment.cs" />
+    <Compile Include="HtmlTokenizer_ReadDocType.cs" />
     <Compile Include="HtmlTokenizer_ReadNextToken.cs" />
+    <Compile Include="HtmlTokenizer_ReadCharRef_RawText_CData.cs" />
+    <Compile Include="HtmlTokenizer_ReadScript.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HtmlAttribute.cs" />
     <Compile Include="HtmlAttributeCollection.cs" />

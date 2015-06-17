@@ -24,7 +24,7 @@
 // THE SOFTWARE.
 //
 
-using System.IO;
+ 
 using System.Text;
 
 namespace HtmlKit
