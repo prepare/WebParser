@@ -16,8 +16,13 @@ namespace Test2_WebDomParsers
             InitializeComponent();
         }
 
+        
+
         private void button1_Click(object sender, EventArgs e)
         {
+             
+
+
             //test web parser
             var parser = new HtmlParser();
             var blankHtmlDoc = new LayoutFarm.WebDom.Impl.HtmlDocument();
@@ -26,7 +31,7 @@ namespace Test2_WebDomParsers
 
             this.treeView2.Nodes.Clear();
             var rootNode = new TreeNode("root");
-            
+
             DescibeNode(blankHtmlDoc.RootNode, rootNode);
 
             treeView2.Nodes.Add(rootNode);
