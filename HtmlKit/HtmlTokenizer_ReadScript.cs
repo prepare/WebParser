@@ -34,7 +34,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.6 Script data state
         /// </summary>
-        void ReadScriptData()
+        void R06_ScriptData()
         {
             do
             {
@@ -79,7 +79,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.33 Script data double escape end state
         /// </summary>
-        void ReadScriptDataDoubleEscapeEnd()
+        void R33_ScriptDataDoubleEscapeEnd()
         {
             do
             {
@@ -124,7 +124,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.17 Script data less-than sign state
         /// </summary>
-        void ReadScriptDataLessThan()
+        void R17_ScriptDataLessThan()
         {
             int nc = Peek();
 
@@ -153,7 +153,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.18 Script data end tag open state
         /// </summary>
-        void ReadScriptDataEndTagOpen()
+        void R18_ScriptDataEndTagOpen()
         {
             int nc = Peek();
             char c;
@@ -184,7 +184,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.19 Script data end tag name state
         /// </summary>
-        void ReadScriptDataEndTagName()
+        void R19_ScriptDataEndTagName()
         {
             do
             {
@@ -255,7 +255,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.20 Script data escape start state
         /// </summary>
-        void ReadScriptDataEscapeStart()
+        void R20_ScriptDataEscapeStart()
         {
             int nc = Peek();
 
@@ -274,7 +274,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.21 Script data escape start dash state
         /// </summary>
-        void ReadScriptDataEscapeStartDash()
+        void R21_ScriptDataEscapeStartDash()
         {
             int nc = Peek();
 
@@ -293,7 +293,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.22 Script data escaped state
         /// </summary>
-        void ReadScriptDataEscaped()
+        void R22_ScriptDataEscaped()
         {
             do
             {
@@ -329,7 +329,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.23 Script data escaped dash state
         /// </summary>
-        void ReadScriptDataEscapedDash()
+        void R23_ScriptDataEscapedDash()
         {
             int nc = Peek();
             char c;
@@ -361,7 +361,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.24 Script data escaped dash dash state
         /// </summary>
-        void ReadScriptDataEscapedDashDash()
+        void R24_ScriptDataEscapedDashDash()
         {
             do
             {
@@ -404,7 +404,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.25 Script data escaped less-than sign state
         /// </summary>
-        void ReadScriptDataEscapedLessThan()
+        void R25_ScriptDataEscapedLessThan()
         {
             int nc = Peek();
             char c = (char)nc;
@@ -436,7 +436,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.26 Script data escaped end tag open state
         /// </summary>
-        void ReadScriptDataEscapedEndTagOpen()
+        void R26_ScriptDataEscapedEndTagOpen()
         {
             int nc = Peek();
             char c;
@@ -470,7 +470,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.27 Script data escaped end tag name state
         /// </summary>
-        void ReadScriptDataEscapedEndTagName()
+        void R27_ScriptDataEscapedEndTagName()
         {
             do
             {
@@ -544,7 +544,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.28 Script data double escape start state
         /// </summary>
-        void ReadScriptDataDoubleEscapeStart()
+        void R28_ScriptDataDoubleEscapeStart()
         {
             do
             {
@@ -595,7 +595,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.29 Script data double escaped state
         /// </summary>
-        void ReadScriptDataDoubleEscaped()
+        void R29_ScriptDataDoubleEscaped()
         {
             do
             {
@@ -633,7 +633,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.30 Script data double escaped dash state
         /// </summary>
-        void ReadScriptDataDoubleEscapedDash()
+        void R30_ScriptDataDoubleEscapedDash()
         {
             int nc = Peek();
             char c;
@@ -667,7 +667,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.31 Script data double escaped dash dash state
         /// </summary>
-        void ReadScriptDataDoubleEscapedDashDash()
+        void R31_ScriptDataDoubleEscapedDashDash()
         {
             do
             {
@@ -710,7 +710,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.32 Script data double escaped less-than sign state
         /// </summary>
-        void ReadScriptDataDoubleEscapedLessThan()
+        void R32_ScriptDataDoubleEscapedLessThan()
         {
             int nc = Peek();
 

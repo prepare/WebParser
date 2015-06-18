@@ -34,7 +34,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.52 DOCTYPE state
         /// </summary>
-        void ReadDocType()
+        void R52_DocType()
         {
             int nc = Peek();
             char c;
@@ -71,7 +71,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.53 Before DOCTYPE name state
         /// </summary>
-        void ReadBeforeDocTypeName()
+        void R53_BeforeDocTypeName()
         {
             token = null;
 
@@ -125,7 +125,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.54 DOCTYPE name state
         /// </summary> 
-        void ReadDocTypeName()
+        void R54_DocTypeName()
         {
             token = null;
 
@@ -183,7 +183,7 @@ namespace HtmlKit
         /// 8.2.4.55 After DOCTYPE name state
         /// </summary>
         /// <returns></returns>
-        void ReadAfterDocTypeName()
+        void R55_AfterDocTypeName()
         {
             token = null;
 
@@ -249,7 +249,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.56 After DOCTYPE public keyword state
         /// </summary>         
-        public void ReadAfterDocTypePublicKeyword()
+        void R56_AfterDocTypePublicKeyword()
         {
             int nc = Read();
             char c;
@@ -302,7 +302,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.57 Before DOCTYPE public identifier state
         /// </summary>         
-        public void ReadBeforeDocTypePublicIdentifier()
+        void R57_BeforeDocTypePublicIdentifier()
         {
             token = null;
 
@@ -358,7 +358,7 @@ namespace HtmlKit
         /// 8.2.4.58 DOCTYPE public identifier (double-quoted) state,
         /// 8.2.4.59 DOCTYPE public identifier (single-quoted) state
         /// </summary>
-        void ReadDocTypePublicIdentifierQuoted()
+        void R58_59_DocTypePublicIdentifierQuoted()
         {
             token = null;
 
@@ -418,7 +418,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.60 After DOCTYPE public identifier state
         /// </summary>
-        public void ReadAfterDocTypePublicIdentifier()
+        void R60_AfterDocTypePublicIdentifier()
         {
             int nc = Read();
             char c;
@@ -472,7 +472,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.61 Between DOCTYPE public and system identifiers state
         /// </summary>
-        void ReadBetweenDocTypePublicAndSystemIdentifiers()
+        void R61_BetweenDocTypePublicAndSystemIdentifiers()
         {
             token = null;
 
@@ -527,7 +527,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.62 After DOCTYPE system keyword state
         /// </summary>
-        void ReadAfterDocTypeSystemKeyword()
+        void R62_AfterDocTypeSystemKeyword()
         {
             int nc = Read();
             char c;
@@ -580,7 +580,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.63 Before DOCTYPE system identifier state
         /// </summary>
-        void ReadBeforeDocTypeSystemIdentifier()
+        void R63_BeforeDocTypeSystemIdentifier()
         {
             token = null;
 
@@ -636,7 +636,7 @@ namespace HtmlKit
         ///8.2.4.64 DOCTYPE system identifier (double-quoted) state,
         ///8.2.4.65 DOCTYPE system identifier (single-quoted) state
         /// </summary>
-        void ReadDocTypeSystemIdentifierQuoted()
+        void R64_65_DocTypeSystemIdentifierQuoted()
         {
             token = null;
 
@@ -694,7 +694,10 @@ namespace HtmlKit
 
         }
 
-        public void ReadAfterDocTypeSystemIdentifier()
+        /// <summary>
+        /// 8.2.4.66 After DOCTYPE system identifier state
+        /// </summary>
+        void R66_AfterDocTypeSystemIdentifier()
         {
             token = null;
 
@@ -741,7 +744,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.67 Bogus DOCTYPE state
         /// </summary>
-        void ReadBogusDocType()
+        void R67_BogusDocType()
         {
             token = null;
 

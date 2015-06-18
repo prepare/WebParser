@@ -161,7 +161,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.5 RAWTEXT state
         /// </summary>
-        void ReadRawText()
+        void R05_RawText()
         {
             do
             {
@@ -210,7 +210,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.7 PLAINTEXT state
         /// </summary>
-        void ReadPlainText()
+        void R07_PlainText()
         {
             int nc = Read();
 
@@ -302,21 +302,21 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.14 RAWTEXT less-than sign state
         /// </summary>
-        void ReadRawTextLessThan()
+        void R14_RawTextLessThan()
         {
             ReadGenericRawTextLessThan(HtmlTokenizerState.RawText, HtmlTokenizerState.RawTextEndTagOpen);
         }
         /// <summary>
         /// 8.2.4.15 RAWTEXT end tag open state
         /// </summary>
-        void ReadRawTextEndTagOpen()
+        void R15_RawTextEndTagOpen()
         {
             ReadGenericRawTextEndTagOpen(false, HtmlTokenizerState.RawText, HtmlTokenizerState.RawTextEndTagName);
         }
         /// <summary>
         /// 8.2.4.16 RAWTEXT end tag name state
         /// </summary>
-        void ReadRawTextEndTagName()
+        void R16_RawTextEndTagName()
         {
             ReadGenericRawTextEndTagName(false, HtmlTokenizerState.RawText);
         }
@@ -324,14 +324,14 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.2 Character reference in data state
         /// </summary>
-        void ReadCharacterReferenceInData()
+        void R02_CharacterReferenceInData()
         {
             ReadCharacterReference(HtmlTokenizerState.Data);
         }
         /// <summary>
         /// 8.2.4.3 RCDATA state
         /// </summary>
-        void ReadRcData()
+        void R03_RcData()
         {
             do
             {
@@ -387,7 +387,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.4 Character reference in RCDATA state
         /// </summary>
-        void ReadCharacterReferenceInRcData()
+        void R04_CharacterReferenceInRcData()
         {
             ReadCharacterReference(HtmlTokenizerState.RcData);
 
@@ -395,28 +395,30 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.11 RCDATA less-than sign state
         /// </summary>
-        void ReadRcDataLessThan()
+        void R11_RcDataLessThan()
         {
             ReadGenericRawTextLessThan(HtmlTokenizerState.RcData, HtmlTokenizerState.RcDataEndTagOpen);
         }
         /// <summary>
         /// 8.2.4.12 RCDATA end tag open state
         /// </summary>
-        void ReadRcDataEndTagOpen()
+        void R12_RcDataEndTagOpen()
         {
             ReadGenericRawTextEndTagOpen(DecodeCharacterReferences, HtmlTokenizerState.RcData, HtmlTokenizerState.RcDataEndTagName);
         }
         /// <summary>
         /// 8.2.4.13 RCDATA end tag name state
         /// </summary>
-        void ReadRcDataEndTagName()
+        void R13_RcDataEndTagName()
         {
             ReadGenericRawTextEndTagName(DecodeCharacterReferences, HtmlTokenizerState.RcData);
         }
+
+
         /// <summary>
         /// 8.2.4.68 CDATA section state
         /// </summary>
-        void ReadCDataSection()
+        void R68_CDataSection()
         {
             int nc = Read();
 

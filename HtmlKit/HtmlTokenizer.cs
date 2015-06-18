@@ -196,7 +196,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.1 Data state
         /// </summary>
-        void ReadDataToken()
+        void R01_DataToken()
         {
             do
             {
@@ -247,7 +247,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.8 Tag open state
         /// </summary>        
-        void ReadTagOpen()
+        void R08_TagOpen()
         {
             int nc = Read();
             char c;
@@ -290,7 +290,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.9 End tag open state
         /// </summary>
-        void ReadEndTagOpen()
+        void R09_EndTagOpen()
         {
             int nc = Read();
             char c;
@@ -333,7 +333,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.10 Tag name state
         /// </summary>
-        void ReadTagName()
+        void R10_TagName()
         {
             do
             {
@@ -387,7 +387,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.43 Self-closing start tag state
         /// </summary>
-        void ReadSelfClosingStartTag()
+        void R43_SelfClosingStartTag()
         {
             int nc = Read();
             char c;

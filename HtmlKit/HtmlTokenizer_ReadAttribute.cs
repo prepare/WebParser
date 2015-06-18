@@ -31,7 +31,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.34 Before attribute name state
         /// </summary>
-        void ReadBeforeAttributeName()
+        void R34_BeforeAttributeName()
         {
             token = null;
 
@@ -84,7 +84,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.35 Attribute name state
         /// </summary>
-        void ReadAttributeName()
+        void R35_AttributeName()
         {
             token = null;
 
@@ -138,7 +138,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.36 After attribute name state
         /// </summary>
-        void ReadAfterAttributeName()
+        void R36_AfterAttributeName()
         {
             token = null;
 
@@ -193,7 +193,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.37 Before attribute value state
         /// </summary>
-        void ReadBeforeAttributeValue()
+        void R37_BeforeAttributeValue()
         {
             token = null;
 
@@ -254,7 +254,7 @@ namespace HtmlKit
         /// 8.2.4.38 Attribute value (double-quoted) state,
         /// 8.2.4.39 Attribute value (single-quoted) state
         /// </summary>
-        void ReadAttributeValueQuoted()
+        void R38_39_AttributeValueQuoted()
         {
             do
             {
@@ -302,7 +302,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.40 Attribute value (unquoted) state
         /// </summary>
-        void ReadAttributeValueUnquoted()
+        void R40_AttributeValueUnquoted()
         {
             do
             {
@@ -367,7 +367,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.41 Character reference in attribute value state
         /// </summary>
-        void ReadCharacterReferenceInAttributeValue()
+        void R41_CharacterReferenceInAttributeValue()
         {
             char additionalAllowedCharacter = quote == '\0' ? '>' : quote;
             int nc = Peek();
@@ -458,7 +458,7 @@ namespace HtmlKit
         /// <summary>
         /// 8.2.4.42 After attribute value (quoted) state
         /// </summary>
-        void ReadAfterAttributeValueQuoted()
+        void R42_AfterAttributeValueQuoted()
         {
             int nc = Peek();
             bool consume;
