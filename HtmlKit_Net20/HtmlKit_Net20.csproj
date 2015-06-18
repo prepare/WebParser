@@ -43,7 +43,13 @@
     <Compile Include="HtmlToken.cs" />
     <Compile Include="HtmlTokenizer.cs" />
     <Compile Include="HtmlTokenizerState.cs" />
+    <Compile Include="HtmlTokenizer_CreateAndEmit.cs" />
+    <Compile Include="HtmlTokenizer_ReadAttribute.cs" />
+    <Compile Include="HtmlTokenizer_ReadCharRef_RawText_CData.cs" />
+    <Compile Include="HtmlTokenizer_ReadComment.cs" />
+    <Compile Include="HtmlTokenizer_ReadDocType.cs" />
     <Compile Include="HtmlTokenizer_ReadNextToken.cs" />
+    <Compile Include="HtmlTokenizer_ReadScript.cs" />
     <Compile Include="HtmlTokenKind.cs" />
     <Compile Include="HtmlUtils.cs" />
     <Compile Include="HtmlWriter.cs" />
