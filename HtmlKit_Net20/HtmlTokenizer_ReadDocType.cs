@@ -31,7 +31,10 @@ namespace HtmlKit
 
     partial class HtmlTokenizer
     {
-        void ReadDocType()
+        /// <summary>
+        /// 8.2.4.52 DOCTYPE state
+        /// </summary>
+        void R52_DocType()
         {
             int nc = Peek();
             char c;
@@ -65,7 +68,10 @@ namespace HtmlKit
 
             return;
         }
-        void ReadBeforeDocTypeName()
+        /// <summary>
+        /// 8.2.4.53 Before DOCTYPE name state
+        /// </summary>
+        void R53_BeforeDocTypeName()
         {
             token = null;
 
@@ -116,7 +122,10 @@ namespace HtmlKit
             } while (true);
         }
 
-        bool ReadDocTypeName()
+        /// <summary>
+        /// 8.2.4.54 DOCTYPE name state
+        /// </summary> 
+        void R54_DocTypeName()
         {
             token = null;
 
@@ -133,7 +142,7 @@ namespace HtmlKit
                     token = doctype;
                     data.Length = 0;
                     name.Length = 0;
-                    return true;
+                    return;
                 }
 
                 c = (char)nc;
@@ -157,7 +166,7 @@ namespace HtmlKit
                         doctype = null;
                         data.Length = 0;
                         name.Length = 0;
-                        return true;
+                        return;
                     case '\0':
                         name.Append('\uFFFD');
                         break;
@@ -168,12 +177,13 @@ namespace HtmlKit
             } while (TokenizerState == HtmlTokenizerState.DocTypeName);
 
             doctype.Name = name.ToString();
-            name.Length = 0;
-
-            return false;
+            name.Length = 0;            
         }
-
-        bool ReadAfterDocTypeName()
+        /// <summary>
+        /// 8.2.4.55 After DOCTYPE name state
+        /// </summary>
+        /// <returns></returns>
+        void R55_AfterDocTypeName()
         {
             token = null;
 
@@ -189,7 +199,7 @@ namespace HtmlKit
                     token = doctype;
                     doctype = null;
                     data.Length = 0;
-                    return true;
+                    return;
                 }
 
                 c = (char)nc;
@@ -210,7 +220,7 @@ namespace HtmlKit
                         token = doctype;
                         doctype = null;
                         data.Length = 0;
-                        return true;
+                        return;
                     default:
                         name.Append(c);
                         if (name.Length < 6)
@@ -232,12 +242,14 @@ namespace HtmlKit
                         }
 
                         name.Length = 0;
-                        return false;
+                        return;
                 }
             } while (true);
         }
-
-        public bool ReadAfterDocTypePublicKeyword()
+        /// <summary>
+        /// 8.2.4.56 After DOCTYPE public keyword state
+        /// </summary>         
+        void R56_AfterDocTypePublicKeyword()
         {
             int nc = Read();
             char c;
@@ -249,7 +261,7 @@ namespace HtmlKit
                 token = doctype;
                 doctype = null;
                 data.Length = 0;
-                return true;
+                return;
             }
 
             c = (char)nc;
@@ -278,19 +290,19 @@ namespace HtmlKit
                     token = doctype;
                     doctype = null;
                     data.Length = 0;
-                    return true;
+                    return;
                 default: // parse error
                     TokenizerState = HtmlTokenizerState.BogusDocType;
                     doctype.ForceQuirksMode = true;
                     break;
             }
 
-            token = null;
-
-            return false;
+            token = null;             
         }
-
-        public bool ReadBeforeDocTypePublicIdentifier()
+        /// <summary>
+        /// 8.2.4.57 Before DOCTYPE public identifier state
+        /// </summary>         
+        void R57_BeforeDocTypePublicIdentifier()
         {
             token = null;
 
@@ -306,7 +318,7 @@ namespace HtmlKit
                     token = doctype;
                     doctype = null;
                     data.Length = 0;
-                    return true;
+                    return;
                 }
 
                 c = (char)nc;
@@ -327,23 +339,26 @@ namespace HtmlKit
                         TokenizerState = HtmlTokenizerState.DocTypePublicIdentifierQuoted;
                         doctype.PublicIdentifier = string.Empty;
                         quote = c;
-                        return false;
+                        return;
                     case '>': // parse error
                         TokenizerState = HtmlTokenizerState.Data;
                         doctype.ForceQuirksMode = true;
                         token = doctype;
                         doctype = null;
                         data.Length = 0;
-                        return true;
+                        return;
                     default: // parse error
                         TokenizerState = HtmlTokenizerState.BogusDocType;
                         doctype.ForceQuirksMode = true;
-                        return false;
+                        return;
                 }
             } while (true);
         }
-
-        void ReadDocTypePublicIdentifierQuoted()
+        /// <summary>
+        /// 8.2.4.58 DOCTYPE public identifier (double-quoted) state,
+        /// 8.2.4.59 DOCTYPE public identifier (single-quoted) state
+        /// </summary>
+        void R58_59_DocTypePublicIdentifierQuoted()
         {
             token = null;
 
@@ -400,8 +415,10 @@ namespace HtmlKit
 
 
         }
-
-        public void ReadAfterDocTypePublicIdentifier()
+        /// <summary>
+        /// 8.2.4.60 After DOCTYPE public identifier state
+        /// </summary>
+        void R60_AfterDocTypePublicIdentifier()
         {
             int nc = Read();
             char c;
@@ -452,8 +469,10 @@ namespace HtmlKit
 
 
         }
-
-        void ReadBetweenDocTypePublicAndSystemIdentifiers()
+        /// <summary>
+        /// 8.2.4.61 Between DOCTYPE public and system identifiers state
+        /// </summary>
+        void R61_BetweenDocTypePublicAndSystemIdentifiers()
         {
             token = null;
 
@@ -505,7 +524,10 @@ namespace HtmlKit
             } while (true);
         }
 
-        void ReadAfterDocTypeSystemKeyword()
+        /// <summary>
+        /// 8.2.4.62 After DOCTYPE system keyword state
+        /// </summary>
+        void R62_AfterDocTypeSystemKeyword()
         {
             int nc = Read();
             char c;
@@ -555,8 +577,10 @@ namespace HtmlKit
 
             token = null;
         }
-
-        void ReadBeforeDocTypeSystemIdentifier()
+        /// <summary>
+        /// 8.2.4.63 Before DOCTYPE system identifier state
+        /// </summary>
+        void R63_BeforeDocTypeSystemIdentifier()
         {
             token = null;
 
@@ -608,8 +632,11 @@ namespace HtmlKit
                 }
             } while (true);
         }
-
-        void ReadDocTypeSystemIdentifierQuoted()
+        /// <summary>
+        ///8.2.4.64 DOCTYPE system identifier (double-quoted) state,
+        ///8.2.4.65 DOCTYPE system identifier (single-quoted) state
+        /// </summary>
+        void R64_65_DocTypeSystemIdentifierQuoted()
         {
             token = null;
 
@@ -667,7 +694,10 @@ namespace HtmlKit
 
         }
 
-        public void ReadAfterDocTypeSystemIdentifier()
+        /// <summary>
+        /// 8.2.4.66 After DOCTYPE system identifier state
+        /// </summary>
+        void R66_AfterDocTypeSystemIdentifier()
         {
             token = null;
 
@@ -711,8 +741,10 @@ namespace HtmlKit
                 }
             } while (true);
         }
-
-        void ReadBogusDocType()
+        /// <summary>
+        /// 8.2.4.67 Bogus DOCTYPE state
+        /// </summary>
+        void R67_BogusDocType()
         {
             token = null;
 

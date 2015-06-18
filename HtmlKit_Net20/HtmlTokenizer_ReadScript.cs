@@ -31,7 +31,10 @@ namespace HtmlKit
 
     partial class HtmlTokenizer
     {
-        void ReadScriptData()
+        /// <summary>
+        /// 8.2.4.6 Script data state
+        /// </summary>
+        void R06_ScriptData()
         {
             do
             {
@@ -73,7 +76,10 @@ namespace HtmlKit
             }
             token = null;
         }
-        void ReadScriptDataDoubleEscapeEnd()
+        /// <summary>
+        /// 8.2.4.33 Script data double escape end state
+        /// </summary>
+        void R33_ScriptDataDoubleEscapeEnd()
         {
             do
             {
@@ -115,7 +121,10 @@ namespace HtmlKit
 
 
         }
-        void ReadScriptDataLessThan()
+        /// <summary>
+        /// 8.2.4.17 Script data less-than sign state
+        /// </summary>
+        void R17_ScriptDataLessThan()
         {
             int nc = Peek();
 
@@ -141,8 +150,10 @@ namespace HtmlKit
 
             token = null;
         }
-
-        void ReadScriptDataEndTagOpen()
+        /// <summary>
+        /// 8.2.4.18 Script data end tag open state
+        /// </summary>
+        void R18_ScriptDataEndTagOpen()
         {
             int nc = Peek();
             char c;
@@ -170,8 +181,10 @@ namespace HtmlKit
 
             token = null;
         }
-
-        void ReadScriptDataEndTagName()
+        /// <summary>
+        /// 8.2.4.19 Script data end tag name state
+        /// </summary>
+        void R19_ScriptDataEndTagName()
         {
             do
             {
@@ -239,8 +252,10 @@ namespace HtmlKit
             name.Length = 0;
             token = null;
         }
-
-        void ReadScriptDataEscapeStart()
+        /// <summary>
+        /// 8.2.4.20 Script data escape start state
+        /// </summary>
+        void R20_ScriptDataEscapeStart()
         {
             int nc = Peek();
 
@@ -256,8 +271,10 @@ namespace HtmlKit
 
             token = null;
         }
-
-        void ReadScriptDataEscapeStartDash()
+        /// <summary>
+        /// 8.2.4.21 Script data escape start dash state
+        /// </summary>
+        void R21_ScriptDataEscapeStartDash()
         {
             int nc = Peek();
 
@@ -273,8 +290,10 @@ namespace HtmlKit
 
             token = null;
         }
-
-        void ReadScriptDataEscaped()
+        /// <summary>
+        /// 8.2.4.22 Script data escaped state
+        /// </summary>
+        void R22_ScriptDataEscaped()
         {
             do
             {
@@ -307,8 +326,10 @@ namespace HtmlKit
 
             token = null;
         }
-
-        void ReadScriptDataEscapedDash()
+        /// <summary>
+        /// 8.2.4.23 Script data escaped dash state
+        /// </summary>
+        void R23_ScriptDataEscapedDash()
         {
             int nc = Peek();
             char c;
@@ -337,8 +358,10 @@ namespace HtmlKit
 
             token = null;
         }
-
-        void ReadScriptDataEscapedDashDash()
+        /// <summary>
+        /// 8.2.4.24 Script data escaped dash dash state
+        /// </summary>
+        void R24_ScriptDataEscapedDashDash()
         {
             do
             {
@@ -378,8 +401,10 @@ namespace HtmlKit
 
 
         }
-
-        void ReadScriptDataEscapedLessThan()
+        /// <summary>
+        /// 8.2.4.25 Script data escaped less-than sign state
+        /// </summary>
+        void R25_ScriptDataEscapedLessThan()
         {
             int nc = Peek();
             char c = (char)nc;
@@ -408,8 +433,10 @@ namespace HtmlKit
 
 
         }
-
-        void ReadScriptDataEscapedEndTagOpen()
+        /// <summary>
+        /// 8.2.4.26 Script data escaped end tag open state
+        /// </summary>
+        void R26_ScriptDataEscapedEndTagOpen()
         {
             int nc = Peek();
             char c;
@@ -440,8 +467,10 @@ namespace HtmlKit
 
 
         }
-
-        void ReadScriptDataEscapedEndTagName()
+        /// <summary>
+        /// 8.2.4.27 Script data escaped end tag name state
+        /// </summary>
+        void R27_ScriptDataEscapedEndTagName()
         {
             do
             {
@@ -512,7 +541,10 @@ namespace HtmlKit
             token = null; 
         }
 
-        void ReadScriptDataDoubleEscapeStart()
+        /// <summary>
+        /// 8.2.4.28 Script data double escape start state
+        /// </summary>
+        void R28_ScriptDataDoubleEscapeStart()
         {
             do
             {
@@ -560,8 +592,10 @@ namespace HtmlKit
 
 
         }
-
-        void ReadScriptDataDoubleEscaped()
+        /// <summary>
+        /// 8.2.4.29 Script data double escaped state
+        /// </summary>
+        void R29_ScriptDataDoubleEscaped()
         {
             do
             {
@@ -596,8 +630,10 @@ namespace HtmlKit
 
 
         }
-
-        void ReadScriptDataDoubleEscapedDash()
+        /// <summary>
+        /// 8.2.4.30 Script data double escaped dash state
+        /// </summary>
+        void R30_ScriptDataDoubleEscapedDash()
         {
             int nc = Peek();
             char c;
@@ -628,8 +664,10 @@ namespace HtmlKit
 
 
         }
-
-        void ReadScriptDataDoubleEscapedDashDash()
+        /// <summary>
+        /// 8.2.4.31 Script data double escaped dash dash state
+        /// </summary>
+        void R31_ScriptDataDoubleEscapedDashDash()
         {
             do
             {
@@ -669,8 +707,10 @@ namespace HtmlKit
 
 
         }
-
-        void ReadScriptDataDoubleEscapedLessThan()
+        /// <summary>
+        /// 8.2.4.32 Script data double escaped less-than sign state
+        /// </summary>
+        void R32_ScriptDataDoubleEscapedLessThan()
         {
             int nc = Peek();
 

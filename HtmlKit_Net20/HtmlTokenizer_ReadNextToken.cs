@@ -68,200 +68,200 @@ namespace HtmlKit
 
                 switch (TokenizerState)
                 {
-                    case HtmlTokenizerState.Data:
-                        ReadDataToken();
+                    case HtmlTokenizerState.Data: 
+                        R01_DataToken();
                         break;
-                    case HtmlTokenizerState.CharacterReferenceInData:
-                        ReadCharacterReferenceInData();
+                    case HtmlTokenizerState.CharacterReferenceInData: 
+                        R02_CharacterReferenceInData();
                         break;
-                    case HtmlTokenizerState.RcData:
-                        ReadRcData();
+                    case HtmlTokenizerState.RcData: 
+                        R03_RcData();
                         break;
-                    case HtmlTokenizerState.CharacterReferenceInRcData:
-                        ReadCharacterReferenceInRcData();
+                    case HtmlTokenizerState.CharacterReferenceInRcData: 
+                        R04_CharacterReferenceInRcData();
                         break;
-                    case HtmlTokenizerState.RawText:
-                        ReadRawText();
+                    case HtmlTokenizerState.RawText: 
+                        R05_RawText();
                         break;
-                    case HtmlTokenizerState.ScriptData:
-                        ReadScriptData();
+                    case HtmlTokenizerState.ScriptData: 
+                        R06_ScriptData();
                         break;
-                    case HtmlTokenizerState.PlainText:
-                        ReadPlainText();
+                    case HtmlTokenizerState.PlainText:                        
+                        R07_PlainText();
                         break;
-                    case HtmlTokenizerState.TagOpen:
-                        ReadTagOpen();
+                    case HtmlTokenizerState.TagOpen:                        
+                        R08_TagOpen();
                         break;
-                    case HtmlTokenizerState.EndTagOpen:
-                        ReadEndTagOpen();
+                    case HtmlTokenizerState.EndTagOpen:                        
+                        R09_EndTagOpen();
                         break;
-                    case HtmlTokenizerState.TagName:
-                        ReadTagName();
+                    case HtmlTokenizerState.TagName:                        
+                        R10_TagName();
                         break;
-                    case HtmlTokenizerState.RcDataLessThan:
-                        ReadRcDataLessThan();
+                    case HtmlTokenizerState.RcDataLessThan:                        
+                        R11_RcDataLessThan();
                         break;
-                    case HtmlTokenizerState.RcDataEndTagOpen:
-                        ReadRcDataEndTagOpen();
+                    case HtmlTokenizerState.RcDataEndTagOpen:                        
+                        R12_RcDataEndTagOpen();
                         break;
-                    case HtmlTokenizerState.RcDataEndTagName:
-                        ReadRcDataEndTagName();
+                    case HtmlTokenizerState.RcDataEndTagName:                        
+                        R13_RcDataEndTagName();
                         break;
-                    case HtmlTokenizerState.RawTextLessThan:
-                        ReadRawTextLessThan();
+                    case HtmlTokenizerState.RawTextLessThan:                        
+                        R14_RawTextLessThan();
                         break;
-                    case HtmlTokenizerState.RawTextEndTagOpen:
-                        ReadRawTextEndTagOpen();
+                    case HtmlTokenizerState.RawTextEndTagOpen:                        
+                        R15_RawTextEndTagOpen();
                         break;
-                    case HtmlTokenizerState.RawTextEndTagName:
-                        ReadRawTextEndTagName();
+                    case HtmlTokenizerState.RawTextEndTagName:                        
+                        R16_RawTextEndTagName();
                         break;
-                    case HtmlTokenizerState.ScriptDataLessThan:
-                        ReadScriptDataLessThan();
+                    case HtmlTokenizerState.ScriptDataLessThan:                        
+                        R17_ScriptDataLessThan();
                         break;
-                    case HtmlTokenizerState.ScriptDataEndTagOpen:
-                        ReadScriptDataEndTagOpen();
+                    case HtmlTokenizerState.ScriptDataEndTagOpen:                        
+                        R18_ScriptDataEndTagOpen();
                         break;
-                    case HtmlTokenizerState.ScriptDataEndTagName:
-                        ReadScriptDataEndTagName();
+                    case HtmlTokenizerState.ScriptDataEndTagName:                        
+                        R19_ScriptDataEndTagName();
                         break;
-                    case HtmlTokenizerState.ScriptDataEscapeStart:
-                        ReadScriptDataEscapeStart();
+                    case HtmlTokenizerState.ScriptDataEscapeStart:                        
+                        R20_ScriptDataEscapeStart();
                         break;
-                    case HtmlTokenizerState.ScriptDataEscapeStartDash:
-                        ReadScriptDataEscapeStartDash();
+                    case HtmlTokenizerState.ScriptDataEscapeStartDash:                        
+                        R21_ScriptDataEscapeStartDash();
                         break;
-                    case HtmlTokenizerState.ScriptDataEscaped:
-                        ReadScriptDataEscaped();
+                    case HtmlTokenizerState.ScriptDataEscaped:                        
+                        R22_ScriptDataEscaped();
                         break;
-                    case HtmlTokenizerState.ScriptDataEscapedDash:
-                        ReadScriptDataEscapedDash();
+                    case HtmlTokenizerState.ScriptDataEscapedDash:                        
+                        R23_ScriptDataEscapedDash();
                         break;
-                    case HtmlTokenizerState.ScriptDataEscapedDashDash:
-                        ReadScriptDataEscapedDashDash();
+                    case HtmlTokenizerState.ScriptDataEscapedDashDash:                        
+                        R24_ScriptDataEscapedDashDash();
                         break;
-                    case HtmlTokenizerState.ScriptDataEscapedLessThan:
-                        ReadScriptDataEscapedLessThan();
+                    case HtmlTokenizerState.ScriptDataEscapedLessThan:                        
+                        R25_ScriptDataEscapedLessThan();
                         break;
-                    case HtmlTokenizerState.ScriptDataEscapedEndTagOpen:
-                        ReadScriptDataEscapedEndTagOpen();
+                    case HtmlTokenizerState.ScriptDataEscapedEndTagOpen:                        
+                        R26_ScriptDataEscapedEndTagOpen();
                         break;
-                    case HtmlTokenizerState.ScriptDataEscapedEndTagName:
-                        ReadScriptDataEscapedEndTagName();
+                    case HtmlTokenizerState.ScriptDataEscapedEndTagName:                        
+                        R27_ScriptDataEscapedEndTagName();
                         break;
-                    case HtmlTokenizerState.ScriptDataDoubleEscapeStart:
-                        ReadScriptDataDoubleEscapeStart();
+                    case HtmlTokenizerState.ScriptDataDoubleEscapeStart:                        
+                        R28_ScriptDataDoubleEscapeStart();
                         break;
-                    case HtmlTokenizerState.ScriptDataDoubleEscaped:
-                        ReadScriptDataDoubleEscaped();
+                    case HtmlTokenizerState.ScriptDataDoubleEscaped:                        
+                        R29_ScriptDataDoubleEscaped();
                         break;
-                    case HtmlTokenizerState.ScriptDataDoubleEscapedDash:
-                        ReadScriptDataDoubleEscapedDash();
+                    case HtmlTokenizerState.ScriptDataDoubleEscapedDash:                        
+                        R30_ScriptDataDoubleEscapedDash();
                         break;
                     case HtmlTokenizerState.ScriptDataDoubleEscapedDashDash:
-                        ReadScriptDataDoubleEscapedDashDash();
+                        R31_ScriptDataDoubleEscapedDashDash();
                         break;
-                    case HtmlTokenizerState.ScriptDataDoubleEscapedLessThan:
-                        ReadScriptDataDoubleEscapedLessThan();
+                    case HtmlTokenizerState.ScriptDataDoubleEscapedLessThan:                        
+                        R32_ScriptDataDoubleEscapedLessThan();
                         break;
-                    case HtmlTokenizerState.ScriptDataDoubleEscapeEnd:
-                        ReadScriptDataDoubleEscapeEnd();
+                    case HtmlTokenizerState.ScriptDataDoubleEscapeEnd:                        
+                        R33_ScriptDataDoubleEscapeEnd();
                         break;
-                    case HtmlTokenizerState.BeforeAttributeName:
-                        ReadBeforeAttributeName();
+                    case HtmlTokenizerState.BeforeAttributeName:                        
+                        R34_BeforeAttributeName();
                         break;
-                    case HtmlTokenizerState.AttributeName:
-                        ReadAttributeName();
+                    case HtmlTokenizerState.AttributeName:                        
+                        R35_AttributeName();
                         break;
-                    case HtmlTokenizerState.AfterAttributeName:
-                        ReadAfterAttributeName();
+                    case HtmlTokenizerState.AfterAttributeName:                        
+                        R36_AfterAttributeName();
                         break;
-                    case HtmlTokenizerState.BeforeAttributeValue:
-                        ReadBeforeAttributeValue();
+                    case HtmlTokenizerState.BeforeAttributeValue:                        
+                        R37_BeforeAttributeValue();
                         break;
-                    case HtmlTokenizerState.AttributeValueQuoted:
-                        ReadAttributeValueQuoted();
+                    case HtmlTokenizerState.AttributeValueQuoted:                       
+                        R38_39_AttributeValueQuoted();
                         break;
-                    case HtmlTokenizerState.AttributeValueUnquoted:
-                        ReadAttributeValueUnquoted();
+                    case HtmlTokenizerState.AttributeValueUnquoted:                        
+                        R40_AttributeValueUnquoted();
                         break;
-                    case HtmlTokenizerState.CharacterReferenceInAttributeValue:
-                        ReadCharacterReferenceInAttributeValue();
+                    case HtmlTokenizerState.CharacterReferenceInAttributeValue:                        
+                        R41_CharacterReferenceInAttributeValue();
                         break;
-                    case HtmlTokenizerState.AfterAttributeValueQuoted:
-                        ReadAfterAttributeValueQuoted();
+                    case HtmlTokenizerState.AfterAttributeValueQuoted:                        
+                        R42_AfterAttributeValueQuoted();
                         break;
-                    case HtmlTokenizerState.SelfClosingStartTag:
-                        ReadSelfClosingStartTag();
+                    case HtmlTokenizerState.SelfClosingStartTag:                        
+                        R43_SelfClosingStartTag();
                         break;
-                    case HtmlTokenizerState.BogusComment:
-                        ReadBogusComment();
+                    case HtmlTokenizerState.BogusComment:                        
+                        R44_BogusComment();
                         break;
-                    case HtmlTokenizerState.MarkupDeclarationOpen:
-                        ReadMarkupDeclarationOpen();
+                    case HtmlTokenizerState.MarkupDeclarationOpen:                        
+                        R45_MarkupDeclarationOpen();
                         break;
-                    case HtmlTokenizerState.CommentStart:
-                        ReadCommentStart();
+                    case HtmlTokenizerState.CommentStart:                        
+                        R46_CommentStart();
                         break;
-                    case HtmlTokenizerState.CommentStartDash:
-                        ReadCommentStartDash();
+                    case HtmlTokenizerState.CommentStartDash:                        
+                        R47_CommentStartDash();
                         break;
-                    case HtmlTokenizerState.Comment:
-                        ReadComment();
+                    case HtmlTokenizerState.Comment:                        
+                        R48_Comment();
                         break;
-                    case HtmlTokenizerState.CommentEndDash:
-                        ReadCommentEndDash();
+                    case HtmlTokenizerState.CommentEndDash:                        
+                        R49_CommentEndDash();
                         break;
-                    case HtmlTokenizerState.CommentEnd:
-                        ReadCommentEnd();
+                    case HtmlTokenizerState.CommentEnd:                        
+                        R50_CommentEnd();
                         break;
-                    case HtmlTokenizerState.CommentEndBang:
-                        ReadCommentEndBang();
+                    case HtmlTokenizerState.CommentEndBang:                        
+                        R51_CommentEndBang();
                         break;
-                    case HtmlTokenizerState.DocType:
-                        ReadDocType();
+                    case HtmlTokenizerState.DocType:                        
+                        R52_DocType();
                         break;
-                    case HtmlTokenizerState.BeforeDocTypeName:
-                        ReadBeforeDocTypeName();
+                    case HtmlTokenizerState.BeforeDocTypeName:                        
+                        R53_BeforeDocTypeName();
                         break;
-                    case HtmlTokenizerState.DocTypeName:
-                        ReadDocTypeName();
+                    case HtmlTokenizerState.DocTypeName:                        
+                        R54_DocTypeName();
                         break;
-                    case HtmlTokenizerState.AfterDocTypeName:
-                        ReadAfterDocTypeName();
+                    case HtmlTokenizerState.AfterDocTypeName:                        
+                        R55_AfterDocTypeName();
                         break;
-                    case HtmlTokenizerState.AfterDocTypePublicKeyword:
-                        ReadAfterDocTypePublicKeyword();
+                    case HtmlTokenizerState.AfterDocTypePublicKeyword:                        
+                        R56_AfterDocTypePublicKeyword();
                         break;
-                    case HtmlTokenizerState.BeforeDocTypePublicIdentifier:
-                        ReadBeforeDocTypePublicIdentifier();
+                    case HtmlTokenizerState.BeforeDocTypePublicIdentifier:                        
+                        R57_BeforeDocTypePublicIdentifier();
                         break;
-                    case HtmlTokenizerState.DocTypePublicIdentifierQuoted:
-                        ReadDocTypePublicIdentifierQuoted();
+                    case HtmlTokenizerState.DocTypePublicIdentifierQuoted:                       
+                        R58_59_DocTypePublicIdentifierQuoted();
                         break;
-                    case HtmlTokenizerState.AfterDocTypePublicIdentifier:
-                        ReadAfterDocTypePublicIdentifier();
+                    case HtmlTokenizerState.AfterDocTypePublicIdentifier:                        
+                        R60_AfterDocTypePublicIdentifier();
                         break;
-                    case HtmlTokenizerState.BetweenDocTypePublicAndSystemIdentifiers:
-                        ReadBetweenDocTypePublicAndSystemIdentifiers();
+                    case HtmlTokenizerState.BetweenDocTypePublicAndSystemIdentifiers:  
+                        R61_BetweenDocTypePublicAndSystemIdentifiers();
                         break;
-                    case HtmlTokenizerState.AfterDocTypeSystemKeyword:
-                        ReadAfterDocTypeSystemKeyword();
+                    case HtmlTokenizerState.AfterDocTypeSystemKeyword:                        
+                        R62_AfterDocTypeSystemKeyword();
                         break;
-                    case HtmlTokenizerState.BeforeDocTypeSystemIdentifier:
-                        ReadBeforeDocTypeSystemIdentifier();
+                    case HtmlTokenizerState.BeforeDocTypeSystemIdentifier:                        
+                        R63_BeforeDocTypeSystemIdentifier();
                         break;
-                    case HtmlTokenizerState.DocTypeSystemIdentifierQuoted:
-                        ReadDocTypeSystemIdentifierQuoted();
+                    case HtmlTokenizerState.DocTypeSystemIdentifierQuoted:              
+                        R64_65_DocTypeSystemIdentifierQuoted();
                         break;
-                    case HtmlTokenizerState.AfterDocTypeSystemIdentifier:
-                        ReadAfterDocTypeSystemIdentifier();
+                    case HtmlTokenizerState.AfterDocTypeSystemIdentifier:                       
+                        R66_AfterDocTypeSystemIdentifier();
                         break;
-                    case HtmlTokenizerState.BogusDocType:
-                        ReadBogusDocType();
+                    case HtmlTokenizerState.BogusDocType:                        
+                        R67_BogusDocType();
                         break;
-                    case HtmlTokenizerState.CDataSection:
-                        ReadCDataSection();
+                    case HtmlTokenizerState.CDataSection:                        
+                        R68_CDataSection();
                         break;
                     case HtmlTokenizerState.EndOfFile:
                         output = token = null;

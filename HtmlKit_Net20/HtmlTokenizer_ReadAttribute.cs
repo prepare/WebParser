@@ -28,7 +28,10 @@ namespace HtmlKit
 {
     partial class HtmlTokenizer
     {
-        void ReadBeforeAttributeName()
+        /// <summary>
+        /// 8.2.4.34 Before attribute name state
+        /// </summary>
+        void R34_BeforeAttributeName()
         {
             token = null;
 
@@ -78,8 +81,10 @@ namespace HtmlKit
                 }
             } while (true);
         }
-
-        void ReadAttributeName()
+        /// <summary>
+        /// 8.2.4.35 Attribute name state
+        /// </summary>
+        void R35_AttributeName()
         {
             token = null;
 
@@ -130,8 +135,10 @@ namespace HtmlKit
 
             EmitTagAttribute();
         }
-
-        void ReadAfterAttributeName()
+        /// <summary>
+        /// 8.2.4.36 After attribute name state
+        /// </summary>
+        void R36_AfterAttributeName()
         {
             token = null;
 
@@ -183,8 +190,10 @@ namespace HtmlKit
                 }
             } while (true);
         }
-
-        void ReadBeforeAttributeValue()
+        /// <summary>
+        /// 8.2.4.37 Before attribute value state
+        /// </summary>
+        void R37_BeforeAttributeValue()
         {
             token = null;
 
@@ -241,8 +250,11 @@ namespace HtmlKit
                 }
             } while (true);
         }
-
-        void ReadAttributeValueQuoted()
+        /// <summary>
+        /// 8.2.4.38 Attribute value (double-quoted) state,
+        /// 8.2.4.39 Attribute value (single-quoted) state
+        /// </summary>
+        void R38_39_AttributeValueQuoted()
         {
             do
             {
@@ -287,8 +299,10 @@ namespace HtmlKit
 
             return;
         }
-
-        void ReadAttributeValueUnquoted()
+        /// <summary>
+        /// 8.2.4.40 Attribute value (unquoted) state
+        /// </summary>
+        void R40_AttributeValueUnquoted()
         {
             do
             {
@@ -350,8 +364,10 @@ namespace HtmlKit
 
         }
 
-
-        void ReadCharacterReferenceInAttributeValue()
+        /// <summary>
+        /// 8.2.4.41 Character reference in attribute value state
+        /// </summary>
+        void R41_CharacterReferenceInAttributeValue()
         {
             char additionalAllowedCharacter = quote == '\0' ? '>' : quote;
             int nc = Peek();
@@ -439,8 +455,10 @@ namespace HtmlKit
 
 
         }
-
-        void ReadAfterAttributeValueQuoted()
+        /// <summary>
+        /// 8.2.4.42 After attribute value (quoted) state
+        /// </summary>
+        void R42_AfterAttributeValueQuoted()
         {
             int nc = Peek();
             bool consume;
