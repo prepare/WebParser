@@ -243,7 +243,7 @@ namespace HtmlKit
 
             EmitDataToken(DecodeCharacterReferences);
         }
-
+     
         /// <summary>
         /// 8.2.4.8 Tag open state
         /// </summary>        

@@ -158,6 +158,80 @@ namespace HtmlKit
             name.Length = 0;
             token = null;
         }
+
+        /// <summary>
+        /// 8.2.4.2 Character reference in data state
+        /// </summary>
+        void R02_CharacterReferenceInData()
+        {
+            ReadCharacterReference(HtmlTokenizerState.Data);
+        }
+        /// <summary>
+        /// 8.2.4.3 RCDATA state
+        /// </summary>
+        void R03_RcData()
+        {
+            do
+            {
+                int nc = Read();
+                char c;
+
+                if (nc == -1)
+                {
+                    TokenizerState = HtmlTokenizerState.EndOfFile;
+                    break;
+                }
+
+                c = (char)nc;
+
+                switch (c)
+                {
+                    case '&':
+                        if (DecodeCharacterReferences)
+                        {
+                            TokenizerState = HtmlTokenizerState.CharacterReferenceInRcData;
+                            token = null;
+                            return;
+                        }
+
+                        goto default;
+                    case '<':
+                        TokenizerState = HtmlTokenizerState.RcDataLessThan;
+                        EmitDataToken(DecodeCharacterReferences);
+                        return;
+                    default:
+                        data.Append(c == '\0' ? '\uFFFD' : c);
+
+                        // Note: we emit at 1024 characters simply to avoid
+                        // consuming too much memory.
+                        if (data.Length >= 1024)
+                        {
+                            EmitDataToken(DecodeCharacterReferences);
+                        }
+
+                        break;
+                }
+            } while (TokenizerState == HtmlTokenizerState.RcData);
+
+            if (data.Length > 0)
+            {
+                EmitDataToken(DecodeCharacterReferences);
+                return;
+            }
+
+            token = null;
+        }
+
+        /// <summary>
+        /// 8.2.4.4 Character reference in RCDATA state
+        /// </summary>
+        void R04_CharacterReferenceInRcData()
+        {
+            ReadCharacterReference(HtmlTokenizerState.RcData);
+
+        }
+
+
         /// <summary>
         /// 8.2.4.5 RAWTEXT state
         /// </summary>
@@ -234,7 +308,7 @@ namespace HtmlKit
 
             EmitDataToken(false);
         }
-
+        
         void ReadCharacterReference(HtmlTokenizerState next)
         {
             int nc = Peek();
@@ -321,77 +395,7 @@ namespace HtmlKit
             ReadGenericRawTextEndTagName(false, HtmlTokenizerState.RawText);
         }
 
-        /// <summary>
-        /// 8.2.4.2 Character reference in data state
-        /// </summary>
-        void R02_CharacterReferenceInData()
-        {
-            ReadCharacterReference(HtmlTokenizerState.Data);
-        }
-        /// <summary>
-        /// 8.2.4.3 RCDATA state
-        /// </summary>
-        void R03_RcData()
-        {
-            do
-            {
-                int nc = Read();
-                char c;
-
-                if (nc == -1)
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    break;
-                }
-
-                c = (char)nc;
-
-                switch (c)
-                {
-                    case '&':
-                        if (DecodeCharacterReferences)
-                        {
-                            TokenizerState = HtmlTokenizerState.CharacterReferenceInRcData;
-                            token = null;
-                            return;
-                        }
-
-                        goto default;
-                    case '<':
-                        TokenizerState = HtmlTokenizerState.RcDataLessThan;
-                        EmitDataToken(DecodeCharacterReferences);
-                        return;
-                    default:
-                        data.Append(c == '\0' ? '\uFFFD' : c);
-
-                        // Note: we emit at 1024 characters simply to avoid
-                        // consuming too much memory.
-                        if (data.Length >= 1024)
-                        {
-                            EmitDataToken(DecodeCharacterReferences);
-                        }
-
-                        break;
-                }
-            } while (TokenizerState == HtmlTokenizerState.RcData);
-
-            if (data.Length > 0)
-            {
-                EmitDataToken(DecodeCharacterReferences);
-                return;
-            }
-
-            token = null;
-        }
-
-        /// <summary>
-        /// 8.2.4.4 Character reference in RCDATA state
-        /// </summary>
-        void R04_CharacterReferenceInRcData()
-        {
-            ReadCharacterReference(HtmlTokenizerState.RcData);
-
-        }
+      
         /// <summary>
         /// 8.2.4.11 RCDATA less-than sign state
         /// </summary>
