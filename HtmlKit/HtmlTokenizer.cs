@@ -193,7 +193,9 @@ namespace HtmlKit
 
             return true;
         }
-
+        /// <summary>
+        /// 8.2.4.1 Data state
+        /// </summary>
         void ReadDataToken()
         {
             do
@@ -241,9 +243,11 @@ namespace HtmlKit
 
             EmitDataToken(DecodeCharacterReferences);
         }
-         
 
-        bool ReadTagOpen()
+        /// <summary>
+        /// 8.2.4.8 Tag open state
+        /// </summary>        
+        void ReadTagOpen()
         {
             int nc = Read();
             char c;
@@ -252,7 +256,7 @@ namespace HtmlKit
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 token = CreateDataToken("<");
-                return true;
+                return;
             }
 
             token = null;
@@ -278,14 +282,14 @@ namespace HtmlKit
                     else
                     {
                         TokenizerState = HtmlTokenizerState.Data;
-                        return false;
+                        return;                         
                     }
                     break;
-            }
-
-            return false;
+            }            
         }
-
+        /// <summary>
+        /// 8.2.4.9 End tag open state
+        /// </summary>
         void ReadEndTagOpen()
         {
             int nc = Read();
@@ -326,7 +330,9 @@ namespace HtmlKit
             }
 
         }
-
+        /// <summary>
+        /// 8.2.4.10 Tag name state
+        /// </summary>
         void ReadTagName()
         {
             do
@@ -378,7 +384,9 @@ namespace HtmlKit
 
 
         }
-          
+        /// <summary>
+        /// 8.2.4.43 Self-closing start tag state
+        /// </summary>
         void ReadSelfClosingStartTag()
         {
             int nc = Read();

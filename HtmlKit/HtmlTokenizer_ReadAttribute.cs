@@ -28,6 +28,9 @@ namespace HtmlKit
 {
     partial class HtmlTokenizer
     {
+        /// <summary>
+        /// 8.2.4.34 Before attribute name state
+        /// </summary>
         void ReadBeforeAttributeName()
         {
             token = null;
@@ -78,7 +81,9 @@ namespace HtmlKit
                 }
             } while (true);
         }
-
+        /// <summary>
+        /// 8.2.4.35 Attribute name state
+        /// </summary>
         void ReadAttributeName()
         {
             token = null;
@@ -130,7 +135,9 @@ namespace HtmlKit
 
             EmitTagAttribute();
         }
-
+        /// <summary>
+        /// 8.2.4.36 After attribute name state
+        /// </summary>
         void ReadAfterAttributeName()
         {
             token = null;
@@ -183,7 +190,9 @@ namespace HtmlKit
                 }
             } while (true);
         }
-
+        /// <summary>
+        /// 8.2.4.37 Before attribute value state
+        /// </summary>
         void ReadBeforeAttributeValue()
         {
             token = null;
@@ -241,7 +250,10 @@ namespace HtmlKit
                 }
             } while (true);
         }
-
+        /// <summary>
+        /// 8.2.4.38 Attribute value (double-quoted) state,
+        /// 8.2.4.39 Attribute value (single-quoted) state
+        /// </summary>
         void ReadAttributeValueQuoted()
         {
             do
@@ -287,7 +299,9 @@ namespace HtmlKit
 
             return;
         }
-
+        /// <summary>
+        /// 8.2.4.40 Attribute value (unquoted) state
+        /// </summary>
         void ReadAttributeValueUnquoted()
         {
             do
@@ -350,7 +364,9 @@ namespace HtmlKit
 
         }
 
-
+        /// <summary>
+        /// 8.2.4.41 Character reference in attribute value state
+        /// </summary>
         void ReadCharacterReferenceInAttributeValue()
         {
             char additionalAllowedCharacter = quote == '\0' ? '>' : quote;
@@ -439,7 +455,9 @@ namespace HtmlKit
 
 
         }
-
+        /// <summary>
+        /// 8.2.4.42 After attribute value (quoted) state
+        /// </summary>
         void ReadAfterAttributeValueQuoted()
         {
             int nc = Peek();

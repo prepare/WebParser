@@ -31,6 +31,9 @@ namespace HtmlKit
 
     partial class HtmlTokenizer
     {
+        /// <summary>
+        /// 8.2.4.44 Bogus comment state
+        /// </summary>
         void ReadBogusComment()
         {
             int nc;
@@ -59,7 +62,9 @@ namespace HtmlKit
 
             EmitCommentToken(data);
         }
-
+        /// <summary>
+        /// 8.2.4.45 Markup declaration open state
+        /// </summary>
         void ReadMarkupDeclarationOpen()
         {
             int count = 0, nc;
@@ -171,7 +176,9 @@ namespace HtmlKit
 
 
         }
-
+        /// <summary>
+        /// 8.2.4.46 Comment start state
+        /// </summary>
         void ReadCommentStart()
         {
             int nc = Read();
@@ -206,7 +213,9 @@ namespace HtmlKit
 
             token = null;
         }
-
+        /// <summary>
+        /// 8.2.4.47 Comment start dash state
+        /// </summary>
         void ReadCommentStartDash()
         {
             int nc = Read();
@@ -241,7 +250,9 @@ namespace HtmlKit
 
             token = null;
         }
-
+        /// <summary>
+        /// 8.2.4.48 Comment state
+        /// </summary>
         void ReadComment()
         {
             token = null;
@@ -276,6 +287,9 @@ namespace HtmlKit
         }
 
         // FIXME: this is exactly the same as ReadCommentStartDash
+        /// <summary>
+        /// 8.2.4.49 Comment end dash state
+        /// </summary>
         void ReadCommentEndDash()
         {
             int nc = Read();
@@ -312,7 +326,9 @@ namespace HtmlKit
 
 
         }
-
+        /// <summary>
+        /// 8.2.4.50 Comment end state
+        /// </summary>
         void ReadCommentEnd()
         {
             token = null;
@@ -353,7 +369,9 @@ namespace HtmlKit
                 }
             } while (true);
         }
-
+        /// <summary>
+        /// 8.2.4.51 Comment end bang state
+        /// </summary>
         void ReadCommentEndBang()
         {
             int nc = Read();
