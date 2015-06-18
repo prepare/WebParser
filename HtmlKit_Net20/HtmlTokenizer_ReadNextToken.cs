@@ -43,26 +43,21 @@ namespace HtmlKit
 
     public delegate void TokenizerEmit(TokenizerEventArgs e);
 
-    /// <summary>
-    /// An HTML tokenizer.
-    /// </summary>
-    /// <remarks>
-    /// Tokenizes HTML text, emitting an <see cref="HtmlToken"/> for each token it encounters.
-    /// </remarks>
+    
     partial class HtmlTokenizer
     {
 
         public event TokenizerEmit TokenEmit;
         public bool UseEventEmitterModel { get; set; }
         bool stopTokenizer;
-        
+
 
         HtmlToken token
         {
             get;
             set;
         }
-                
+
 
         public bool ReadNextToken(out HtmlToken output)
         {
