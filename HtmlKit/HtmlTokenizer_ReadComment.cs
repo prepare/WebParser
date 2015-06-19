@@ -135,9 +135,8 @@ namespace HtmlKit
 
                 if (count == 7)
                 {
-                    doctype = CreateDocTypeToken(name.ToString());
-                    TokenizerState = HtmlTokenizerState.DocType;
-                    name.Length = 0;
+                    doctype = CreateDocTypeToken(ClearNameBuffer());
+                    TokenizerState = HtmlTokenizerState.DocType;                     
                     return;
                 }
 

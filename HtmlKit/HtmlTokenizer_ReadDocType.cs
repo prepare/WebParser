@@ -140,10 +140,9 @@ namespace HtmlKit
                         break;
                     case '>':
                         TokenizerState = HtmlTokenizerState.Data;
-                        doctype.Name = name.ToString();
-
+                        doctype.Name = ClearNameBuffer();
                         EmitAndClearDocTypeToken();
-                        name.Length = 0;
+                         
                         return;
                     case '\0':
                         name.Append('\uFFFD');
@@ -154,8 +153,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.DocTypeName);
 
-            doctype.Name = name.ToString();
-            name.Length = 0;
+            doctype.Name = ClearNameBuffer();
         }
         /// <summary>
         /// 8.2.4.55 After DOCTYPE name state
@@ -199,12 +197,12 @@ namespace HtmlKit
                         if (NameIs("public"))
                         {
                             TokenizerState = HtmlTokenizerState.AfterDocTypePublicKeyword;
-                            doctype.PublicKeyword = name.ToString();
+                            doctype.PublicKeyword = ClearNameBuffer();
                         }
                         else if (NameIs("system"))
                         {
                             TokenizerState = HtmlTokenizerState.AfterDocTypeSystemKeyword;
-                            doctype.SystemKeyword = name.ToString();
+                            doctype.SystemKeyword = ClearNameBuffer();
                         }
                         else
                         {
@@ -320,10 +318,9 @@ namespace HtmlKit
                 if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
-                    doctype.PublicIdentifier = name.ToString();
+                    doctype.PublicIdentifier = ClearNameBuffer();
                     doctype.ForceQuirksMode = true;
-                    EmitAndClearDocTypeToken();
-                    name.Length = 0;
+                    EmitAndClearDocTypeToken();                     
                     return;
                 }
 
@@ -338,10 +335,9 @@ namespace HtmlKit
                         break;
                     case '>': // parse error
                         TokenizerState = HtmlTokenizerState.Data;
-                        doctype.PublicIdentifier = name.ToString();
+                        doctype.PublicIdentifier = ClearNameBuffer();
                         doctype.ForceQuirksMode = true;
-                        EmitAndClearDocTypeToken();
-                        name.Length = 0;
+                        EmitAndClearDocTypeToken();                         
                         return;
                     default:
                         if (c == quote)
@@ -355,8 +351,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.DocTypePublicIdentifierQuoted);
 
-            doctype.PublicIdentifier = name.ToString();
-            name.Length = 0;
+            doctype.PublicIdentifier = ClearNameBuffer();
         }
         /// <summary>
         /// 8.2.4.60 After DOCTYPE public identifier state
@@ -556,15 +551,12 @@ namespace HtmlKit
                 if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
-                    doctype.SystemIdentifier = name.ToString();
+                    doctype.SystemIdentifier = ClearNameBuffer();
                     doctype.ForceQuirksMode = true;
-
-                    EmitAndClearDocTypeToken();
-                    name.Length = 0;
+                    EmitAndClearDocTypeToken();                     
                     return;
                 }
-
-
+                 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
 
@@ -575,11 +567,10 @@ namespace HtmlKit
                         break;
                     case '>': // parse error
                         TokenizerState = HtmlTokenizerState.Data;
-                        doctype.SystemIdentifier = name.ToString();
+                        doctype.SystemIdentifier = ClearNameBuffer();
                         doctype.ForceQuirksMode = true;
 
-                        EmitAndClearDocTypeToken();
-                        name.Length = 0;
+                        EmitAndClearDocTypeToken();                         
                         return;
                     default:
                         if (c == quote)
@@ -593,8 +584,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.DocTypeSystemIdentifierQuoted);
 
-            doctype.SystemIdentifier = name.ToString();
-            name.Length = 0;
+            doctype.SystemIdentifier = ClearNameBuffer();
         }
 
         /// <summary>

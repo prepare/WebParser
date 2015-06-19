@@ -98,8 +98,7 @@ namespace HtmlKit
                 if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
-                    name.Length = 0;
-
+                    name.Length = 0; 
                     EmitDataToken(decoded);
                     return;
                 }

@@ -246,8 +246,7 @@ namespace HtmlKit
                 if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
-                    name.Length = 0;
-
+                    name.Length = 0; 
                     EmitDataToken();
                     return;
                 }
@@ -271,8 +270,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.AttributeValueQuoted);
 
-            attribute.Value = name.ToString();
-            name.Length = 0;
+            attribute.Value = ClearNameBuffer();              
         }
         /// <summary>
         /// 8.2.4.40 Attribute value (unquoted) state
@@ -328,8 +326,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.AttributeValueUnquoted);
 
-            attribute.Value = name.ToString();
-            name.Length = 0;
+            attribute.Value = ClearNameBuffer();             
         }
 
         /// <summary>
