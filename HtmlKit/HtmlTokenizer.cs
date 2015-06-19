@@ -242,7 +242,7 @@ namespace HtmlKit
 
             EmitDataToken(DecodeCharacterReferences);
         }
-     
+
         /// <summary>
         /// 8.2.4.8 Tag open state
         /// </summary>        
@@ -256,7 +256,7 @@ namespace HtmlKit
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 SetEmitToken(CreateDataToken("<"));
                 return;
-            } 
+            }
 
             c = (char)nc;
 
@@ -279,10 +279,10 @@ namespace HtmlKit
                     else
                     {
                         TokenizerState = HtmlTokenizerState.Data;
-                        return;                         
+                        return;
                     }
                     break;
-            }            
+            }
         }
         /// <summary>
         /// 8.2.4.9 End tag open state
@@ -362,10 +362,9 @@ namespace HtmlKit
                         TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
                         break;
                     case '>':
-                        SetEmitToken(CreateTagToken(name.ToString(), isEndTag));
+                        SetEmitToken(CreateTagTokenFromNameBuffer(isEndTag));
                         TokenizerState = HtmlTokenizerState.Data;
-                        data.Length = 0;
-                        name.Length = 0;
+                        data.Length = 0;                         
                         return;
                     default:
                         name.Append(c == '\0' ? '\uFFFD' : c);
@@ -373,8 +372,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.TagName);
 
-            tag = CreateTagToken(name.ToString(), isEndTag);
-            name.Length = 0; 
+            tag = CreateTagTokenFromNameBuffer(isEndTag);              
         }
         /// <summary>
         /// 8.2.4.43 Self-closing start tag state
@@ -405,9 +403,9 @@ namespace HtmlKit
             TokenizerState = HtmlTokenizerState.BeforeAttributeName;
 
             // Note: we save the data in case we hit a parse error and have to emit a data token
-            data.Append(c); 
+            data.Append(c);
         }
-      
+
 
     }
 }

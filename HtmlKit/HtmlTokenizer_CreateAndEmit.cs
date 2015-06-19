@@ -129,7 +129,13 @@ namespace HtmlKit
             return new HtmlAttribute(name);
         }
 
-
+        HtmlTagToken CreateTagTokenFromNameBuffer(bool isEndTag)
+        {
+            HtmlTagToken token = CreateTagToken(name.ToString(), isEndTag);
+            //each time we create tag token, always clear name ***
+            name.Length = 0;
+            return token;
+        }
         void EmitTagAttribute()
         {
             attribute = CreateAttribute(name.ToString());
@@ -237,5 +243,8 @@ namespace HtmlKit
             data.Length = 0;
             tag = null;
         }
+
+        
+
     }
 }

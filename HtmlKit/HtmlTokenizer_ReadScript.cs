@@ -222,10 +222,10 @@ namespace HtmlKit
                         if (NameIs("script"))
                         {
 
-                            SetEmitToken(CreateTagToken(name.ToString(), true));
+                            SetEmitToken(CreateTagTokenFromNameBuffer(true));
                             TokenizerState = HtmlTokenizerState.Data;
                             data.Length = 0;
-                            name.Length = 0;
+                             
                             return;
                         }
                         goto default;
@@ -242,8 +242,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.ScriptDataEndTagName);
 
-            tag = CreateTagToken(name.ToString(), true);
-            name.Length = 0;
+            tag = CreateTagTokenFromNameBuffer(true);             
              
         }
         /// <summary>
@@ -491,11 +490,9 @@ namespace HtmlKit
                     case '>':
                         if (NameIs("script"))
                         {
-                            SetEmitToken(CreateTagToken(name.ToString(), true));
-
+                            SetEmitToken(CreateTagTokenFromNameBuffer(true));
                             TokenizerState = HtmlTokenizerState.Data;
-                            data.Length = 0;
-                            name.Length = 0;
+                            data.Length = 0; 
                             return;
                         }
                         goto default;
@@ -512,8 +509,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.ScriptDataEscapedEndTagName);
 
-            tag = CreateTagToken(name.ToString(), true);
-            name.Length = 0; 
+            tag = CreateTagTokenFromNameBuffer(true);              
         }
 
         /// <summary>
@@ -665,6 +661,7 @@ namespace HtmlKit
                         data.Append(c);
                         break;
                 }
+
             } while (TokenizerState == HtmlTokenizerState.ScriptDataEscaped);
              
         }

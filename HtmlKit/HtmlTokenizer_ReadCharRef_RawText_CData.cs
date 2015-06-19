@@ -131,10 +131,9 @@ namespace HtmlKit
                     case '>':
                         if (NameIs(activeTagName))
                         {
-                            SetEmitToken(CreateTagToken(name.ToString(), true));
+                            SetEmitToken(CreateTagTokenFromNameBuffer(true));
                             TokenizerState = HtmlTokenizerState.Data;
-                            data.Length = 0;
-                            name.Length = 0;
+                            data.Length = 0;                             
                             return;
                         }
                         goto default;
@@ -150,8 +149,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == current);
 
-            tag = CreateTagToken(name.ToString(), true);
-            name.Length = 0; 
+            tag = CreateTagTokenFromNameBuffer(true);             
         }
 
         /// <summary>

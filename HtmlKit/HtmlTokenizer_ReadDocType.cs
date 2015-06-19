@@ -319,8 +319,7 @@ namespace HtmlKit
                     case '>': // parse error
                         TokenizerState = HtmlTokenizerState.Data;
                         doctype.ForceQuirksMode = true;
-                        EmitAndClearDocTypeToken();
-                        data.Length = 0;
+                        EmitAndClearDocTypeToken(); 
                         return;
                     default: // parse error
                         TokenizerState = HtmlTokenizerState.BogusDocType;
@@ -346,8 +345,7 @@ namespace HtmlKit
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     doctype.PublicIdentifier = name.ToString();
                     doctype.ForceQuirksMode = true;
-                    EmitAndClearDocTypeToken();
-                    data.Length = 0;
+                    EmitAndClearDocTypeToken(); 
                     name.Length = 0;
                     return;
                 }
@@ -366,8 +364,7 @@ namespace HtmlKit
                         TokenizerState = HtmlTokenizerState.Data;
                         doctype.PublicIdentifier = name.ToString();
                         doctype.ForceQuirksMode = true;
-                        EmitAndClearDocTypeToken();
-                        data.Length = 0;
+                        EmitAndClearDocTypeToken(); 
                         name.Length = 0;
                         return;
                     default:
