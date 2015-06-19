@@ -71,8 +71,7 @@ namespace HtmlKit
 
             if (data.Length > 0)
             {
-                EmitDataToken(false);
-                return;
+                EmitDataToken(); 
             } 
         }
         /// <summary>

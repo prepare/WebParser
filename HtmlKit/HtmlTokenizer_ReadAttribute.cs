@@ -44,7 +44,7 @@ namespace HtmlKit
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     tag = null;
 
-                    EmitDataToken(false);
+                    EmitDataToken();
                     return;
                 }
 
@@ -95,7 +95,7 @@ namespace HtmlKit
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     name.Length = 0;
                     tag = null;
-                    EmitDataToken(false);
+                    EmitDataToken();
                     return;
                 }
 
@@ -148,7 +148,7 @@ namespace HtmlKit
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     tag = null;
 
-                    EmitDataToken(false);
+                    EmitDataToken();
                     return;
                 }
 
@@ -202,7 +202,7 @@ namespace HtmlKit
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     tag = null;
 
-                    EmitDataToken(false);
+                    EmitDataToken();
                     return;
                 }
 
@@ -261,7 +261,7 @@ namespace HtmlKit
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     name.Length = 0;
 
-                    EmitDataToken(false);
+                    EmitDataToken();
                     return;
                 }
 
@@ -303,9 +303,8 @@ namespace HtmlKit
                 if (nc == -1)
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
-                    name.Length = 0;
-
-                    EmitDataToken(false);
+                    name.Length = 0; 
+                    EmitDataToken();
                     return;
                 }
 
@@ -366,8 +365,7 @@ namespace HtmlKit
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 data.Append('&');
                 name.Length = 0;
-
-                EmitDataToken(false);
+                EmitDataToken();
                 return;
             }
 
@@ -408,7 +406,7 @@ namespace HtmlKit
                             data.Append(entity.GetPushedInput());
                             entity.Reset();
 
-                            EmitDataToken(false);
+                            EmitDataToken();
                             return;
                         }
 
@@ -452,7 +450,7 @@ namespace HtmlKit
             if (nc == -1)
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
-                EmitDataToken(false);
+                EmitDataToken();
                 return;
             }
 

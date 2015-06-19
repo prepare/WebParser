@@ -295,7 +295,7 @@ namespace HtmlKit
             if (nc == -1)
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
-                EmitDataToken(false);
+                EmitDataToken();
                 return;
             }
 
@@ -339,8 +339,7 @@ namespace HtmlKit
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     name.Length = 0;
-
-                    EmitDataToken(false);
+                    EmitDataToken();
                     return;
                 }
 
@@ -385,7 +384,7 @@ namespace HtmlKit
             if (nc == -1)
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
-                EmitDataToken(false);
+                EmitDataToken();
                 return;
             }
 

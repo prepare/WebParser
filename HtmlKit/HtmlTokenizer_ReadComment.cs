@@ -60,7 +60,7 @@ namespace HtmlKit
                 data.Append(c == '\0' ? '\uFFFD' : c);
             } while (true);
 
-            EmitCommentToken(data);
+            EmitCommentToken(data.ToString());
         }
         /// <summary>
         /// 8.2.4.45 Markup declaration open state
@@ -75,7 +75,7 @@ namespace HtmlKit
                 if ((nc = Peek()) == -1)
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
-                    EmitDataToken(false);
+                    EmitDataToken();
                     return;
                 }
 
@@ -116,7 +116,7 @@ namespace HtmlKit
                     if ((nc = Read()) == -1)
                     {
                         TokenizerState = HtmlTokenizerState.EndOfFile;
-                        EmitDataToken(false);
+                        EmitDataToken();
                         return;
                     }
 
@@ -151,7 +151,7 @@ namespace HtmlKit
                     if ((nc = Read()) == -1)
                     {
                         TokenizerState = HtmlTokenizerState.EndOfFile;
-                        EmitDataToken(false);
+                        EmitDataToken();
                         return;
                     }
 
@@ -220,8 +220,8 @@ namespace HtmlKit
 
             if (nc == -1)
             {
-                TokenizerState = HtmlTokenizerState.Data;
-                EmitCommentToken(name);
+                TokenizerState = HtmlTokenizerState.Data;                 
+                EmitCommentTokenFromNameBuffer();
                 return;
             }
 
@@ -236,7 +236,7 @@ namespace HtmlKit
                     break;
                 case '>': // parse error
                     TokenizerState = HtmlTokenizerState.Data;
-                    EmitCommentToken(name);
+                    EmitCommentTokenFromNameBuffer();
                     return;
                 default: // parse error
                     TokenizerState = HtmlTokenizerState.Comment;
@@ -259,7 +259,7 @@ namespace HtmlKit
                 if (nc == -1)
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
-                    EmitCommentToken(name);
+                    EmitCommentTokenFromNameBuffer();
                     return;
                 }
 
@@ -292,7 +292,7 @@ namespace HtmlKit
             if (nc == -1)
             {
                 TokenizerState = HtmlTokenizerState.Data;
-                EmitCommentToken(name);
+                EmitCommentTokenFromNameBuffer();
                 return;
             }
 
@@ -307,7 +307,7 @@ namespace HtmlKit
                     break;
                 case '>': // parse error
                     TokenizerState = HtmlTokenizerState.Data;
-                    EmitCommentToken(name);
+                    EmitCommentTokenFromNameBuffer();
                     return;
                 default: // parse error
                     TokenizerState = HtmlTokenizerState.Comment;
@@ -329,7 +329,7 @@ namespace HtmlKit
                 if (nc == -1)
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
-                    EmitCommentToken(name);
+                    EmitCommentTokenFromNameBuffer();
                     return;
                 }
 
@@ -342,7 +342,7 @@ namespace HtmlKit
                 {
                     case '>':
                         TokenizerState = HtmlTokenizerState.Data;
-                        EmitCommentToken(name);
+                        EmitCommentTokenFromNameBuffer();
                         return;
                     case '!': // parse error
                         TokenizerState = HtmlTokenizerState.CommentEndBang;
@@ -368,7 +368,7 @@ namespace HtmlKit
             if (nc == -1)
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
-                EmitCommentToken(name);
+                EmitCommentTokenFromNameBuffer();
                 return;
             }
 
@@ -384,7 +384,7 @@ namespace HtmlKit
                     break;
                 case '>':
                     TokenizerState = HtmlTokenizerState.Data;
-                    EmitCommentToken(name);
+                    EmitCommentTokenFromNameBuffer();
                     return;
                 default: // parse error
                     TokenizerState = HtmlTokenizerState.Comment;

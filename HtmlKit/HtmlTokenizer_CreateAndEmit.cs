@@ -24,12 +24,12 @@
 // THE SOFTWARE.
 //
 
- 
+
 using System.Text;
 
 namespace HtmlKit
 {
- 
+
     partial class HtmlTokenizer
     {
 
@@ -129,49 +129,53 @@ namespace HtmlKit
             return new HtmlAttribute(name);
         }
 
-        HtmlTagToken CreateTagTokenFromNameBuffer(bool isEndTag)
+        string ClearNameBuffer()
         {
-            HtmlTagToken token = CreateTagToken(name.ToString(), isEndTag);
-            //each time we create tag token, always clear name ***
+            string nameBuffer = name.ToString();
             name.Length = 0;
-            return token;
-        }
-        void EmitTagAttribute()
-        {
-            attribute = CreateAttribute(name.ToString());
-            tag.Attributes.Add(attribute);
-            name.Length = 0;
+            return nameBuffer;
         }
 
-        bool EmitCommentToken(string comment)
+        HtmlTagToken CreateTagTokenFromNameBuffer(bool isEndTag)
+        {
+            //each time we create tag token, always clear name ***
+            return CreateTagToken(ClearNameBuffer(), isEndTag);
+        }
+
+        void EmitTagAttribute()
+        {
+            attribute = CreateAttribute(ClearNameBuffer());
+            tag.Attributes.Add(attribute);
+        }
+        void EmitCommentToken(string comment)
         {
             SetEmitToken(CreateCommentToken(comment));
             data.Length = 0;
             name.Length = 0;
-            return true;
         }
-
-        void EmitCommentToken(StringBuilder comment)
+        void EmitCommentTokenFromNameBuffer()
         {
-            EmitCommentToken(comment.ToString());
+            //each time we create tag token, always clear name ***
+            EmitCommentToken(ClearNameBuffer());
+            data.Length = 0;
         }
-        void EmitDataToken(bool encodeEntities)
+        void EmitDataToken(bool encodeEntities = false)
         {
             if (data.Length > 0)
             {
                 var dataToken = CreateDataToken(data.ToString());
-                dataToken.EncodeEntities = encodeEntities;                 
+                dataToken.EncodeEntities = encodeEntities;
                 SetEmitToken(dataToken);
-                data.Length = 0; 
-            } 
+                data.Length = 0;
+            }
         }
         void EmitCDataToken()
         {
             if (data.Length > 0)
             {
                 SetEmitToken(CreateCDataToken(data.ToString()));
-                data.Length = 0; 
-            } 
+                data.Length = 0;
+            }
         }
 
         void EmitScriptDataToken()
@@ -180,8 +184,8 @@ namespace HtmlKit
             {
 
                 SetEmitToken(CreateScriptDataToken(data.ToString()));
-                data.Length = 0; 
-            } 
+                data.Length = 0;
+            }
         }
         void EmitTagToken()
         {
@@ -218,7 +222,7 @@ namespace HtmlKit
 
                         for (int i = tag.Attributes.Count; i > 0; i--)
                         {
-                             
+
                             var attr = tag.Attributes[i - 1];
 
                             if (attr.Id == HtmlAttributeId.XmlNS && attr.Value != null)
@@ -238,13 +242,13 @@ namespace HtmlKit
             {
                 TokenizerState = HtmlTokenizerState.Data;
             }
-                         
+
             SetEmitToken(tag);
             data.Length = 0;
             tag = null;
         }
 
-        
+
 
     }
 }

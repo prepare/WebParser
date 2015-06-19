@@ -634,8 +634,6 @@ namespace HtmlKit
 
             doctype.SystemIdentifier = name.ToString();
             name.Length = 0;
-
-
         }
 
         /// <summary>

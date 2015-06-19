@@ -167,16 +167,13 @@ namespace HtmlKit
             do
             {
                 int nc = Read();
-                char c;
-
+                char c; 
                 if (nc == -1)
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     break;
-                }
-
-                c = (char)nc;
-
+                } 
+                c = (char)nc; 
                 switch (c)
                 {
                     case '&':
@@ -244,7 +241,7 @@ namespace HtmlKit
                 {
                     case '<':
                         TokenizerState = HtmlTokenizerState.RawTextLessThan;
-                        EmitDataToken(false);
+                        EmitDataToken();
                         return;
                     default:
                         data.Append(c == '\0' ? '\uFFFD' : c);
@@ -253,7 +250,7 @@ namespace HtmlKit
                         // consuming too much memory.
                         if (data.Length >= 1024)
                         {
-                            EmitDataToken(false);
+                            EmitDataToken();
                             return;
                         }
 
@@ -263,8 +260,7 @@ namespace HtmlKit
 
             if (data.Length > 0)
             {
-                EmitDataToken(false);
-                return;
+                EmitDataToken(); 
             } 
         }
 
@@ -286,7 +282,7 @@ namespace HtmlKit
                 // consuming too much memory.
                 if (data.Length >= 1024)
                 {
-                    EmitDataToken(false);
+                    EmitDataToken();
                     return;
                 }
                 nc = Read();
@@ -294,7 +290,7 @@ namespace HtmlKit
 
             TokenizerState = HtmlTokenizerState.EndOfFile;
 
-            EmitDataToken(false);
+            EmitDataToken();
         }
         
         void ReadCharacterReference(HtmlTokenizerState next)
