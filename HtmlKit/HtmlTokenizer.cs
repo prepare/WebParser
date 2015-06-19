@@ -137,18 +137,6 @@ namespace HtmlKit
             get; private set;
         }
 
-
-
-        static bool IsAlphaNumeric(char c)
-        {
-            return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9');
-        }
-
-        static bool IsAsciiLetter(char c)
-        {
-            return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
-        }
-
         static char ToLower(char c)
         {
             return (c >= 'A' && c <= 'Z') ? (char)(c + 0x20) : c;
@@ -174,7 +162,7 @@ namespace HtmlKit
 
         bool ReadNext(out char c)
         {
-            int nc; 
+            int nc;
             if ((nc = text.Read()) == -1)
             {
                 c = '\0';
@@ -189,6 +177,252 @@ namespace HtmlKit
                     LineNumber++;
                     return true;
                 default:
+                    LinePosition++;
+                    return true;
+            }
+        }
+
+        bool Peek(out char c, out CharMode charMode)
+        {
+            int nc = text.Peek();
+            if (nc == -1)
+            {
+                c = '\0';
+                charMode = CharMode.Eof;
+                return false;
+            }
+            c = (char)nc;
+            switch (c)
+            {
+                case '\n':
+                    charMode = CharMode.NewLine;
+                    return true;
+                case '\t':
+                case ' ':
+                case '\r':
+                case '\f':
+                    charMode = CharMode.WhiteSpace;
+                    return true;
+                case '!':
+                    charMode = CharMode.Bang;
+                    return true;
+                case '/':
+                    charMode = CharMode.Slash;
+                    return true;
+                case '?':
+                    charMode = CharMode.Quest;
+                    return true;
+                case '>':
+                    charMode = CharMode.Gt;
+                    return true;
+                case '<':
+                    charMode = CharMode.Lt;
+                    return true;
+                case '=': 
+                    charMode = CharMode.Assign;
+                    return true;
+                case 'a':
+                case 'b':
+                case 'c':
+                case 'd':
+                case 'e':
+                case 'f':
+                case 'g':
+                case 'h':
+                case 'i':
+                case 'j':
+                case 'k':
+                case 'l':
+                case 'm':
+                case 'n':
+                case 'o':
+                case 'p':
+                case 'q':
+                case 'r':
+                case 's':
+                case 't':
+                case 'u':
+                case 'v':
+                case 'w':
+                case 'x':
+                case 'y':
+                case 'z':
+                    charMode = CharMode.LowerAsciiLetter;
+                    return true;
+                case 'A':
+                case 'B':
+                case 'C':
+                case 'D':
+                case 'E':
+                case 'F':
+                case 'G':
+                case 'H':
+                case 'I':
+                case 'J':
+                case 'K':
+                case 'L':
+                case 'M':
+                case 'N':
+                case 'O':
+                case 'P':
+                case 'Q':
+                case 'R':
+                case 'S':
+                case 'T':
+                case 'U':
+                case 'V':
+                case 'W':
+                case 'X':
+                case 'Y':
+                case 'Z':
+                    charMode = CharMode.UpperAsciiLetter;
+                    return true;
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    charMode = CharMode.Numeric;
+                    return true;
+                default:
+                    charMode = CharMode.Others;
+                    return true;
+            }
+        }
+
+        /// <summary>
+        /// read next and analyze char group
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="charMode"></param>
+        /// <returns></returns>
+        bool ReadNext(out char c, out CharMode charMode)
+        {
+            int nc;
+            if ((nc = text.Read()) == -1)
+            {
+                c = '\0';
+                charMode = CharMode.Eof;
+                return false;
+            }
+
+            c = (char)nc;
+            switch (c)
+            {
+                case '\n':
+                    LinePosition = 1;
+                    LineNumber++;
+                    charMode = CharMode.NewLine;
+                    return true;
+                case '\t':
+                case ' ':
+                case '\r':
+                case '\f':
+                    LinePosition++;
+                    charMode = CharMode.WhiteSpace;
+                    return true;
+                case '!':
+                    LinePosition++;
+                    charMode = CharMode.Bang;
+                    return true;
+                case '/':
+                    LinePosition++;
+                    charMode = CharMode.Slash;
+                    return true;
+                case '?':
+                    LinePosition++;
+                    charMode = CharMode.Quest;
+                    return true;
+                case '=':
+                    LinePosition++;
+                    charMode = CharMode.Assign;
+                    return true;
+                case '>':
+                    LinePosition++;
+                    charMode = CharMode.Gt;
+                    return true;
+                case '<':
+                    LinePosition++;
+                    charMode = CharMode.Lt;
+                    return true;
+                case 'a':
+                case 'b':
+                case 'c':
+                case 'd':
+                case 'e':
+                case 'f':
+                case 'g':
+                case 'h':
+                case 'i':
+                case 'j':
+                case 'k':
+                case 'l':
+                case 'm':
+                case 'n':
+                case 'o':
+                case 'p':
+                case 'q':
+                case 'r':
+                case 's':
+                case 't':
+                case 'u':
+                case 'v':
+                case 'w':
+                case 'x':
+                case 'y':
+                case 'z':
+                    charMode = CharMode.LowerAsciiLetter;
+                    LinePosition++;
+                    return true;
+                case 'A':
+                case 'B':
+                case 'C':
+                case 'D':
+                case 'E':
+                case 'F':
+                case 'G':
+                case 'H':
+                case 'I':
+                case 'J':
+                case 'K':
+                case 'L':
+                case 'M':
+                case 'N':
+                case 'O':
+                case 'P':
+                case 'Q':
+                case 'R':
+                case 'S':
+                case 'T':
+                case 'U':
+                case 'V':
+                case 'W':
+                case 'X':
+                case 'Y':
+                case 'Z':
+                    charMode = CharMode.UpperAsciiLetter;
+                    LinePosition++;
+                    return true;
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    charMode = CharMode.Numeric;
+                    LinePosition++;
+                    return true;
+                default:
+                    charMode = CharMode.Others;
                     LinePosition++;
                     return true;
             }
@@ -261,7 +495,8 @@ namespace HtmlKit
         {
 
             char c;
-            if (!ReadNext(out c))
+            CharMode charMode;
+            if (!ReadNext(out c, out charMode))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 SetEmitToken(CreateDataToken("<"));
@@ -273,23 +508,19 @@ namespace HtmlKit
             data.Append('<');
             data.Append(c);
 
-            switch (c)
+            switch (charMode)
             {
-                case '!': TokenizerState = HtmlTokenizerState.MarkupDeclarationOpen; break;
-                case '?': TokenizerState = HtmlTokenizerState.BogusComment; break;
-                case '/': TokenizerState = HtmlTokenizerState.EndTagOpen; break;
+                case CharMode.Bang: TokenizerState = HtmlTokenizerState.MarkupDeclarationOpen; break;
+                case CharMode.Quest: TokenizerState = HtmlTokenizerState.BogusComment; break;
+                case CharMode.Slash: TokenizerState = HtmlTokenizerState.EndTagOpen; break;
                 default:
-                    if (IsAsciiLetter(c))
-                    {
-                        TokenizerState = HtmlTokenizerState.TagName;
-                        isEndTag = false;
-                        name.Append(c);
-                    }
-                    else
-                    {
-                        TokenizerState = HtmlTokenizerState.Data;
-                        return;
-                    }
+                    TokenizerState = HtmlTokenizerState.Data;
+                    return;
+                case CharMode.UpperAsciiLetter:
+                case CharMode.LowerAsciiLetter:
+                    TokenizerState = HtmlTokenizerState.TagName;
+                    isEndTag = false;
+                    name.Append(c);
                     break;
             }
         }
@@ -300,7 +531,8 @@ namespace HtmlKit
         {
 
             char c;
-            if (!ReadNext(out c))
+            CharMode charMode;
+            if (!ReadNext(out c, out charMode))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 EmitDataToken();
@@ -310,26 +542,25 @@ namespace HtmlKit
             // Note: we save the data in case we hit a parse error and have to emit a data token
             data.Append(c);
 
-            switch (c)
+
+            switch (charMode)
             {
-                case '>': // parse error
+                default:
+                    TokenizerState = HtmlTokenizerState.BogusComment;
+                    return;
+                case CharMode.Gt:// parse error
                     TokenizerState = HtmlTokenizerState.Data;
                     data.Length = 0;
                     break;
-                default:
-                    if (IsAsciiLetter(c))
-                    {
-                        TokenizerState = HtmlTokenizerState.TagName;
-                        isEndTag = true;
-                        name.Append(c);
-                    }
-                    else
-                    {
-                        TokenizerState = HtmlTokenizerState.BogusComment;
-                        return;
-                    }
+                case CharMode.UpperAsciiLetter:
+                case CharMode.LowerAsciiLetter:
+                    TokenizerState = HtmlTokenizerState.TagName;
+                    isEndTag = true;
+                    name.Append(c);
                     break;
             }
+
+
 
         }
         /// <summary>
@@ -340,7 +571,8 @@ namespace HtmlKit
             do
             {
                 char c;
-                if (!ReadNext(out c))
+                CharMode charMode;
+                if (!ReadNext(out c, out charMode))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     name.Length = 0;
@@ -350,27 +582,28 @@ namespace HtmlKit
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
 
-                switch (c)
+                switch (charMode)
                 {
-                    case '\t':
-                    case '\r':
-                    case '\n':
-                    case '\f':
-                    case ' ':
+                    case CharMode.NewLine:
+                    case CharMode.WhiteSpace:
                         TokenizerState = HtmlTokenizerState.BeforeAttributeName;
                         break;
-                    case '/':
+                    case CharMode.Slash:
                         TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
                         break;
-                    case '>':
+                    case CharMode.Gt:
                         SetEmitToken(CreateTagTokenFromNameBuffer(isEndTag));
                         TokenizerState = HtmlTokenizerState.Data;
                         data.Length = 0;
                         return;
+                    case CharMode.NullChar:
+                        name.Append('\uFFFD');
+                        break;
                     default:
-                        name.Append(c == '\0' ? '\uFFFD' : c);
+                        name.Append(c);
                         break;
                 }
+
             } while (TokenizerState == HtmlTokenizerState.TagName);
 
             tag = CreateTagTokenFromNameBuffer(isEndTag);

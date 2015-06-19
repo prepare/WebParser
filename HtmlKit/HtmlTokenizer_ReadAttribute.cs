@@ -69,9 +69,12 @@ namespace HtmlKit
                     case '=':
                         // parse error
                         goto default;
+                    case '\0':
+                        c = '\uFFFD';
+                        goto default;
                     default:
                         TokenizerState = HtmlTokenizerState.AttributeName;
-                        name.Append(c == '\0' ? '\uFFFD' : c);
+                        name.Append(c);
                         return;
                 }
             } while (true);
@@ -115,11 +118,13 @@ namespace HtmlKit
                         break;
                     case '>':
                         EmitTagAttribute();
-
                         EmitTagToken();
                         return;
+                    case '\0':
+                        c = '\uFFFD';
+                        goto default;
                     default:
-                        name.Append(c == '\0' ? '\uFFFD' : c);
+                        name.Append(c);
                         break;
                 }
             } while (TokenizerState == HtmlTokenizerState.AttributeName);
@@ -169,9 +174,12 @@ namespace HtmlKit
                     case '<':
                         // parse error
                         goto default;
+                    case '\0':
+                        c = '\uFFFD';
+                        goto default;
                     default:
                         TokenizerState = HtmlTokenizerState.AttributeName;
-                        name.Append(c == '\0' ? '\uFFFD' : c);
+                        name.Append(c);
                         return;
                 }
             } while (true);
@@ -226,9 +234,12 @@ namespace HtmlKit
                     case '`':
                         // parse error
                         goto default;
+                    case '\0':
+                        c = '\uFFFD';
+                        goto default;
                     default:
                         TokenizerState = HtmlTokenizerState.AttributeName;
-                        name.Append(c == '\0' ? '\uFFFD' : c);
+                        name.Append(c);
                         return;
                 }
             } while (true);
@@ -246,7 +257,7 @@ namespace HtmlKit
                 if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
-                    name.Length = 0; 
+                    name.Length = 0;
                     EmitDataToken();
                     return;
                 }
@@ -270,7 +281,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.AttributeValueQuoted);
 
-            attribute.Value = ClearNameBuffer();              
+            attribute.Value = ClearNameBuffer();
         }
         /// <summary>
         /// 8.2.4.40 Attribute value (unquoted) state
@@ -313,20 +324,19 @@ namespace HtmlKit
                     case '=':
                     case '`':
                         // parse error
-                        goto default;
+                        goto default; 
                     default:
                         if (c == quote)
                         {
                             TokenizerState = HtmlTokenizerState.AfterAttributeValueQuoted;
                             break;
-                        }
-
+                        } 
                         name.Append(c == '\0' ? '\uFFFD' : c);
                         break;
                 }
             } while (TokenizerState == HtmlTokenizerState.AttributeValueUnquoted);
 
-            attribute.Value = ClearNameBuffer();             
+            attribute.Value = ClearNameBuffer();
         }
 
         /// <summary>
@@ -336,8 +346,8 @@ namespace HtmlKit
         {
             char additionalAllowedCharacter = quote == '\0' ? '>' : quote;
             char c;
-
-            if (!Peek(out c))
+            CharMode charMode;
+            if (!Peek(out c, out charMode))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 data.Append('&');
@@ -372,12 +382,11 @@ namespace HtmlKit
                         break;
                     }
 
-                    entity.Push('&');
-
+                    entity.Push('&'); 
                     while (entity.Push(c))
                     {
                         ReadNext();
-                        if (!Peek(out c))
+                        if (!Peek(out c, out charMode))
                         {
                             TokenizerState = HtmlTokenizerState.EndOfFile;
                             data.Append(entity.GetPushedInput());
@@ -386,14 +395,22 @@ namespace HtmlKit
                             return;
                         }
                     }
-
                     var pushed = entity.GetPushedInput();
                     string value;
 
-                    if (c == '=' || IsAlphaNumeric(c))
-                        value = pushed;
-                    else
-                        value = entity.GetValue();
+                    switch (charMode)
+                    {
+                        default:
+                            value = entity.GetValue();
+                            break;
+                        case CharMode.Assign:
+                        case CharMode.LowerAsciiLetter:
+                        case CharMode.UpperAsciiLetter:
+                        case CharMode.Numeric:
+                            value = pushed;
+                            break;
+                    }
+
 
                     data.Append(pushed);
                     name.Append(value);
@@ -426,7 +443,7 @@ namespace HtmlKit
             }
 
             bool consume;
-             
+
             switch (c)
             {
                 case '\t':

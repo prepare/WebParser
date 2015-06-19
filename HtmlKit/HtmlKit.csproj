@@ -30,6 +30,7 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="HtmlTokenizer_CharMode.cs" />
     <Compile Include="HtmlTokenizer_CreateAndEmit.cs" />
     <Compile Include="HtmlTokenizer_ReadAttribute.cs" />
     <Compile Include="HtmlTokenizer_ReadComment.cs" />

@@ -38,10 +38,10 @@ namespace HtmlKit
 
         void ReadGenericRawTextLessThan(HtmlTokenizerState rawText, HtmlTokenizerState rawTextEndTagOpen)
         {
-    
+
 
             char c;
-            if(!Peek(out c))
+            if (!Peek(out c))
             {
                 //?
                 throw new System.NotSupportedException();
@@ -60,30 +60,32 @@ namespace HtmlKit
                     TokenizerState = rawText;
                     break;
             }
-
         }
 
         void ReadGenericRawTextEndTagOpen(bool decoded, HtmlTokenizerState rawText, HtmlTokenizerState rawTextEndTagName)
         {
-             
+
             char c;
-            if(!Peek(out c))             
+            CharMode charMode;
+            if (!Peek(out c, out charMode))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 EmitDataToken(decoded);
                 return;
             }
-             
-            if (IsAsciiLetter(c))
+            switch (charMode)
             {
-                TokenizerState = rawTextEndTagName;
-                name.Append(c);
-                data.Append(c);
-                ReadNext();
-            }
-            else
-            {
-                TokenizerState = rawText;
+                //IsAsciiLetter(c)
+                case CharMode.UpperAsciiLetter:
+                case CharMode.LowerAsciiLetter:
+                    TokenizerState = rawTextEndTagName;
+                    name.Append(c);
+                    data.Append(c);
+                    ReadNext();
+                    break;
+                default:
+                    TokenizerState = rawText;
+                    break;
             }
         }
 
@@ -95,10 +97,11 @@ namespace HtmlKit
             {
 
                 char c;
-                if (!ReadNext(out c))
+                CharMode charMode;
+                if (!ReadNext(out c, out charMode))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
-                    name.Length = 0; 
+                    name.Length = 0;
                     EmitDataToken(decoded);
                     return;
                 }
@@ -136,13 +139,19 @@ namespace HtmlKit
                         }
                         goto default;
                     default:
-                        if (!IsAsciiLetter(c))
+                        switch (charMode)
                         {
-                            TokenizerState = rawText;
-                            return;
-                        }
-
-                        name.Append(c == '\0' ? '\uFFFD' : c);
+                            default://if (!IsAsciiLetter(c))
+                                TokenizerState = rawText;
+                                return;
+                            case CharMode.UpperAsciiLetter:
+                            case CharMode.LowerAsciiLetter:
+                                name.Append(c);
+                                break;
+                            case CharMode.NullChar:
+                                name.Append('\uFFFD');
+                                break;
+                        }                 
                         break;
                 }
             } while (TokenizerState == current);
@@ -286,15 +295,15 @@ namespace HtmlKit
 
         void ReadCharacterReference(HtmlTokenizerState next)
         {
-             
+
             char c;
-            if(!Peek(out c))
+            if (!Peek(out c))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 data.Append('&');
                 EmitDataToken(true);
                 return;
-            } 
+            }
             switch (c)
             {
                 case '\t':
@@ -324,7 +333,7 @@ namespace HtmlKit
 
                     EmitDataToken(true);
                     return;
-                } 
+                }
             }
 
             TokenizerState = next;
@@ -416,7 +425,7 @@ namespace HtmlKit
                 else
                 {
                     cdata[cdataIndex++] = c;
-                } 
+                }
             }
 
             TokenizerState = HtmlTokenizerState.EndOfFile;
