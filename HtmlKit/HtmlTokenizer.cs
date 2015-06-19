@@ -154,31 +154,45 @@ namespace HtmlKit
             return (c >= 'A' && c <= 'Z') ? (char)(c + 0x20) : c;
         }
 
-        int Peek()
+        bool Peek(out char c)
         {
-            return text.Peek();
+            int nc = text.Peek();
+            if (nc == -1)
+            {
+                c = '\0';
+                return false;
+            }
+            c = (char)nc;
+            return true;
         }
 
-        int Read()
+        void ReadNext()
         {
-            int c;
-
-            if ((c = text.Read()) == -1)
-                return -1;
-
-            if (c == '\n')
-            {
-                LinePosition = 1;
-                LineNumber++;
-            }
-            else
-            {
-                LinePosition++;
-            }
-
-            return c;
+            char c;
+            ReadNext(out c);
         }
 
+        bool ReadNext(out char c)
+        {
+            int nc; 
+            if ((nc = text.Read()) == -1)
+            {
+                c = '\0';
+                return false;
+            }
+
+            c = (char)nc;
+            switch (c)
+            {
+                case '\n':
+                    LinePosition = 1;
+                    LineNumber++;
+                    return true;
+                default:
+                    LinePosition++;
+                    return true;
+            }
+        }
         // Note: value must be lowercase
         bool NameIs(string value)
         {
@@ -200,16 +214,13 @@ namespace HtmlKit
         {
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     break;
                 }
-
-                c = (char)nc;
 
                 switch (c)
                 {
@@ -248,23 +259,21 @@ namespace HtmlKit
         /// </summary>        
         void R08_TagOpen()
         {
-            int nc = Read();
-            char c;
 
-            if (nc == -1)
+            char c;
+            if (!ReadNext(out c))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 SetEmitToken(CreateDataToken("<"));
                 return;
             }
 
-            c = (char)nc;
 
             // Note: we save the data in case we hit a parse error and have to emit a data token
             data.Append('<');
             data.Append(c);
 
-            switch ((c = (char)nc))
+            switch (c)
             {
                 case '!': TokenizerState = HtmlTokenizerState.MarkupDeclarationOpen; break;
                 case '?': TokenizerState = HtmlTokenizerState.BogusComment; break;
@@ -289,17 +298,15 @@ namespace HtmlKit
         /// </summary>
         void R09_EndTagOpen()
         {
-            int nc = Read();
-            char c;
 
-            if (nc == -1)
+            char c;
+            if (!ReadNext(out c))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 EmitDataToken();
                 return;
             }
 
-            c = (char)nc;
             // Note: we save the data in case we hit a parse error and have to emit a data token
             data.Append(c);
 
@@ -332,19 +339,14 @@ namespace HtmlKit
         {
             do
             {
-                int nc = Read();
                 char c;
-
-                if (nc == -1)
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     name.Length = 0;
                     EmitDataToken();
                     return;
                 }
-
-                c = (char)nc;
-
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
 
@@ -363,7 +365,7 @@ namespace HtmlKit
                     case '>':
                         SetEmitToken(CreateTagTokenFromNameBuffer(isEndTag));
                         TokenizerState = HtmlTokenizerState.Data;
-                        data.Length = 0;                         
+                        data.Length = 0;
                         return;
                     default:
                         name.Append(c == '\0' ? '\uFFFD' : c);
@@ -371,24 +373,21 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.TagName);
 
-            tag = CreateTagTokenFromNameBuffer(isEndTag);              
+            tag = CreateTagTokenFromNameBuffer(isEndTag);
         }
         /// <summary>
         /// 8.2.4.43 Self-closing start tag state
         /// </summary>
         void R43_SelfClosingStartTag()
         {
-            int nc = Read();
-            char c;
 
-            if (nc == -1)
+            char c;
+            if (!ReadNext(out c))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 EmitDataToken();
                 return;
             }
-
-            c = (char)nc;
 
             if (c == '>')
             {

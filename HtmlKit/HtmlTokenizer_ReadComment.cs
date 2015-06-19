@@ -36,7 +36,7 @@ namespace HtmlKit
         /// </summary>
         void R44_BogusComment()
         {
-            int nc;
+
             char c;
 
             if (data.Length > 0)
@@ -46,18 +46,22 @@ namespace HtmlKit
                 data[0] = c;
             }
 
+
             do
             {
-                if ((nc = Read()) == -1)
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     break;
                 }
-
-                if ((c = (char)nc) == '>')
+                if (c == '>')
+                {
                     break;
-
-                data.Append(c == '\0' ? '\uFFFD' : c);
+                }
+                else
+                {
+                    data.Append(c == '\0' ? '\uFFFD' : c);
+                }
             } while (true);
 
             EmitCommentToken(data.ToString());
@@ -67,27 +71,27 @@ namespace HtmlKit
         /// </summary>
         void R45_MarkupDeclarationOpen()
         {
-            int count = 0, nc;
+            int count = 0;
             char c = '\0';
 
             while (count < 2)
             {
-                if ((nc = Peek()) == -1)
+                if(!ReadNext(out c))                 
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     EmitDataToken();
                     return;
                 }
 
-                if ((c = (char)nc) != '-')
+                if (c != '-')
                     break;
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
-                Read();
+                ReadNext();
                 count++;
             }
-             
+
 
             if (count == 2)
             {
@@ -108,19 +112,19 @@ namespace HtmlKit
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
                 name.Append(c);
-                Read();
+                ReadNext();
                 count = 1;
 
                 while (count < 7)
                 {
-                    if ((nc = Read()) == -1)
+                    if (!ReadNext(out c))
                     {
                         TokenizerState = HtmlTokenizerState.EndOfFile;
                         EmitDataToken();
                         return;
                     }
 
-                    if (ToLower((c = (char)nc)) != DocType[count])
+                    if (ToLower(c) != DocType[count])
                         break;
 
                     // Note: we save the data in case we hit a parse error and have to emit a data token
@@ -143,19 +147,19 @@ namespace HtmlKit
             {
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
-                Read();
+                ReadNext();
                 count = 1;
 
                 while (count < 7)
                 {
-                    if ((nc = Read()) == -1)
+                    if (!ReadNext(out c))
                     {
                         TokenizerState = HtmlTokenizerState.EndOfFile;
                         EmitDataToken();
                         return;
                     }
 
-                    if ((c = (char)nc) != CData[count])
+                    if (c != CData[count])
                         break;
 
                     // Note: we save the data in case we hit a parse error and have to emit a data token
@@ -180,18 +184,15 @@ namespace HtmlKit
         /// </summary>
         void R46_CommentStart()
         {
-            int nc = Read();
-            char c;
 
-            if (nc == -1)
+            char c;
+            if (!ReadNext(out c))
             {
                 TokenizerState = HtmlTokenizerState.Data;
 
                 EmitCommentToken(string.Empty);
                 return;
             }
-
-            c = (char)nc;
 
             data.Append(c);
 
@@ -208,24 +209,21 @@ namespace HtmlKit
                     TokenizerState = HtmlTokenizerState.Comment;
                     name.Append(c == '\0' ? '\uFFFD' : c);
                     break;
-            } 
+            }
         }
         /// <summary>
         /// 8.2.4.47 Comment start dash state
         /// </summary>
         void R47_CommentStartDash()
         {
-            int nc = Read();
-            char c;
 
-            if (nc == -1)
+            char c;
+            if (!ReadNext(out c))
             {
-                TokenizerState = HtmlTokenizerState.Data;                 
+                TokenizerState = HtmlTokenizerState.Data;
                 EmitCommentTokenFromNameBuffer();
                 return;
             }
-
-            c = (char)nc;
 
             data.Append(c);
 
@@ -243,27 +241,25 @@ namespace HtmlKit
                     name.Append('-');
                     name.Append(c == '\0' ? '\uFFFD' : c);
                     break;
-            } 
+            }
         }
         /// <summary>
         /// 8.2.4.48 Comment state
         /// </summary>
         void R48_Comment()
         {
-           
+
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     EmitCommentTokenFromNameBuffer();
                     return;
                 }
 
-                c = (char)nc;
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -286,17 +282,14 @@ namespace HtmlKit
         /// </summary>
         void R49_CommentEndDash()
         {
-            int nc = Read();
-            char c;
 
-            if (nc == -1)
+            char c;
+            if (!ReadNext(out c))
             {
                 TokenizerState = HtmlTokenizerState.Data;
                 EmitCommentTokenFromNameBuffer();
                 return;
             }
-
-            c = (char)nc;
 
             data.Append(c);
 
@@ -314,26 +307,25 @@ namespace HtmlKit
                     name.Append('-');
                     name.Append(c == '\0' ? '\uFFFD' : c);
                     break;
-            } 
+            }
         }
         /// <summary>
         /// 8.2.4.50 Comment end state
         /// </summary>
         void R50_CommentEnd()
-        {   
+        {
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     EmitCommentTokenFromNameBuffer();
                     return;
                 }
 
-                c = (char)nc;
+
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -362,17 +354,14 @@ namespace HtmlKit
         /// </summary>
         void R51_CommentEndBang()
         {
-            int nc = Read();
-            char c;
 
-            if (nc == -1)
+            char c;
+            if (!ReadNext(out c))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 EmitCommentTokenFromNameBuffer();
                 return;
             }
-
-            c = (char)nc;
 
             data.Append(c);
 
@@ -391,7 +380,7 @@ namespace HtmlKit
                     name.Append("--!");
                     name.Append(c == '\0' ? '\uFFFD' : c);
                     break;
-            } 
+            }
         }
 
     }

@@ -33,13 +33,11 @@ namespace HtmlKit
         /// </summary>
         void R34_BeforeAttributeName()
         {
-           
+
             do
             {
-                int nc = Read();
                 char c;
-
-                if (nc == -1)
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     tag = null;
@@ -47,8 +45,6 @@ namespace HtmlKit
                     EmitDataToken();
                     return;
                 }
-
-                c = (char)nc;
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -84,13 +80,12 @@ namespace HtmlKit
         /// 8.2.4.35 Attribute name state
         /// </summary>
         void R35_AttributeName()
-        {   
+        {
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     name.Length = 0;
@@ -99,7 +94,6 @@ namespace HtmlKit
                     return;
                 }
 
-                c = (char)nc;
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -137,22 +131,18 @@ namespace HtmlKit
         /// </summary>
         void R36_AfterAttributeName()
         {
-            
+
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     tag = null;
-
                     EmitDataToken();
                     return;
                 }
-
-                c = (char)nc;
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -191,13 +181,12 @@ namespace HtmlKit
         /// </summary>
         void R37_BeforeAttributeValue()
         {
-            
+
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     tag = null;
@@ -206,7 +195,6 @@ namespace HtmlKit
                     return;
                 }
 
-                c = (char)nc;
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -253,10 +241,9 @@ namespace HtmlKit
         {
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     name.Length = 0;
@@ -264,16 +251,13 @@ namespace HtmlKit
                     EmitDataToken();
                     return;
                 }
-
-                c = (char)nc;
-
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
 
                 switch (c)
                 {
                     case '&':
-                        TokenizerState = HtmlTokenizerState.CharacterReferenceInAttributeValue; 
+                        TokenizerState = HtmlTokenizerState.CharacterReferenceInAttributeValue;
                         return;
                     default:
                         if (c == quote)
@@ -288,7 +272,7 @@ namespace HtmlKit
             } while (TokenizerState == HtmlTokenizerState.AttributeValueQuoted);
 
             attribute.Value = name.ToString();
-            name.Length = 0;  
+            name.Length = 0;
         }
         /// <summary>
         /// 8.2.4.40 Attribute value (unquoted) state
@@ -297,18 +281,16 @@ namespace HtmlKit
         {
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
-                    name.Length = 0; 
+                    name.Length = 0;
                     EmitDataToken();
                     return;
-                }
 
-                c = (char)nc;
+                }
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -323,7 +305,7 @@ namespace HtmlKit
                         TokenizerState = HtmlTokenizerState.BeforeAttributeName;
                         break;
                     case '&':
-                        TokenizerState = HtmlTokenizerState.CharacterReferenceInAttributeValue; 
+                        TokenizerState = HtmlTokenizerState.CharacterReferenceInAttributeValue;
                         return;
                     case '>':
                         EmitTagToken();
@@ -347,7 +329,7 @@ namespace HtmlKit
             } while (TokenizerState == HtmlTokenizerState.AttributeValueUnquoted);
 
             attribute.Value = name.ToString();
-            name.Length = 0; 
+            name.Length = 0;
         }
 
         /// <summary>
@@ -356,11 +338,9 @@ namespace HtmlKit
         void R41_CharacterReferenceInAttributeValue()
         {
             char additionalAllowedCharacter = quote == '\0' ? '>' : quote;
-            int nc = Peek();
-            bool consume;
             char c;
 
-            if (nc == -1)
+            if (!Peek(out c))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 data.Append('&');
@@ -369,7 +349,8 @@ namespace HtmlKit
                 return;
             }
 
-            c = (char)nc; 
+            bool consume;
+
             switch (c)
             {
                 case '\t':
@@ -398,19 +379,15 @@ namespace HtmlKit
 
                     while (entity.Push(c))
                     {
-                        Read();
-
-                        if ((nc = Peek()) == -1)
+                        ReadNext();
+                        if (!Peek(out c))
                         {
                             TokenizerState = HtmlTokenizerState.EndOfFile;
                             data.Append(entity.GetPushedInput());
                             entity.Reset();
-
                             EmitDataToken();
                             return;
                         }
-
-                        c = (char)nc;
                     }
 
                     var pushed = entity.GetPushedInput();
@@ -434,7 +411,7 @@ namespace HtmlKit
                 TokenizerState = HtmlTokenizerState.AttributeValueQuoted;
 
             if (consume)
-                Read();
+                ReadNext();
 
 
         }
@@ -443,18 +420,16 @@ namespace HtmlKit
         /// </summary>
         void R42_AfterAttributeValueQuoted()
         {
-            int nc = Peek();
-            bool consume;
             char c;
-
-            if (nc == -1)
+            if (!Peek(out c))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 EmitDataToken();
                 return;
             }
 
-            c = (char)nc; 
+            bool consume;
+             
             switch (c)
             {
                 case '\t':
@@ -480,7 +455,7 @@ namespace HtmlKit
             }
 
             if (consume)
-                Read();
+                ReadNext();
         }
 
 

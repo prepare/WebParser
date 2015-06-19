@@ -24,7 +24,7 @@
 // THE SOFTWARE.
 //
 
- 
+
 
 namespace HtmlKit
 {
@@ -38,16 +38,13 @@ namespace HtmlKit
         {
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     break;
                 }
-
-                c = (char)nc;
 
                 switch (c)
                 {
@@ -71,8 +68,8 @@ namespace HtmlKit
 
             if (data.Length > 0)
             {
-                EmitDataToken(); 
-            } 
+                EmitDataToken();
+            }
         }
         /// <summary>
         /// 8.2.4.33 Script data double escape end state
@@ -81,8 +78,9 @@ namespace HtmlKit
         {
             do
             {
-                int nc = Peek();
-                char c = (char)nc;
+                char c;
+                if (!Peek(out c))
+                { throw new System.Exception(); }
 
                 switch (c)
                 {
@@ -98,7 +96,7 @@ namespace HtmlKit
                         else
                             TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscaped;
                         data.Append(c);
-                        Read();
+                        ReadNext();
                         break;
                     default:
                         if (!IsAsciiLetter(c))
@@ -109,12 +107,12 @@ namespace HtmlKit
                         {
                             name.Append(c);
                             data.Append(c);
-                            Read();
+                            ReadNext();
                         }
                         break;
                 }
             } while (TokenizerState == HtmlTokenizerState.ScriptDataDoubleEscapeEnd);
-             
+
 
         }
         /// <summary>
@@ -122,56 +120,57 @@ namespace HtmlKit
         /// </summary>
         void R17_ScriptDataLessThan()
         {
-            int nc = Peek();
+
+            char c;
+            if (!Peek(out c))
+            {
+                throw new System.NotSupportedException(); //?
+            }
 
             data.Append('<');
-
-            switch ((char)nc)
+            switch (c)
             {
                 case '/':
                     TokenizerState = HtmlTokenizerState.ScriptDataEndTagOpen;
                     data.Append('/');
                     name.Length = 0;
-                    Read();
+                    ReadNext();
                     break;
                 case '!':
                     TokenizerState = HtmlTokenizerState.ScriptDataEscapeStart;
                     data.Append('!');
-                    Read();
+                    ReadNext();
                     break;
                 default:
                     TokenizerState = HtmlTokenizerState.ScriptData;
                     break;
-            } 
+            }
         }
         /// <summary>
         /// 8.2.4.18 Script data end tag open state
         /// </summary>
         void R18_ScriptDataEndTagOpen()
         {
-            int nc = Peek();
-            char c;
 
-            if (nc == -1)
+            char c;
+            if (!Peek(out c))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 EmitScriptDataToken();
                 return;
             }
 
-            c = (char)nc;
-
             if (c == 'S' || c == 's')
             {
                 TokenizerState = HtmlTokenizerState.ScriptDataEndTagName;
                 name.Append('s');
                 data.Append(c);
-                Read();
+                ReadNext();
             }
             else
             {
                 TokenizerState = HtmlTokenizerState.ScriptData;
-            } 
+            }
         }
         /// <summary>
         /// 8.2.4.19 Script data end tag name state
@@ -180,18 +179,15 @@ namespace HtmlKit
         {
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     name.Length = 0;
                     EmitScriptDataToken();
                     return;
                 }
-
-                c = (char)nc;
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -224,7 +220,7 @@ namespace HtmlKit
                             SetEmitToken(CreateTagTokenFromNameBuffer(true));
                             TokenizerState = HtmlTokenizerState.Data;
                             data.Length = 0;
-                             
+
                             return;
                         }
                         goto default;
@@ -232,7 +228,7 @@ namespace HtmlKit
                         if (!IsAsciiLetter(c))
                         {
                             TokenizerState = HtmlTokenizerState.ScriptData;
-                            
+
                             return;
                         }
 
@@ -241,43 +237,46 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.ScriptDataEndTagName);
 
-            tag = CreateTagTokenFromNameBuffer(true);             
-             
+            tag = CreateTagTokenFromNameBuffer(true);
+
         }
         /// <summary>
         /// 8.2.4.20 Script data escape start state
         /// </summary>
         void R20_ScriptDataEscapeStart()
         {
-            int nc = Peek();
 
-            if (nc == '-')
+            char c;
+            if (!Peek(out c)) { throw new System.NotSupportedException(); }
+            if (c == '-')
             {
                 TokenizerState = HtmlTokenizerState.ScriptDataEscapeStartDash;
-                Read();
+                ReadNext();
             }
             else
             {
                 TokenizerState = HtmlTokenizerState.ScriptData;
             }
-             
+
         }
         /// <summary>
         /// 8.2.4.21 Script data escape start dash state
         /// </summary>
         void R21_ScriptDataEscapeStartDash()
         {
-            int nc = Peek();
+            char c;
+            if (!Peek(out c))
+            { throw new System.Exception(); }
 
-            if (nc == '-')
+            if (c == '-')
             {
                 TokenizerState = HtmlTokenizerState.ScriptDataEscapedDashDash;
-                Read();
+                ReadNext();
             }
             else
             {
                 TokenizerState = HtmlTokenizerState.ScriptData;
-            } 
+            }
         }
         /// <summary>
         /// 8.2.4.22 Script data escaped state
@@ -286,17 +285,14 @@ namespace HtmlKit
         {
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     EmitScriptDataToken();
                     return;
                 }
-
-                c = (char)nc;
 
                 switch (c)
                 {
@@ -311,24 +307,23 @@ namespace HtmlKit
                         data.Append(c == '\0' ? '\uFFFD' : c);
                         break;
                 }
-            } while (TokenizerState == HtmlTokenizerState.ScriptDataEscaped); 
+            } while (TokenizerState == HtmlTokenizerState.ScriptDataEscaped);
         }
         /// <summary>
         /// 8.2.4.23 Script data escaped dash state
         /// </summary>
         void R23_ScriptDataEscapedDash()
         {
-            int nc = Peek();
-            char c;
 
-            if (nc == -1)
+            char c;
+            if (!Peek(out c))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 EmitScriptDataToken();
                 return;
             }
 
-            switch ((c = (char)nc))
+            switch (c)
             {
                 case '-':
                     TokenizerState = HtmlTokenizerState.ScriptDataEscapedDashDash;
@@ -341,8 +336,8 @@ namespace HtmlKit
                     TokenizerState = HtmlTokenizerState.ScriptDataEscaped;
                     data.Append(c == '\0' ? '\uFFFD' : c);
                     break;
-            } 
-             
+            }
+
         }
         /// <summary>
         /// 8.2.4.24 Script data escaped dash dash state
@@ -351,17 +346,14 @@ namespace HtmlKit
         {
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     EmitScriptDataToken();
                     return;
                 }
-
-                c = (char)nc;
 
                 switch (c)
                 {
@@ -381,21 +373,24 @@ namespace HtmlKit
                         data.Append(c);
                         break;
                 }
-            } while (TokenizerState == HtmlTokenizerState.ScriptDataEscaped); 
+            } while (TokenizerState == HtmlTokenizerState.ScriptDataEscaped);
         }
         /// <summary>
         /// 8.2.4.25 Script data escaped less-than sign state
         /// </summary>
         void R25_ScriptDataEscapedLessThan()
         {
-            int nc = Peek();
-            char c = (char)nc;
+
+
+            char c;
+            if (!Peek(out c))
+            { throw new System.Exception(); }
 
             if (c == '/')
             {
                 TokenizerState = HtmlTokenizerState.ScriptDataEndTagOpen;
                 name.Length = 0;
-                Read();
+                ReadNext();
             }
             else if (IsAsciiLetter(c))
             {
@@ -403,43 +398,40 @@ namespace HtmlKit
                 data.Append('<');
                 data.Append(c);
                 name.Append(c);
-                Read();
+                ReadNext();
             }
             else
             {
                 TokenizerState = HtmlTokenizerState.ScriptDataEscaped;
                 data.Append('<');
-            } 
+            }
         }
         /// <summary>
         /// 8.2.4.26 Script data escaped end tag open state
         /// </summary>
         void R26_ScriptDataEscapedEndTagOpen()
         {
-            int nc = Peek();
-            char c;
+
 
             data.Append("</");
-
-            if (nc == -1)
+            char c;
+            if (!Peek(out c))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 EmitScriptDataToken();
                 return;
             }
 
-            c = (char)nc;
-
             if (IsAsciiLetter(c))
             {
                 TokenizerState = HtmlTokenizerState.ScriptDataEscapedEndTagName;
                 name.Append(c);
-                Read();
+                ReadNext();
             }
             else
             {
                 TokenizerState = HtmlTokenizerState.ScriptDataEscaped;
-            } 
+            }
         }
         /// <summary>
         /// 8.2.4.27 Script data escaped end tag name state
@@ -448,10 +440,9 @@ namespace HtmlKit
         {
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     name.Length = 0;
@@ -459,8 +450,6 @@ namespace HtmlKit
                     EmitScriptDataToken();
                     return;
                 }
-
-                c = (char)nc;
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -491,7 +480,7 @@ namespace HtmlKit
                         {
                             SetEmitToken(CreateTagTokenFromNameBuffer(true));
                             TokenizerState = HtmlTokenizerState.Data;
-                            data.Length = 0; 
+                            data.Length = 0;
                             return;
                         }
                         goto default;
@@ -499,7 +488,7 @@ namespace HtmlKit
                         if (!IsAsciiLetter(c))
                         {
                             TokenizerState = HtmlTokenizerState.ScriptData;
-                            data.Append(c); 
+                            data.Append(c);
                             return;
                         }
 
@@ -508,7 +497,7 @@ namespace HtmlKit
                 }
             } while (TokenizerState == HtmlTokenizerState.ScriptDataEscapedEndTagName);
 
-            tag = CreateTagTokenFromNameBuffer(true);              
+            tag = CreateTagTokenFromNameBuffer(true);
         }
 
         /// <summary>
@@ -518,19 +507,15 @@ namespace HtmlKit
         {
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if ((!ReadNext(out c)))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     name.Length = 0;
-
                     EmitScriptDataToken();
                     return;
                 }
-
-                c = (char)nc;
 
                 data.Append(c);
 
@@ -556,7 +541,7 @@ namespace HtmlKit
                             name.Append(c);
                         break;
                 }
-            } while (TokenizerState == HtmlTokenizerState.ScriptDataDoubleEscapeStart); 
+            } while (TokenizerState == HtmlTokenizerState.ScriptDataDoubleEscapeStart);
         }
         /// <summary>
         /// 8.2.4.29 Script data double escaped state
@@ -565,17 +550,14 @@ namespace HtmlKit
         {
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!(ReadNext(out c)))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     EmitScriptDataToken();
                     return;
                 }
-
-                c = (char)nc;
 
                 switch (c)
                 {
@@ -590,24 +572,22 @@ namespace HtmlKit
                         data.Append(c == '\0' ? '\uFFFD' : c);
                         break;
                 }
-            } while (TokenizerState == HtmlTokenizerState.ScriptDataEscaped); 
+            } while (TokenizerState == HtmlTokenizerState.ScriptDataEscaped);
         }
         /// <summary>
         /// 8.2.4.30 Script data double escaped dash state
         /// </summary>
         void R30_ScriptDataDoubleEscapedDash()
         {
-            int nc = Peek();
-            char c;
 
-            if (nc == -1)
+            char c;
+            if (!Peek(out c))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 EmitScriptDataToken();
                 return;
             }
-
-            switch ((c = (char)nc))
+            switch (c)
             {
                 case '-':
                     TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscapedDashDash;
@@ -620,7 +600,7 @@ namespace HtmlKit
                     TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscaped;
                     data.Append(c == '\0' ? '\uFFFD' : c);
                     break;
-            } 
+            }
 
         }
         /// <summary>
@@ -630,17 +610,14 @@ namespace HtmlKit
         {
             do
             {
-                int nc = Read();
-                char c;
 
-                if (nc == -1)
+                char c;
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     EmitScriptDataToken();
                     return;
                 }
-
-                c = (char)nc;
 
                 switch (c)
                 {
@@ -662,25 +639,28 @@ namespace HtmlKit
                 }
 
             } while (TokenizerState == HtmlTokenizerState.ScriptDataEscaped);
-             
+
         }
         /// <summary>
         /// 8.2.4.32 Script data double escaped less-than sign state
         /// </summary>
         void R32_ScriptDataDoubleEscapedLessThan()
         {
-            int nc = Peek();
+             
+            char c;
+            if (!Peek(out c))
+            { throw new System.Exception(); } //?
 
-            if (nc == '/')
+            if (c == '/')
             {
                 TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscapeEnd;
                 data.Append('/');
-                Read();
+                ReadNext();
             }
             else
             {
                 TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscaped;
-            } 
+            }
         }
     }
 }
