@@ -139,7 +139,7 @@ namespace HtmlKit
 
         bool EmitCommentToken(string comment)
         {
-            token = CreateCommentToken(comment);
+            SetEmitToken(CreateCommentToken(comment));
             data.Length = 0;
             name.Length = 0;
             return true;
@@ -151,40 +151,31 @@ namespace HtmlKit
         }
         void EmitDataToken(bool encodeEntities)
         {
-
             if (data.Length > 0)
             {
                 var dataToken = CreateDataToken(data.ToString());
-                dataToken.EncodeEntities = encodeEntities;
-                token = dataToken;
-                data.Length = 0;
-                return;
-            }
-            token = null;
+                dataToken.EncodeEntities = encodeEntities;                 
+                SetEmitToken(dataToken);
+                data.Length = 0; 
+            } 
         }
         void EmitCDataToken()
         {
             if (data.Length > 0)
             {
-                token = CreateCDataToken(data.ToString());
-                data.Length = 0;
-                return;
-            }
-            token = null;
+                SetEmitToken(CreateCDataToken(data.ToString()));
+                data.Length = 0; 
+            } 
         }
 
         void EmitScriptDataToken()
         {
             if (data.Length > 0)
             {
-                token = CreateScriptDataToken(data.ToString());
-                data.Length = 0;
-                return;
-            }
 
-            token = null;
-
-            return;
+                SetEmitToken(CreateScriptDataToken(data.ToString()));
+                data.Length = 0; 
+            } 
         }
         void EmitTagToken()
         {
@@ -221,10 +212,12 @@ namespace HtmlKit
 
                         for (int i = tag.Attributes.Count; i > 0; i--)
                         {
+                             
                             var attr = tag.Attributes[i - 1];
 
                             if (attr.Id == HtmlAttributeId.XmlNS && attr.Value != null)
                             {
+                                //TODO: and here i-1?
                                 HtmlNamespace = tag.Attributes[i].Value.ToHtmlNamespace();
                                 break;
                             }
@@ -239,9 +232,9 @@ namespace HtmlKit
             {
                 TokenizerState = HtmlTokenizerState.Data;
             }
-
+                         
+            SetEmitToken(tag);
             data.Length = 0;
-            token = tag;
             tag = null;
         }
     }

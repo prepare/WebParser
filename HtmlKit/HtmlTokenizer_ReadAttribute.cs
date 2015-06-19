@@ -33,8 +33,7 @@ namespace HtmlKit
         /// </summary>
         void R34_BeforeAttributeName()
         {
-            token = null;
-
+           
             do
             {
                 int nc = Read();
@@ -85,9 +84,7 @@ namespace HtmlKit
         /// 8.2.4.35 Attribute name state
         /// </summary>
         void R35_AttributeName()
-        {
-            token = null;
-
+        {   
             do
             {
                 int nc = Read();
@@ -140,8 +137,7 @@ namespace HtmlKit
         /// </summary>
         void R36_AfterAttributeName()
         {
-            token = null;
-
+            
             do
             {
                 int nc = Read();
@@ -195,8 +191,7 @@ namespace HtmlKit
         /// </summary>
         void R37_BeforeAttributeValue()
         {
-            token = null;
-
+            
             do
             {
                 int nc = Read();
@@ -278,8 +273,7 @@ namespace HtmlKit
                 switch (c)
                 {
                     case '&':
-                        TokenizerState = HtmlTokenizerState.CharacterReferenceInAttributeValue;
-                        token = null;
+                        TokenizerState = HtmlTokenizerState.CharacterReferenceInAttributeValue; 
                         return;
                     default:
                         if (c == quote)
@@ -294,10 +288,7 @@ namespace HtmlKit
             } while (TokenizerState == HtmlTokenizerState.AttributeValueQuoted);
 
             attribute.Value = name.ToString();
-            name.Length = 0;
-            token = null;
-
-            return;
+            name.Length = 0;  
         }
         /// <summary>
         /// 8.2.4.40 Attribute value (unquoted) state
@@ -333,8 +324,7 @@ namespace HtmlKit
                         TokenizerState = HtmlTokenizerState.BeforeAttributeName;
                         break;
                     case '&':
-                        TokenizerState = HtmlTokenizerState.CharacterReferenceInAttributeValue;
-                        token = null;
+                        TokenizerState = HtmlTokenizerState.CharacterReferenceInAttributeValue; 
                         return;
                     case '>':
                         EmitTagToken();
@@ -358,10 +348,7 @@ namespace HtmlKit
             } while (TokenizerState == HtmlTokenizerState.AttributeValueUnquoted);
 
             attribute.Value = name.ToString();
-            name.Length = 0;
-            token = null;
-
-
+            name.Length = 0; 
         }
 
         /// <summary>
@@ -384,9 +371,7 @@ namespace HtmlKit
                 return;
             }
 
-            c = (char)nc;
-            token = null;
-
+            c = (char)nc; 
             switch (c)
             {
                 case '\t':
@@ -471,9 +456,7 @@ namespace HtmlKit
                 return;
             }
 
-            c = (char)nc;
-            token = null;
-
+            c = (char)nc; 
             switch (c)
             {
                 case '\t':

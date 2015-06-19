@@ -217,7 +217,6 @@ namespace HtmlKit
                         if (DecodeCharacterReferences)
                         {
                             TokenizerState = HtmlTokenizerState.CharacterReferenceInData;
-                            token = null;
                             return;
                         }
 
@@ -255,11 +254,9 @@ namespace HtmlKit
             if (nc == -1)
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
-                token = CreateDataToken("<");
+                SetEmitToken(CreateDataToken("<"));
                 return;
-            }
-
-            token = null;
+            } 
 
             c = (char)nc;
 
@@ -303,8 +300,6 @@ namespace HtmlKit
             }
 
             c = (char)nc;
-            token = null;
-
             // Note: we save the data in case we hit a parse error and have to emit a data token
             data.Append(c);
 
@@ -367,7 +362,7 @@ namespace HtmlKit
                         TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
                         break;
                     case '>':
-                        token = CreateTagToken(name.ToString(), isEndTag);
+                        SetEmitToken(CreateTagToken(name.ToString(), isEndTag));
                         TokenizerState = HtmlTokenizerState.Data;
                         data.Length = 0;
                         name.Length = 0;
@@ -379,10 +374,7 @@ namespace HtmlKit
             } while (TokenizerState == HtmlTokenizerState.TagName);
 
             tag = CreateTagToken(name.ToString(), isEndTag);
-            name.Length = 0;
-            token = null;
-
-
+            name.Length = 0; 
         }
         /// <summary>
         /// 8.2.4.43 Self-closing start tag state
@@ -413,11 +405,7 @@ namespace HtmlKit
             TokenizerState = HtmlTokenizerState.BeforeAttributeName;
 
             // Note: we save the data in case we hit a parse error and have to emit a data token
-            data.Append(c);
-
-            token = null;
-
-
+            data.Append(c); 
         }
       
 

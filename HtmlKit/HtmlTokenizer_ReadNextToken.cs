@@ -43,7 +43,7 @@ namespace HtmlKit
 
     public delegate void TokenizerEmit(TokenizerEventArgs e);
 
-    
+
     partial class HtmlTokenizer
     {
 
@@ -51,20 +51,25 @@ namespace HtmlKit
         public bool UseEventEmitterModel { get; set; }
         bool stopTokenizer;
 
-
-        HtmlToken token
+        HtmlToken _nextEmitToken;
+        HtmlToken nextEmitToken
         {
-            get;
-            set;
+            get { return _nextEmitToken; }
+        } 
+        void SetEmitToken(HtmlToken token)
+        {
+            this._nextEmitToken = token;
+        } 
+        void ResetEmittingToken()
+        {
+            _nextEmitToken = null;
         }
-
-
+        //---------------------------
         public bool ReadNextToken(out HtmlToken output)
-        {
-            token = null;
-
+        {  
             while (TokenizerState != HtmlTokenizerState.EndOfFile)
             {
+                ResetEmittingToken(); //before each round we reset current token
 
                 switch (TokenizerState)
                 {
@@ -264,17 +269,17 @@ namespace HtmlKit
                         R68_CDataSection();
                         break;
                     case HtmlTokenizerState.EndOfFile:
-                        output = token = null;
+                        output =null;
                         return false;
                 }
 
-                if ((output = token) != null)
+                if ((output = nextEmitToken) != null)
                 {
                     return true;//found next token 
                 }
             }
             //3.
-            output = token = null;
+            output = null;
             return false;
         }
     }

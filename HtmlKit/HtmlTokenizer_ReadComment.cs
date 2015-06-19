@@ -87,8 +87,7 @@ namespace HtmlKit
                 Read();
                 count++;
             }
-
-            token = null;
+             
 
             if (count == 2)
             {
@@ -209,9 +208,7 @@ namespace HtmlKit
                     TokenizerState = HtmlTokenizerState.Comment;
                     name.Append(c == '\0' ? '\uFFFD' : c);
                     break;
-            }
-
-            token = null;
+            } 
         }
         /// <summary>
         /// 8.2.4.47 Comment start dash state
@@ -246,17 +243,14 @@ namespace HtmlKit
                     name.Append('-');
                     name.Append(c == '\0' ? '\uFFFD' : c);
                     break;
-            }
-
-            token = null;
+            } 
         }
         /// <summary>
         /// 8.2.4.48 Comment state
         /// </summary>
         void R48_Comment()
         {
-            token = null;
-
+           
             do
             {
                 int nc = Read();
@@ -320,19 +314,13 @@ namespace HtmlKit
                     name.Append('-');
                     name.Append(c == '\0' ? '\uFFFD' : c);
                     break;
-            }
-
-            token = null;
-
-
+            } 
         }
         /// <summary>
         /// 8.2.4.50 Comment end state
         /// </summary>
         void R50_CommentEnd()
-        {
-            token = null;
-
+        {   
             do
             {
                 int nc = Read();
@@ -403,11 +391,7 @@ namespace HtmlKit
                     name.Append("--!");
                     name.Append(c == '\0' ? '\uFFFD' : c);
                     break;
-            }
-
-            token = null;
-
-
+            } 
         }
 
     }

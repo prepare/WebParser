@@ -54,8 +54,7 @@ namespace HtmlKit
                     TokenizerState = rawText;
                     break;
             }
-
-            token = null;
+             
         }
 
         void ReadGenericRawTextEndTagOpen(bool decoded, HtmlTokenizerState rawText, HtmlTokenizerState rawTextEndTagName)
@@ -82,9 +81,7 @@ namespace HtmlKit
             else
             {
                 TokenizerState = rawText;
-            }
-
-            token = null;
+            } 
         }
 
         void ReadGenericRawTextEndTagName(bool decoded, HtmlTokenizerState rawText)
@@ -134,7 +131,7 @@ namespace HtmlKit
                     case '>':
                         if (NameIs(activeTagName))
                         {
-                            token = CreateTagToken(name.ToString(), true);
+                            SetEmitToken(CreateTagToken(name.ToString(), true));
                             TokenizerState = HtmlTokenizerState.Data;
                             data.Length = 0;
                             name.Length = 0;
@@ -144,8 +141,7 @@ namespace HtmlKit
                     default:
                         if (!IsAsciiLetter(c))
                         {
-                            TokenizerState = rawText;
-                            token = null;
+                            TokenizerState = rawText; 
                             return;
                         }
 
@@ -155,8 +151,7 @@ namespace HtmlKit
             } while (TokenizerState == current);
 
             tag = CreateTagToken(name.ToString(), true);
-            name.Length = 0;
-            token = null;
+            name.Length = 0; 
         }
 
         /// <summary>
@@ -189,8 +184,7 @@ namespace HtmlKit
                     case '&':
                         if (DecodeCharacterReferences)
                         {
-                            TokenizerState = HtmlTokenizerState.CharacterReferenceInRcData;
-                            token = null;
+                            TokenizerState = HtmlTokenizerState.CharacterReferenceInRcData; 
                             return;
                         }
 
@@ -217,9 +211,7 @@ namespace HtmlKit
             {
                 EmitDataToken(DecodeCharacterReferences);
                 return;
-            }
-
-            token = null;
+            } 
         }
 
         /// <summary>
@@ -275,9 +267,7 @@ namespace HtmlKit
             {
                 EmitDataToken(false);
                 return;
-            }
-
-            token = null;
+            } 
         }
 
 
@@ -323,8 +313,7 @@ namespace HtmlKit
                 return;
             }
 
-            c = (char)nc;
-            token = null;
+            c = (char)nc; 
 
             switch (c)
             {
