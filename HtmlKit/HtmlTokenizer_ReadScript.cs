@@ -37,7 +37,7 @@ namespace HtmlKit
         void R06_ScriptData()
         {
             char c;
-            while(ReadNext(out c))
+            while (ReadNext(out c))
             {
                 switch (c)
                 {
@@ -62,11 +62,9 @@ namespace HtmlKit
             }
 
             //eof
-            TokenizerState = HtmlTokenizerState.EndOfFile;
-            if (data.Length > 0)
-            {
-                EmitDataToken();
-            }
+            TokenizerState = HtmlTokenizerState.EndOfFile; 
+            EmitDataToken();
+
         }
         /// <summary>
         /// 8.2.4.33 Script data double escape end state
@@ -75,7 +73,7 @@ namespace HtmlKit
         {
             char c;
             CharMode charMode;
-            while (Peek(out c,out charMode))
+            while (Peek(out c, out charMode))
             {
                 switch (charMode)
                 {
@@ -99,12 +97,12 @@ namespace HtmlKit
                         data.Append(c);
                         ReadNext();
                         break;
-                } 
+                }
             }
 
 
             //eof?
-            throw new System.Exception();  
+            throw new System.Exception();
         }
         /// <summary>
         /// 8.2.4.17 Script data less-than sign state
@@ -171,7 +169,7 @@ namespace HtmlKit
 
             char c;
             CharMode charMode;
-            while(ReadNext(out c,out charMode))
+            while (ReadNext(out c, out charMode))
             {
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
@@ -226,13 +224,13 @@ namespace HtmlKit
                                 break;
                         }
                         break;
-                } 
+                }
             }
             //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
             name.Length = 0;
             EmitScriptDataToken();
-            
+
         }
         /// <summary>
         /// 8.2.4.20 Script data escape start state
@@ -278,7 +276,7 @@ namespace HtmlKit
         void R22_ScriptDataEscaped()
         {
             char c;
-            while(ReadNext(out c))
+            while (ReadNext(out c))
             {
                 switch (c)
                 {
@@ -301,7 +299,7 @@ namespace HtmlKit
             //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
             EmitScriptDataToken();
-             
+
         }
         /// <summary>
         /// 8.2.4.23 Script data escaped dash state
@@ -343,14 +341,14 @@ namespace HtmlKit
         {
             do
             {
-                
+
                 char c;
                 if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     EmitScriptDataToken();
                     return;
-                } 
+                }
                 switch (c)
                 {
                     case '-':
@@ -444,7 +442,7 @@ namespace HtmlKit
         {
             char c;
             CharMode charMode;
-            while(ReadNext(out c,out charMode))
+            while (ReadNext(out c, out charMode))
             {
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -500,7 +498,7 @@ namespace HtmlKit
             //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
             name.Length = 0;
-            EmitScriptDataToken(); 
+            EmitScriptDataToken();
         }
 
         /// <summary>
@@ -513,7 +511,7 @@ namespace HtmlKit
             CharMode charMode;
             while (ReadNext(out c, out charMode))
             {
-                data.Append(c); 
+                data.Append(c);
                 switch (charMode)
                 {
                     case CharMode.LowerAsciiLetter:
@@ -530,17 +528,17 @@ namespace HtmlKit
                         else
                             TokenizerState = HtmlTokenizerState.ScriptDataEscaped;
                         name.Length = 0;
-                        return; 
+                        return;
                     default:
                         //  if (!IsAsciiLetter(c))
                         TokenizerState = HtmlTokenizerState.ScriptDataEscaped;
                         return;
-                } 
-            } 
+                }
+            }
             //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
             name.Length = 0;
-            EmitScriptDataToken(); 
+            EmitScriptDataToken();
         }
         /// <summary>
         /// 8.2.4.29 Script data double escaped state
@@ -548,7 +546,7 @@ namespace HtmlKit
         void R29_ScriptDataDoubleEscaped()
         {
             char c;
-            while(ReadNext(out c))
+            while (ReadNext(out c))
             {
 
                 switch (c)
@@ -566,13 +564,13 @@ namespace HtmlKit
                     default:
                         data.Append(c);
                         break;
-                } 
+                }
             }
 
             //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
             EmitScriptDataToken();
-             
+
         }
         /// <summary>
         /// 8.2.4.30 Script data double escaped dash state
@@ -613,22 +611,22 @@ namespace HtmlKit
         {
 
             char c;
-            while(ReadNext(out c))
+            while (ReadNext(out c))
             {
                 data.Append(c);
 
                 switch (c)
                 {
-                    case '-': 
+                    case '-':
                         break;
                     case '<':
-                        TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscapedLessThan; 
+                        TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscapedLessThan;
                         return;
                     case '>':
-                        TokenizerState = HtmlTokenizerState.ScriptData; 
+                        TokenizerState = HtmlTokenizerState.ScriptData;
                         return;
                     default:
-                        TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscaped; 
+                        TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscaped;
                         return;
                 }
             }
@@ -636,7 +634,7 @@ namespace HtmlKit
 
             //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
-            EmitScriptDataToken(); 
+            EmitScriptDataToken();
 
         }
         /// <summary>

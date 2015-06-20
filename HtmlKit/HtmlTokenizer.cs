@@ -48,9 +48,9 @@ namespace HtmlKit
         HtmlAttribute attribute;
         string activeTagName;
         HtmlTagToken tag;
-        int cdataIndex;
+       
         bool isEndTag;
-        char quote;
+        int quote;
 
         TextReader text;
 

@@ -79,7 +79,7 @@ namespace HtmlKit
             }
         }
 
-        void ReadGenericRawTextEndTagName(bool decoded, HtmlTokenizerState rawText)
+        void ReadGenericRawTextEndTagName(bool decoded, HtmlTokenizerState rawTextState)
         {
             var current = TokenizerState;
 
@@ -131,8 +131,9 @@ namespace HtmlKit
                     default:
                         switch (charMode)
                         {
+                            //TODO: review here
                             default://if (!IsAsciiLetter(c))
-                                TokenizerState = rawText;
+                                TokenizerState = rawTextState;
                                 return;
                             case CharMode.UpperAsciiLetter:
                             case CharMode.LowerAsciiLetter:
@@ -197,10 +198,8 @@ namespace HtmlKit
 
             //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
-            if (data.Length > 0)
-            {
-                EmitDataToken(DecodeCharacterReferences);
-            }
+            EmitDataToken(DecodeCharacterReferences);
+
         }
 
         /// <summary>
@@ -244,12 +243,8 @@ namespace HtmlKit
             }
 
             //eof
-            TokenizerState = HtmlTokenizerState.EndOfFile;
-            if (data.Length > 0)
-            {
-                EmitDataToken();
-            }
-
+            TokenizerState = HtmlTokenizerState.EndOfFile; 
+            EmitDataToken(); 
         }
 
 
@@ -383,6 +378,7 @@ namespace HtmlKit
         /// </summary>
         void R68_CDataSection()
         {
+            int cdataIndex = 0;
 
             char c;
             while (ReadNext(out c))
@@ -412,7 +408,6 @@ namespace HtmlKit
 
             //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
-
             for (int i = 0; i < cdataIndex; i++)
                 data.Append(cdata[i]);
 

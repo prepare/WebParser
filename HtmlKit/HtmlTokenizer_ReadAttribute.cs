@@ -318,7 +318,7 @@ namespace HtmlKit
         /// </summary>
         void R41_CharacterReferenceInAttributeValue()
         {
-            char additionalAllowedCharacter = quote == '\0' ? '>' : quote;
+            int additionalAllowedCharacter = (quote == -1) ? '>' : quote;
             char c;
             CharMode charMode;
             if (!Peek(out c, out charMode))
@@ -391,7 +391,7 @@ namespace HtmlKit
                     break;
             }
 
-            if (quote == '\0')
+            if (quote == -1)
                 TokenizerState = HtmlTokenizerState.AttributeValueUnquoted;
             else
                 TokenizerState = HtmlTokenizerState.AttributeValueQuoted;
