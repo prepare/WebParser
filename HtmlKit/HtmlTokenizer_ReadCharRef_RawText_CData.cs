@@ -22,24 +22,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-
-
-
+// 
 namespace HtmlKit
 {
 
     partial class HtmlTokenizer
-    {
-
-
-
-
-
+    { 
         void ReadGenericRawTextLessThan(HtmlTokenizerState rawText, HtmlTokenizerState rawTextEndTagOpen)
-        {
-
-
+        { 
             char c;
             if (!Peek(out c))
             {
@@ -151,7 +141,7 @@ namespace HtmlKit
                             case CharMode.NullChar:
                                 name.Append('\uFFFD');
                                 break;
-                        }                 
+                        }
                         break;
                 }
             } while (TokenizerState == current);
@@ -171,16 +161,9 @@ namespace HtmlKit
         /// </summary>
         void R03_RcData()
         {
-            do
+            char c;
+            while(ReadNext(out c))
             {
-
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    break;
-                }
-
                 switch (c)
                 {
                     case '&':
@@ -195,9 +178,11 @@ namespace HtmlKit
                         TokenizerState = HtmlTokenizerState.RcDataLessThan;
                         EmitDataToken(DecodeCharacterReferences);
                         return;
+                    case '\0':
+                        c = '\uFFFD';
+                        goto default;
                     default:
-                        data.Append(c == '\0' ? '\uFFFD' : c);
-
+                        data.Append(c);
                         // Note: we emit at 1024 characters simply to avoid
                         // consuming too much memory.
                         if (data.Length >= 1024)
@@ -207,13 +192,15 @@ namespace HtmlKit
 
                         break;
                 }
-            } while (TokenizerState == HtmlTokenizerState.RcData);
+            }
 
+
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
             if (data.Length > 0)
             {
-                EmitDataToken(DecodeCharacterReferences);
-                return;
-            }
+                EmitDataToken(DecodeCharacterReferences); 
+            }  
         }
 
         /// <summary>
@@ -231,41 +218,38 @@ namespace HtmlKit
         /// </summary>
         void R05_RawText()
         {
-            do
+            char c;
+            while(ReadNext(out c))
             {
-
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    break;
-                }
-
                 switch (c)
                 {
                     case '<':
                         TokenizerState = HtmlTokenizerState.RawTextLessThan;
                         EmitDataToken();
                         return;
+                    case '\0':
+                        c = '\uFFFD';
+                        goto default;
                     default:
-                        data.Append(c == '\0' ? '\uFFFD' : c);
-
+                        data.Append(c);
                         // Note: we emit at 1024 characters simply to avoid
                         // consuming too much memory.
                         if (data.Length >= 1024)
                         {
                             EmitDataToken();
                             return;
-                        }
-
+                        } 
                         break;
                 }
-            } while (TokenizerState == HtmlTokenizerState.RawText);
+            }
 
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
             if (data.Length > 0)
             {
                 EmitDataToken();
             }
+             
         }
 
 
@@ -288,8 +272,8 @@ namespace HtmlKit
                 }
             }
 
+            //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
-
             EmitDataToken();
         }
 
@@ -403,9 +387,7 @@ namespace HtmlKit
 
             char c;
             while (ReadNext(out c))
-            {
-
-
+            {   
                 if (cdataIndex >= 3)
                 {
                     data.Append(cdata[0]);
@@ -428,15 +410,15 @@ namespace HtmlKit
                 }
             }
 
+
+            //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
 
             for (int i = 0; i < cdataIndex; i++)
                 data.Append(cdata[i]);
 
             cdataIndex = 0;
-
-            EmitCDataToken();
-            return;
+            EmitCDataToken();             
         }
 
     }

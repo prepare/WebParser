@@ -46,25 +46,25 @@ namespace HtmlKit
                 data[0] = c;
             }
 
-
-            do
+            while(ReadNext(out c))
             {
-                if (!ReadNext(out c))
+                switch(c)
                 {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    break;
+                    case '>':
+                        EmitCommentToken(data.ToString());
+                        return;
+                    case '\0':
+                        c = '\uFFFD';
+                        goto default;
+                    default:
+                        data.Append(c);
+                        break;
                 }
-                if (c == '>')
-                {
-                    break;
-                }
-                else
-                {
-                    data.Append(c == '\0' ? '\uFFFD' : c);
-                }
-            } while (true);
+            }
 
-            EmitCommentToken(data.ToString());
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            EmitCommentToken(data.ToString()); 
         }
         /// <summary>
         /// 8.2.4.45 Markup declaration open state
@@ -204,9 +204,12 @@ namespace HtmlKit
                     TokenizerState = HtmlTokenizerState.Data;
                     EmitCommentToken(string.Empty);
                     return;
+                case '\0':
+                    c = '\uFFFD';
+                    goto default;
                 default: // parse error
                     TokenizerState = HtmlTokenizerState.Comment;
-                    name.Append(c == '\0' ? '\uFFFD' : c);
+                    name.Append(c);
                     break;
             }
         }
@@ -235,10 +238,13 @@ namespace HtmlKit
                     TokenizerState = HtmlTokenizerState.Data;
                     EmitCommentTokenFromNameBuffer();
                     return;
+                case '\0':
+                    c = '\uFFFD';
+                    goto default;
                 default: // parse error
                     TokenizerState = HtmlTokenizerState.Comment;
                     name.Append('-');
-                    name.Append(c == '\0' ? '\uFFFD' : c);
+                    name.Append(c);
                     break;
             }
         }
@@ -247,19 +253,10 @@ namespace HtmlKit
         /// </summary>
         void R48_Comment()
         {
-
-            do
+             
+            char c;
+            while(ReadNext(out c))
             {
-
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    EmitCommentTokenFromNameBuffer();
-                    return;
-                }
-
-
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
 
@@ -268,11 +265,19 @@ namespace HtmlKit
                     case '-':
                         TokenizerState = HtmlTokenizerState.CommentEndDash;
                         return;
+                    case '\0':
+                        c = '\uFFFD';
+                        goto default;
                     default:
-                        name.Append(c == '\0' ? '\uFFFD' : c);
+                        name.Append(c);
                         break;
                 }
-            } while (true);
+            }
+
+
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            EmitCommentTokenFromNameBuffer(); 
         }
 
         // FIXME: this is exactly the same as ReadCommentStartDash
@@ -301,10 +306,13 @@ namespace HtmlKit
                     TokenizerState = HtmlTokenizerState.Data;
                     EmitCommentTokenFromNameBuffer();
                     return;
+                case '\0':
+                    c = '\uFFFD';
+                    goto default;
                 default: // parse error
                     TokenizerState = HtmlTokenizerState.Comment;
                     name.Append('-');
-                    name.Append(c == '\0' ? '\uFFFD' : c);
+                    name.Append(c);
                     break;
             }
         }
@@ -313,22 +321,12 @@ namespace HtmlKit
         /// </summary>
         void R50_CommentEnd()
         {
-            do
+
+            char c;
+            while(ReadNext(out c))
             {
-
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    EmitCommentTokenFromNameBuffer();
-                    return;
-                }
-
-
-
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
-
                 switch (c)
                 {
                     case '>':
@@ -341,12 +339,19 @@ namespace HtmlKit
                     case '-':
                         name.Append('-');
                         break;
+                    case '\0':
+                        c = '\uFFFD';
+                        goto default;
                     default:
                         TokenizerState = HtmlTokenizerState.Comment;
-                        name.Append(c == '\0' ? '\uFFFD' : c);
+                        name.Append(c);
                         return;
                 }
-            } while (true);
+            }
+
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            EmitCommentTokenFromNameBuffer(); 
         }
         /// <summary>
         /// 8.2.4.51 Comment end bang state
@@ -374,10 +379,13 @@ namespace HtmlKit
                     TokenizerState = HtmlTokenizerState.Data;
                     EmitCommentTokenFromNameBuffer();
                     return;
+                case '\0':
+                    c = '\uFFFD';
+                    goto default;
                 default: // parse error
                     TokenizerState = HtmlTokenizerState.Comment;
                     name.Append("--!");
-                    name.Append(c == '\0' ? '\uFFFD' : c);
+                    name.Append(c);
                     break;
             }
         }

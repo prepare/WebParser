@@ -36,9 +36,9 @@ namespace HtmlKit
         /// </summary>
         void R52_DocType()
         {
-             
+
             char c;
-            if(!Peek(out c))
+            if (!Peek(out c))
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 doctype.ForceQuirksMode = true;
@@ -47,7 +47,7 @@ namespace HtmlKit
                 return;
             }
 
-            TokenizerState = HtmlTokenizerState.BeforeDocTypeName;             
+            TokenizerState = HtmlTokenizerState.BeforeDocTypeName;
 
             switch (c)
             {
@@ -59,7 +59,7 @@ namespace HtmlKit
                     data.Append(c);
                     ReadNext();
                     break;
-            } 
+            }
         }
         /// <summary>
         /// 8.2.4.53 Before DOCTYPE name state
@@ -67,21 +67,11 @@ namespace HtmlKit
         void R53_BeforeDocTypeName()
         {
 
-            do
+            char c;
+            while(ReadNext(out c))
             {
-                 
-                char c;
-                if(!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    doctype.ForceQuirksMode = true;
-                    EmitAndClearDocTypeToken();
-                    return;
-                }                  
-
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
-
                 switch (c)
                 {
                     case '\t':
@@ -96,15 +86,20 @@ namespace HtmlKit
                         EmitAndClearDocTypeToken();
                         return;
                     case '\0':
-                        TokenizerState = HtmlTokenizerState.DocTypeName;
-                        name.Append('\uFFFD');
-                        return;
+                        c = '\uFFFD';
+                        goto default;
                     default:
                         TokenizerState = HtmlTokenizerState.DocTypeName;
                         name.Append(c);
                         return;
-                }
-            } while (true);
+                } 
+            }
+
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            doctype.ForceQuirksMode = true;
+            EmitAndClearDocTypeToken(); 
+            
         }
 
         /// <summary>
@@ -112,23 +107,11 @@ namespace HtmlKit
         /// </summary> 
         void R54_DocTypeName()
         {
-
-            do
+            char c;
+            while(ReadNext(out c))
             {
-             
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    doctype.Name = name.ToString();
-                    doctype.ForceQuirksMode = true;
-                    EmitAndClearDocTypeToken();
-                    return;
-                }                
-
                 // Note: we save the data in case we hit a parse error and have to emit a data token
-                data.Append(c);
-
+                data.Append(c); 
                 switch (c)
                 {
                     case '\t':
@@ -137,23 +120,29 @@ namespace HtmlKit
                     case '\f':
                     case ' ':
                         TokenizerState = HtmlTokenizerState.AfterDocTypeName;
-                        break;
+                        doctype.Name = ClearNameBuffer();
+                        return;
                     case '>':
                         TokenizerState = HtmlTokenizerState.Data;
                         doctype.Name = ClearNameBuffer();
                         EmitAndClearDocTypeToken();
-                         
                         return;
                     case '\0':
-                        name.Append('\uFFFD');
-                        break;
+                        c = '\uFFFD';
+                        goto default;
                     default:
                         name.Append(c);
                         break;
                 }
-            } while (TokenizerState == HtmlTokenizerState.DocTypeName);
 
-            doctype.Name = ClearNameBuffer();
+            }
+
+
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            doctype.Name = name.ToString();
+            doctype.ForceQuirksMode = true;
+            EmitAndClearDocTypeToken();             
         }
         /// <summary>
         /// 8.2.4.55 After DOCTYPE name state
@@ -161,19 +150,9 @@ namespace HtmlKit
         /// <returns></returns>
         void R55_AfterDocTypeName()
         {
-
-            do
+            char c;
+            while(ReadNext(out c))
             {
-                 
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    doctype.ForceQuirksMode = true;
-                    EmitAndClearDocTypeToken();
-                    return;
-                } 
-
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
 
@@ -192,8 +171,8 @@ namespace HtmlKit
                     default:
                         name.Append(c);
                         if (name.Length < 6)
-                            break;
-
+                            continue; //read next
+                        //-------------------
                         if (NameIs("public"))
                         {
                             TokenizerState = HtmlTokenizerState.AfterDocTypePublicKeyword;
@@ -207,12 +186,17 @@ namespace HtmlKit
                         else
                         {
                             TokenizerState = HtmlTokenizerState.BogusDocType;
-                        }
-
-                        name.Length = 0;
+                            name.Length = 0;
+                        }                        
                         return;
-                }
-            } while (true);
+                } 
+            }
+
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            doctype.ForceQuirksMode = true;
+            EmitAndClearDocTypeToken();
+             
         }
         /// <summary>
         /// 8.2.4.56 After DOCTYPE public keyword state
@@ -263,17 +247,9 @@ namespace HtmlKit
         /// </summary>         
         void R57_BeforeDocTypePublicIdentifier()
         {
-
-            do
+            char c;
+            while (ReadNext(out c))
             {
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    doctype.ForceQuirksMode = true;
-                    EmitAndClearDocTypeToken();
-                    return;
-                }
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -302,7 +278,13 @@ namespace HtmlKit
                         doctype.ForceQuirksMode = true;
                         return;
                 }
-            } while (true);
+
+            }
+
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            doctype.ForceQuirksMode = true;
+            EmitAndClearDocTypeToken(); 
         }
         /// <summary>
         /// 8.2.4.58 DOCTYPE public identifier (double-quoted) state,
@@ -310,21 +292,9 @@ namespace HtmlKit
         /// </summary>
         void R58_59_DocTypePublicIdentifierQuoted()
         {
-
-            do
+            char c;
+            while(ReadNext(out c))
             {
-
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    doctype.PublicIdentifier = ClearNameBuffer();
-                    doctype.ForceQuirksMode = true;
-                    EmitAndClearDocTypeToken();                     
-                    return;
-                }
-
-
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
 
@@ -337,21 +307,29 @@ namespace HtmlKit
                         TokenizerState = HtmlTokenizerState.Data;
                         doctype.PublicIdentifier = ClearNameBuffer();
                         doctype.ForceQuirksMode = true;
-                        EmitAndClearDocTypeToken();                         
+                        EmitAndClearDocTypeToken();
                         return;
                     default:
                         if (c == quote)
                         {
                             TokenizerState = HtmlTokenizerState.AfterDocTypePublicIdentifier;
-                            break;
+                            doctype.PublicIdentifier = ClearNameBuffer();
+                            return;
                         }
-
-                        name.Append(c);
+                        else
+                        {
+                            name.Append(c);
+                        }
                         break;
                 }
-            } while (TokenizerState == HtmlTokenizerState.DocTypePublicIdentifierQuoted);
+            }
 
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
             doctype.PublicIdentifier = ClearNameBuffer();
+            doctype.ForceQuirksMode = true;
+            EmitAndClearDocTypeToken();
+             
         }
         /// <summary>
         /// 8.2.4.60 After DOCTYPE public identifier state
@@ -401,20 +379,9 @@ namespace HtmlKit
         /// </summary>
         void R61_BetweenDocTypePublicAndSystemIdentifiers()
         {
-
-            do
+            char c;
+            while(ReadNext(out c))
             {
-
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    doctype.ForceQuirksMode = true;
-
-                    EmitAndClearDocTypeToken();
-                    return;
-                }
-
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
 
@@ -440,8 +407,13 @@ namespace HtmlKit
                         TokenizerState = HtmlTokenizerState.BogusDocType;
                         doctype.ForceQuirksMode = true;
                         return;
-                }
-            } while (true);
+                } 
+            }
+
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            doctype.ForceQuirksMode = true;
+            EmitAndClearDocTypeToken(); 
         }
 
         /// <summary>
@@ -493,19 +465,9 @@ namespace HtmlKit
         /// </summary>
         void R63_BeforeDocTypeSystemIdentifier()
         {
-
-            do
+            char c;
+            while(ReadNext(out c))
             {
-
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    doctype.ForceQuirksMode = true;
-                    EmitAndClearDocTypeToken();
-                    return;
-                }
-
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -533,8 +495,14 @@ namespace HtmlKit
                         TokenizerState = HtmlTokenizerState.BogusDocType;
                         doctype.ForceQuirksMode = true;
                         return;
-                }
-            } while (true);
+                } 
+            }
+
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            doctype.ForceQuirksMode = true;
+            EmitAndClearDocTypeToken();
+             
         }
         /// <summary>
         ///8.2.4.64 DOCTYPE system identifier (double-quoted) state,
@@ -542,21 +510,9 @@ namespace HtmlKit
         /// </summary>
         void R64_65_DocTypeSystemIdentifierQuoted()
         {
-
-
-            do
+            char c;
+            while (ReadNext(out c))
             {
-
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    doctype.SystemIdentifier = ClearNameBuffer();
-                    doctype.ForceQuirksMode = true;
-                    EmitAndClearDocTypeToken();                     
-                    return;
-                }
-                 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
 
@@ -564,27 +520,35 @@ namespace HtmlKit
                 {
                     case '\0': // parse error
                         name.Append('\uFFFD');
-                        break;
+                        break; //break switch
+
                     case '>': // parse error
                         TokenizerState = HtmlTokenizerState.Data;
                         doctype.SystemIdentifier = ClearNameBuffer();
                         doctype.ForceQuirksMode = true;
-
-                        EmitAndClearDocTypeToken();                         
+                        EmitAndClearDocTypeToken();
                         return;
                     default:
                         if (c == quote)
                         {
                             TokenizerState = HtmlTokenizerState.AfterDocTypeSystemIdentifier;
-                            break;
+                            doctype.SystemIdentifier = ClearNameBuffer();
+                            return;
                         }
-
-                        name.Append(c);
+                        else
+                        {
+                            name.Append(c);
+                        }
                         break;
                 }
-            } while (TokenizerState == HtmlTokenizerState.DocTypeSystemIdentifierQuoted);
+            }
 
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
             doctype.SystemIdentifier = ClearNameBuffer();
+            doctype.ForceQuirksMode = true;
+            EmitAndClearDocTypeToken();
+             
         }
 
         /// <summary>
@@ -592,22 +556,11 @@ namespace HtmlKit
         /// </summary>
         void R66_AfterDocTypeSystemIdentifier()
         {
-
-            do
+            char c;
+            while (ReadNext(out c))
             {
-                 
-                char c;
-                if(!ReadNext(out c))                 
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    doctype.ForceQuirksMode = true;
-                    EmitAndClearDocTypeToken();
-                    return;
-                } 
-
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
-
                 switch (c)
                 {
                     case '\t':
@@ -624,37 +577,35 @@ namespace HtmlKit
                         TokenizerState = HtmlTokenizerState.BogusDocType;
                         return;
                 }
-            } while (true);
+            }
+
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            doctype.ForceQuirksMode = true;
+            EmitAndClearDocTypeToken();
+
         }
         /// <summary>
         /// 8.2.4.67 Bogus DOCTYPE state
         /// </summary>
         void R67_BogusDocType()
         {
-
-
-            do
+            char c;
+            while (ReadNext(out c))
             {
-                 
-                char c;
-                if(!ReadNext(out c))                 
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    doctype.ForceQuirksMode = true;
-                    EmitAndClearDocTypeToken();
-                    return;
-                }                 
-
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
-
                 if (c == '>')
                 {
                     TokenizerState = HtmlTokenizerState.Data;
                     EmitAndClearDocTypeToken();
                     return;
                 }
-            } while (true);
+            }
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            doctype.ForceQuirksMode = true;
+            EmitAndClearDocTypeToken();
         }
 
         void EmitAndClearDocTypeToken()

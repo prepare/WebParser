@@ -33,22 +33,12 @@ namespace HtmlKit
         /// </summary>
         void R34_BeforeAttributeName()
         {
-
-            do
+            char c;
+            while (ReadNext(out c))
             {
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    tag = null;
-
-                    EmitDataToken();
-                    return;
-                }
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
-
                 switch (c)
                 {
                     case '\t':
@@ -77,27 +67,20 @@ namespace HtmlKit
                         name.Append(c);
                         return;
                 }
-            } while (true);
+            }
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            tag = null;
+            EmitDataToken();
         }
         /// <summary>
         /// 8.2.4.35 Attribute name state
         /// </summary>
         void R35_AttributeName()
         {
-            do
+            char c;
+            while (ReadNext(out c))
             {
-
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    name.Length = 0;
-                    tag = null;
-                    EmitDataToken();
-                    return;
-                }
-
-
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
 
@@ -109,13 +92,16 @@ namespace HtmlKit
                     case '\f':
                     case ' ':
                         TokenizerState = HtmlTokenizerState.AfterAttributeName;
-                        break;
+                        EmitTagAttribute();
+                        return;
                     case '/':
                         TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
-                        break;
+                        EmitTagAttribute();
+                        return;
                     case '=':
                         TokenizerState = HtmlTokenizerState.BeforeAttributeValue;
-                        break;
+                        EmitTagAttribute();
+                        return;
                     case '>':
                         EmitTagAttribute();
                         EmitTagToken();
@@ -127,28 +113,23 @@ namespace HtmlKit
                         name.Append(c);
                         break;
                 }
-            } while (TokenizerState == HtmlTokenizerState.AttributeName);
 
-            EmitTagAttribute();
+            }
+
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            name.Length = 0;
+            tag = null;
+            EmitDataToken();
         }
         /// <summary>
         /// 8.2.4.36 After attribute name state
         /// </summary>
         void R36_AfterAttributeName()
         {
-
-            do
+            char c;
+            while (ReadNext(out c))
             {
-
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    tag = null;
-                    EmitDataToken();
-                    return;
-                }
-
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
 
@@ -182,27 +163,20 @@ namespace HtmlKit
                         name.Append(c);
                         return;
                 }
-            } while (true);
+            }
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            tag = null;
+            EmitDataToken();
         }
         /// <summary>
         /// 8.2.4.37 Before attribute value state
         /// </summary>
         void R37_BeforeAttributeValue()
         {
-
-            do
+            char c;
+            while (ReadNext(out c))
             {
-
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    tag = null;
-
-                    EmitDataToken();
-                    return;
-                }
-
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -242,7 +216,12 @@ namespace HtmlKit
                         name.Append(c);
                         return;
                 }
-            } while (true);
+            }
+
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            tag = null;
+            EmitDataToken();
         }
         /// <summary>
         /// 8.2.4.38 Attribute value (double-quoted) state,
@@ -250,20 +229,11 @@ namespace HtmlKit
         /// </summary>
         void R38_39_AttributeValueQuoted()
         {
-            do
+            char c;
+            while (ReadNext(out c))
             {
-
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    name.Length = 0;
-                    EmitDataToken();
-                    return;
-                }
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
-
                 switch (c)
                 {
                     case '&':
@@ -273,37 +243,33 @@ namespace HtmlKit
                         if (c == quote)
                         {
                             TokenizerState = HtmlTokenizerState.AfterAttributeValueQuoted;
-                            break;
+                            attribute.Value = ClearNameBuffer();
+                            return;
                         }
-
-                        name.Append(c == '\0' ? '\uFFFD' : c);
+                        else
+                        {
+                            name.Append(c == '\0' ? '\uFFFD' : c);
+                        }
                         break;
                 }
-            } while (TokenizerState == HtmlTokenizerState.AttributeValueQuoted);
+            }
 
-            attribute.Value = ClearNameBuffer();
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            name.Length = 0;
+            EmitDataToken();
         }
         /// <summary>
         /// 8.2.4.40 Attribute value (unquoted) state
         /// </summary>
         void R40_AttributeValueUnquoted()
         {
-            do
+            char c;
+            while(ReadNext(out c))
             {
 
-                char c;
-                if (!ReadNext(out c))
-                {
-                    TokenizerState = HtmlTokenizerState.EndOfFile;
-                    name.Length = 0;
-                    EmitDataToken();
-                    return;
-
-                }
-
                 // Note: we save the data in case we hit a parse error and have to emit a data token
-                data.Append(c);
-
+                data.Append(c); 
                 switch (c)
                 {
                     case '\t':
@@ -312,7 +278,8 @@ namespace HtmlKit
                     case '\f':
                     case ' ':
                         TokenizerState = HtmlTokenizerState.BeforeAttributeName;
-                        break;
+                        attribute.Value = ClearNameBuffer();
+                        return;
                     case '&':
                         TokenizerState = HtmlTokenizerState.CharacterReferenceInAttributeValue;
                         return;
@@ -324,19 +291,26 @@ namespace HtmlKit
                     case '=':
                     case '`':
                         // parse error
-                        goto default; 
+                        goto default;
                     default:
                         if (c == quote)
                         {
                             TokenizerState = HtmlTokenizerState.AfterAttributeValueQuoted;
-                            break;
-                        } 
-                        name.Append(c == '\0' ? '\uFFFD' : c);
+                            attribute.Value = ClearNameBuffer();
+                            return;
+                        }
+                        else
+                        {
+                            name.Append(c == '\0' ? '\uFFFD' : c);
+                        }
                         break;
-                }
-            } while (TokenizerState == HtmlTokenizerState.AttributeValueUnquoted);
+                } 
+            }
 
-            attribute.Value = ClearNameBuffer();
+            //eof
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            name.Length = 0;
+            EmitDataToken(); 
         }
 
         /// <summary>
@@ -382,7 +356,7 @@ namespace HtmlKit
                         break;
                     }
 
-                    entity.Push('&'); 
+                    entity.Push('&');
                     while (entity.Push(c))
                     {
                         ReadNext();
@@ -410,8 +384,6 @@ namespace HtmlKit
                             value = pushed;
                             break;
                     }
-
-
                     data.Append(pushed);
                     name.Append(value);
                     consume = c == ';';
@@ -442,8 +414,6 @@ namespace HtmlKit
                 return;
             }
 
-            bool consume;
-
             switch (c)
             {
                 case '\t':
@@ -452,24 +422,20 @@ namespace HtmlKit
                 case '\f':
                 case ' ':
                     TokenizerState = HtmlTokenizerState.BeforeAttributeName;
-                    consume = true;
-                    break;
+                    ReadNext(); //consume
+                    return;
                 case '/':
                     TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
-                    consume = true;
-                    break;
+                    ReadNext();//consume
+                    return;
                 case '>':
                     EmitTagToken();
-                    consume = true;
-                    break;
+                    ReadNext();//consume
+                    return;
                 default:
                     TokenizerState = HtmlTokenizerState.BeforeAttributeName;
-                    consume = false;
                     break;
             }
-
-            if (consume)
-                ReadNext();
         }
 
 
