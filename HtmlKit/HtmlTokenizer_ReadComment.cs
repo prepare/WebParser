@@ -46,9 +46,9 @@ namespace HtmlKit
                 data[0] = c;
             }
 
-            while(ReadNext(out c))
+            while (ReadNext(out c))
             {
-                switch(c)
+                switch (c)
                 {
                     case '>':
                         EmitCommentToken(data.ToString());
@@ -64,19 +64,19 @@ namespace HtmlKit
 
             //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
-            EmitCommentToken(data.ToString()); 
+            EmitCommentToken(data.ToString());
         }
         /// <summary>
         /// 8.2.4.45 Markup declaration open state
         /// </summary>
         void R45_MarkupDeclarationOpen()
         {
+            //TODO: review this method again 
             int count = 0;
-            char c = '\0';
-
+            char c = '\0';//?                
             while (count < 2)
             {
-                if(!ReadNext(out c))                 
+                if (!ReadNext(out c))
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
                     EmitDataToken();
@@ -84,12 +84,16 @@ namespace HtmlKit
                 }
 
                 if (c != '-')
+                {
                     break;
-
-                // Note: we save the data in case we hit a parse error and have to emit a data token
-                data.Append(c);
-                ReadNext();
-                count++;
+                }
+                else
+                {
+                    // Note: we save the data in case we hit a parse error and have to emit a data token
+                    data.Append(c);
+                    ReadNext();
+                    count++;
+                }
             }
 
 
@@ -136,7 +140,7 @@ namespace HtmlKit
                 if (count == 7)
                 {
                     doctype = CreateDocTypeToken(ClearNameBuffer());
-                    TokenizerState = HtmlTokenizerState.DocType;                     
+                    TokenizerState = HtmlTokenizerState.DocType;
                     return;
                 }
 
@@ -253,9 +257,9 @@ namespace HtmlKit
         /// </summary>
         void R48_Comment()
         {
-             
+
             char c;
-            while(ReadNext(out c))
+            while (ReadNext(out c))
             {
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -277,7 +281,7 @@ namespace HtmlKit
 
             //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
-            EmitCommentTokenFromNameBuffer(); 
+            EmitCommentTokenFromNameBuffer();
         }
 
         // FIXME: this is exactly the same as ReadCommentStartDash
@@ -323,7 +327,7 @@ namespace HtmlKit
         {
 
             char c;
-            while(ReadNext(out c))
+            while (ReadNext(out c))
             {
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
@@ -351,7 +355,7 @@ namespace HtmlKit
 
             //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
-            EmitCommentTokenFromNameBuffer(); 
+            EmitCommentTokenFromNameBuffer();
         }
         /// <summary>
         /// 8.2.4.51 Comment end bang state

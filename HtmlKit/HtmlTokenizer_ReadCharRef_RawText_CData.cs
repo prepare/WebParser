@@ -27,9 +27,9 @@ namespace HtmlKit
 {
 
     partial class HtmlTokenizer
-    { 
+    {
         void ReadGenericRawTextLessThan(HtmlTokenizerState rawText, HtmlTokenizerState rawTextEndTagOpen)
-        { 
+        {
             char c;
             if (!Peek(out c))
             {
@@ -162,7 +162,7 @@ namespace HtmlKit
         void R03_RcData()
         {
             char c;
-            while(ReadNext(out c))
+            while (ReadNext(out c))
             {
                 switch (c)
                 {
@@ -199,8 +199,8 @@ namespace HtmlKit
             TokenizerState = HtmlTokenizerState.EndOfFile;
             if (data.Length > 0)
             {
-                EmitDataToken(DecodeCharacterReferences); 
-            }  
+                EmitDataToken(DecodeCharacterReferences);
+            }
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace HtmlKit
         void R05_RawText()
         {
             char c;
-            while(ReadNext(out c))
+            while (ReadNext(out c))
             {
                 switch (c)
                 {
@@ -238,7 +238,7 @@ namespace HtmlKit
                         {
                             EmitDataToken();
                             return;
-                        } 
+                        }
                         break;
                 }
             }
@@ -249,7 +249,7 @@ namespace HtmlKit
             {
                 EmitDataToken();
             }
-             
+
         }
 
 
@@ -321,7 +321,6 @@ namespace HtmlKit
             }
 
             TokenizerState = next;
-
             data.Append(entity.GetValue());
             entity.Reset();
 
@@ -387,7 +386,7 @@ namespace HtmlKit
 
             char c;
             while (ReadNext(out c))
-            {   
+            {
                 if (cdataIndex >= 3)
                 {
                     data.Append(cdata[0]);
@@ -418,7 +417,7 @@ namespace HtmlKit
                 data.Append(cdata[i]);
 
             cdataIndex = 0;
-            EmitCDataToken();             
+            EmitCDataToken();
         }
 
     }

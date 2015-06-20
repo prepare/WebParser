@@ -265,11 +265,11 @@ namespace HtmlKit
         void R40_AttributeValueUnquoted()
         {
             char c;
-            while(ReadNext(out c))
+            while (ReadNext(out c))
             {
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
-                data.Append(c); 
+                data.Append(c);
                 switch (c)
                 {
                     case '\t':
@@ -304,13 +304,13 @@ namespace HtmlKit
                             name.Append(c == '\0' ? '\uFFFD' : c);
                         }
                         break;
-                } 
+                }
             }
 
             //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
             name.Length = 0;
-            EmitDataToken(); 
+            EmitDataToken();
         }
 
         /// <summary>
