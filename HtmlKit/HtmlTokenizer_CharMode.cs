@@ -14,12 +14,31 @@ namespace HtmlKit
             WhiteSpace,
             NullChar,
 
-            Gt, // >
-            Lt, // <
-            Bang,// !
-            Quest,//? 
-            Slash, //  /
-            Assign, // =
+
+            /// <summary>
+            /// &gt;
+            /// </summary>
+            Gt,  
+            /// <summary>
+            /// &lt;
+            /// </summary>
+            Lt,  
+            /// <summary>
+            /// !
+            /// </summary>
+            Bang, 
+            /// <summary>
+            /// ?
+            /// </summary>
+            Quest, 
+            /// <summary>
+            /// /
+            /// </summary>
+            Slash,  
+            /// <summary>
+            /// =
+            /// </summary>
+            Assign, 
 
 
             Eof

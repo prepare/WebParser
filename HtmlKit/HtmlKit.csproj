@@ -38,6 +38,7 @@
     <Compile Include="HtmlTokenizer_ReadNextToken.cs" />
     <Compile Include="HtmlTokenizer_ReadCharRef_RawText_CData.cs" />
     <Compile Include="HtmlTokenizer_ReadScript.cs" />
+    <Compile Include="HtmlTokenizer_ReadTag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HtmlAttribute.cs" />
     <Compile Include="HtmlAttributeCollection.cs" />
