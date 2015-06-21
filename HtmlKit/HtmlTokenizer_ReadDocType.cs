@@ -42,7 +42,6 @@ namespace HtmlKit
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
                 doctype.ForceQuirksMode = true;
-
                 EmitAndClearDocTypeToken();
                 return;
             }
