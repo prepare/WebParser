@@ -43,7 +43,7 @@ namespace HtmlKit
                 switch (c)
                 {
                     case '<':
-                        TokenizerState = HtmlTokenizerState.ScriptDataLessThan;
+                        TokenizerState = HtmlTokenizerState.s17_ScriptDataLessThan;
                         EmitScriptDataToken();
                         return;
                     case '\0':
@@ -80,16 +80,16 @@ namespace HtmlKit
                 switch (charMode)
                 {
                     default:
-                        TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscaped;
+                        TokenizerState = HtmlTokenizerState.s29_ScriptDataDoubleEscaped;
                         return;
                     case CharMode.NewLine:
                     case CharMode.WhiteSpace:
                     case CharMode.Gt:
                     case CharMode.Slash:
                         if (NameIs("script"))
-                            TokenizerState = HtmlTokenizerState.ScriptDataEscaped;
+                            TokenizerState = HtmlTokenizerState.s22_ScriptDataEscaped;
                         else
-                            TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscaped;
+                            TokenizerState = HtmlTokenizerState.s29_ScriptDataDoubleEscaped;
                         data.Append(c);
                         ReadNext();
                         return;
@@ -123,18 +123,18 @@ namespace HtmlKit
             switch (c)
             {
                 case '/':
-                    TokenizerState = HtmlTokenizerState.ScriptDataEndTagOpen;
+                    TokenizerState = HtmlTokenizerState.s18_ScriptDataEndTagOpen;
                     data.Append('/');
                     name.Length = 0;
                     ReadNext();
                     break;
                 case '!':
-                    TokenizerState = HtmlTokenizerState.ScriptDataEscapeStart;
+                    TokenizerState = HtmlTokenizerState.s20_ScriptDataEscapeStart;
                     data.Append('!');
                     ReadNext();
                     break;
                 default:
-                    TokenizerState = HtmlTokenizerState.ScriptData;
+                    TokenizerState = HtmlTokenizerState.s06_ScriptData;
                     break;
             }
         }
@@ -155,14 +155,14 @@ namespace HtmlKit
 
             if (c == 'S' || c == 's')
             {
-                TokenizerState = HtmlTokenizerState.ScriptDataEndTagName;
+                TokenizerState = HtmlTokenizerState.s19_ScriptDataEndTagName;
                 name.Append('s');
                 data.Append(c);
                 ReadNext();
             }
             else
             {
-                TokenizerState = HtmlTokenizerState.ScriptData;
+                TokenizerState = HtmlTokenizerState.s06_ScriptData;
             }
         }
         /// <summary>
@@ -189,7 +189,7 @@ namespace HtmlKit
                     case ' ':
                         if (NameIs("script"))
                         {
-                            TokenizerState = HtmlTokenizerState.BeforeAttributeName;
+                            TokenizerState = HtmlTokenizerState.s34_BeforeAttributeName;
                             tag = CreateTagTokenFromNameBuffer(true);
                             return;
                         }
@@ -198,7 +198,7 @@ namespace HtmlKit
                     case '/':
                         if (NameIs("script"))
                         {
-                            TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
+                            TokenizerState = HtmlTokenizerState.s43_SelfClosingStartTag;
                             tag = CreateTagTokenFromNameBuffer(true);
                             return;
                         }
@@ -208,7 +208,7 @@ namespace HtmlKit
                         {
 
                             SetEmitToken(CreateTagTokenFromNameBuffer(true));
-                            TokenizerState = HtmlTokenizerState.Data;
+                            TokenizerState = HtmlTokenizerState.s01_Data;
                             data.Length = 0;
                             return;
                         }
@@ -217,7 +217,7 @@ namespace HtmlKit
                         switch (charMode)
                         {
                             default:
-                                TokenizerState = HtmlTokenizerState.ScriptData;
+                                TokenizerState = HtmlTokenizerState.s06_ScriptData;
                                 tag = CreateTagTokenFromNameBuffer(true);
                                 return;
                             case CharMode.NullChar:
@@ -248,12 +248,12 @@ namespace HtmlKit
             if (!Peek(out c)) { throw new System.NotSupportedException(); }
             if (c == '-')
             {
-                TokenizerState = HtmlTokenizerState.ScriptDataEscapeStartDash;
+                TokenizerState = HtmlTokenizerState.s21_ScriptDataEscapeStartDash;
                 ReadNext();
             }
             else
             {
-                TokenizerState = HtmlTokenizerState.ScriptData;
+                TokenizerState = HtmlTokenizerState.s06_ScriptData;
             }
 
         }
@@ -269,12 +269,12 @@ namespace HtmlKit
 
             if (c == '-')
             {
-                TokenizerState = HtmlTokenizerState.ScriptDataEscapedDashDash;
+                TokenizerState = HtmlTokenizerState.s24_ScriptDataEscapedDashDash;
                 ReadNext();
             }
             else
             {
-                TokenizerState = HtmlTokenizerState.ScriptData;
+                TokenizerState = HtmlTokenizerState.s06_ScriptData;
             }
         }
         /// <summary>
@@ -289,11 +289,11 @@ namespace HtmlKit
                 switch (c)
                 {
                     case '-':
-                        TokenizerState = HtmlTokenizerState.ScriptDataEscapedDash;
+                        TokenizerState = HtmlTokenizerState.s23_ScriptDataEscapedDash;
                         data.Append('-');
                         return;
                     case '<':
-                        TokenizerState = HtmlTokenizerState.ScriptDataEscapedLessThan;
+                        TokenizerState = HtmlTokenizerState.s25_ScriptDataEscapedLessThan;
                         return;
                     case '\0':
                         c = '\uFFFD';
@@ -327,17 +327,17 @@ namespace HtmlKit
             switch (c)
             {
                 case '-':
-                    TokenizerState = HtmlTokenizerState.ScriptDataEscapedDashDash;
+                    TokenizerState = HtmlTokenizerState.s24_ScriptDataEscapedDashDash;
                     data.Append('-');
                     break;
                 case '<':
-                    TokenizerState = HtmlTokenizerState.ScriptDataEscapedLessThan;
+                    TokenizerState = HtmlTokenizerState.s25_ScriptDataEscapedLessThan;
                     break;
                 case '\0':
                     c = '\uFFFD';
                     goto default;
                 default:
-                    TokenizerState = HtmlTokenizerState.ScriptDataEscaped;
+                    TokenizerState = HtmlTokenizerState.s22_ScriptDataEscaped;
                     data.Append(c);
                     break;
             }
@@ -362,24 +362,24 @@ namespace HtmlKit
                 switch (c)
                 {
                     case '-':
-                        TokenizerState = HtmlTokenizerState.ScriptDataEscapedDash;
+                        TokenizerState = HtmlTokenizerState.s23_ScriptDataEscapedDash;
                         data.Append('-');
                         break;
                     case '<':
-                        TokenizerState = HtmlTokenizerState.ScriptDataEscapedLessThan;
+                        TokenizerState = HtmlTokenizerState.s25_ScriptDataEscapedLessThan;
                         break;
                     case '>':
-                        TokenizerState = HtmlTokenizerState.ScriptData;
+                        TokenizerState = HtmlTokenizerState.s06_ScriptData;
                         data.Append('>');
                         break;
                     default:
                         //TODO :review here again
-                        TokenizerState = HtmlTokenizerState.ScriptDataEscaped;
+                        TokenizerState = HtmlTokenizerState.s22_ScriptDataEscaped;
                         data.Append(c);
                         break;
                 }
                 //TODO :review here again
-            } while (TokenizerState == HtmlTokenizerState.ScriptDataEscaped);
+            } while (TokenizerState == HtmlTokenizerState.s22_ScriptDataEscaped);
         }
         /// <summary>
         /// 8.2.4.25 Script data escaped less-than sign state
@@ -398,19 +398,19 @@ namespace HtmlKit
             {
                 case CharMode.UpperAsciiLetter:
                 case CharMode.LowerAsciiLetter:
-                    TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscaped;
+                    TokenizerState = HtmlTokenizerState.s29_ScriptDataDoubleEscaped;
                     data.Append('<');
                     data.Append(c);
                     name.Append(c);
                     ReadNext();
                     break;
                 case CharMode.Slash:
-                    TokenizerState = HtmlTokenizerState.ScriptDataEndTagOpen;
+                    TokenizerState = HtmlTokenizerState.s18_ScriptDataEndTagOpen;
                     name.Length = 0;
                     ReadNext();
                     break;
                 default:
-                    TokenizerState = HtmlTokenizerState.ScriptDataEscaped;
+                    TokenizerState = HtmlTokenizerState.s22_ScriptDataEscaped;
                     data.Append('<');
                     break;
             }
@@ -438,12 +438,12 @@ namespace HtmlKit
                 //if (IsAsciiLetter(c))
                 case CharMode.UpperAsciiLetter:
                 case CharMode.LowerAsciiLetter:
-                    TokenizerState = HtmlTokenizerState.ScriptDataEscapedEndTagName;
+                    TokenizerState = HtmlTokenizerState.s27_ScriptDataEscapedEndTagName;
                     name.Append(c);
                     ReadNext();
                     break;
                 default:
-                    TokenizerState = HtmlTokenizerState.ScriptDataEscaped;
+                    TokenizerState = HtmlTokenizerState.s22_ScriptDataEscaped;
                     break;
             }
         }
@@ -468,7 +468,7 @@ namespace HtmlKit
                     case ' ':
                         if (NameIs("script"))
                         {
-                            TokenizerState = HtmlTokenizerState.BeforeAttributeName;
+                            TokenizerState = HtmlTokenizerState.s34_BeforeAttributeName;
                             tag = CreateTagTokenFromNameBuffer(true);
                             return;
                         }
@@ -477,7 +477,7 @@ namespace HtmlKit
                     case '/':
                         if (NameIs("script"))
                         {
-                            TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
+                            TokenizerState = HtmlTokenizerState.s43_SelfClosingStartTag;
                             tag = CreateTagTokenFromNameBuffer(true);
                             return;
                         }
@@ -486,7 +486,7 @@ namespace HtmlKit
                         if (NameIs("script"))
                         {
                             SetEmitToken(CreateTagTokenFromNameBuffer(true));
-                            TokenizerState = HtmlTokenizerState.Data;
+                            TokenizerState = HtmlTokenizerState.s01_Data;
                             data.Length = 0;
                             return;
                         }
@@ -496,7 +496,7 @@ namespace HtmlKit
                         {
                             default:
                                 //if (!IsAsciiLetter(c))
-                                TokenizerState = HtmlTokenizerState.ScriptData;
+                                TokenizerState = HtmlTokenizerState.s06_ScriptData;
                                 data.Append(c);
                                 return;
                             case CharMode.LowerAsciiLetter:
@@ -538,14 +538,14 @@ namespace HtmlKit
                     case CharMode.Slash:
                     case CharMode.Gt:
                         if (NameIs("script"))
-                            TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscaped;
+                            TokenizerState = HtmlTokenizerState.s29_ScriptDataDoubleEscaped;
                         else
-                            TokenizerState = HtmlTokenizerState.ScriptDataEscaped;
+                            TokenizerState = HtmlTokenizerState.s22_ScriptDataEscaped;
                         name.Length = 0;
                         return;
                     default:
                         //  if (!IsAsciiLetter(c))
-                        TokenizerState = HtmlTokenizerState.ScriptDataEscaped;
+                        TokenizerState = HtmlTokenizerState.s22_ScriptDataEscaped;
                         return;
                 }
             }
@@ -567,11 +567,11 @@ namespace HtmlKit
                 switch (c)
                 {
                     case '-':
-                        TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscapedDash;
+                        TokenizerState = HtmlTokenizerState.s30_ScriptDataDoubleEscapedDash;
                         data.Append('-');
                         return;
                     case '<':
-                        TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscapedLessThan;
+                        TokenizerState = HtmlTokenizerState.s32_ScriptDataDoubleEscapedLessThan;
                         return;
                     case '\0':
                         c = '\uFFFD';
@@ -604,17 +604,17 @@ namespace HtmlKit
             switch (c)
             {
                 case '-':
-                    TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscapedDashDash;
+                    TokenizerState = HtmlTokenizerState.s31_ScriptDataDoubleEscapedDashDash;
                     data.Append('-');
                     break;
                 case '<':
-                    TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscapedLessThan;
+                    TokenizerState = HtmlTokenizerState.s32_ScriptDataDoubleEscapedLessThan;
                     break;
                 case '\0':
                     c = '\uFFFD';
                     goto default;
                 default:
-                    TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscaped;
+                    TokenizerState = HtmlTokenizerState.s29_ScriptDataDoubleEscaped;
                     data.Append(c);
                     break;
             }
@@ -637,13 +637,13 @@ namespace HtmlKit
                     case '-':
                         break;
                     case '<':
-                        TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscapedLessThan;
+                        TokenizerState = HtmlTokenizerState.s32_ScriptDataDoubleEscapedLessThan;
                         return;
                     case '>':
-                        TokenizerState = HtmlTokenizerState.ScriptData;
+                        TokenizerState = HtmlTokenizerState.s06_ScriptData;
                         return;
                     default:
-                        TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscaped;
+                        TokenizerState = HtmlTokenizerState.s29_ScriptDataDoubleEscaped;
                         return;
                 }
             }
@@ -667,13 +667,13 @@ namespace HtmlKit
 
             if (c == '/')
             {
-                TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscapeEnd;
+                TokenizerState = HtmlTokenizerState.s33_ScriptDataDoubleEscapeEnd;
                 data.Append('/');
                 ReadNext();
             }
             else
             {
-                TokenizerState = HtmlTokenizerState.ScriptDataDoubleEscaped;
+                TokenizerState = HtmlTokenizerState.s29_ScriptDataDoubleEscaped;
             }
         }
     }

@@ -67,7 +67,7 @@ namespace UnitTests
                 var tokenizer = new HtmlTokenizer(textReader);
                 HtmlToken token;
 
-                Assert.AreEqual(HtmlTokenizerState.Data, tokenizer.TokenizerState);
+                Assert.AreEqual(HtmlTokenizerState.s01_Data, tokenizer.TokenizerState);
 
                 while (tokenizer.ReadNextToken(out token))
                 {

@@ -47,7 +47,7 @@ namespace HtmlKit
                 return;
             }
 
-            TokenizerState = HtmlTokenizerState.BeforeDocTypeName;
+            TokenizerState = HtmlTokenizerState.s53_BeforeDocTypeName;
 
             switch (c)
             {
@@ -82,7 +82,7 @@ namespace HtmlKit
                     case ' ':
                         break;
                     case '>':
-                        TokenizerState = HtmlTokenizerState.Data;
+                        TokenizerState = HtmlTokenizerState.s01_Data;
                         doctype.ForceQuirksMode = true;
                         EmitAndClearDocTypeToken();
                         return;
@@ -90,7 +90,7 @@ namespace HtmlKit
                         c = '\uFFFD';
                         goto default;
                     default:
-                        TokenizerState = HtmlTokenizerState.DocTypeName;
+                        TokenizerState = HtmlTokenizerState.s54_DocTypeName;
                         name.Append(c);
                         return;
                 } 
@@ -121,11 +121,11 @@ namespace HtmlKit
                     case '\n':
                     case '\f':
                     case ' ':
-                        TokenizerState = HtmlTokenizerState.AfterDocTypeName;
+                        TokenizerState = HtmlTokenizerState.s55_AfterDocTypeName;
                         doctype.Name = ClearNameBuffer();
                         return;
                     case '>':
-                        TokenizerState = HtmlTokenizerState.Data;
+                        TokenizerState = HtmlTokenizerState.s01_Data;
                         doctype.Name = ClearNameBuffer();
                         EmitAndClearDocTypeToken();
                         return;
@@ -167,7 +167,7 @@ namespace HtmlKit
                     case ' ':
                         break;
                     case '>':
-                        TokenizerState = HtmlTokenizerState.Data;
+                        TokenizerState = HtmlTokenizerState.s01_Data;
                         EmitAndClearDocTypeToken();
                         return;
                     default:
@@ -177,17 +177,17 @@ namespace HtmlKit
                         //-------------------
                         if (NameIs("public"))
                         {
-                            TokenizerState = HtmlTokenizerState.AfterDocTypePublicKeyword;
+                            TokenizerState = HtmlTokenizerState.s56_AfterDocTypePublicKeyword;
                             doctype.PublicKeyword = ClearNameBuffer();
                         }
                         else if (NameIs("system"))
                         {
-                            TokenizerState = HtmlTokenizerState.AfterDocTypeSystemKeyword;
+                            TokenizerState = HtmlTokenizerState.s62_AfterDocTypeSystemKeyword;
                             doctype.SystemKeyword = ClearNameBuffer();
                         }
                         else
                         {
-                            TokenizerState = HtmlTokenizerState.BogusDocType;
+                            TokenizerState = HtmlTokenizerState.s67_BogusDocType;
                             name.Length = 0;
                         }                        
                         return;
@@ -226,21 +226,21 @@ namespace HtmlKit
                 case '\n':
                 case '\f':
                 case ' ':
-                    TokenizerState = HtmlTokenizerState.BeforeDocTypePublicIdentifier;
+                    TokenizerState = HtmlTokenizerState.s57_BeforeDocTypePublicIdentifier;
                     break;
                 case '"':
                 case '\'': // parse error
-                    TokenizerState = HtmlTokenizerState.DocTypePublicIdentifierQuoted;
+                    TokenizerState = HtmlTokenizerState.s58_59_DocTypePublicIdentifierQuoted;
                     doctype.PublicIdentifier = string.Empty;
                     quote = c;
                     break;
                 case '>': // parse error
-                    TokenizerState = HtmlTokenizerState.Data;
+                    TokenizerState = HtmlTokenizerState.s01_Data;
                     doctype.ForceQuirksMode = true;
                     EmitAndClearDocTypeToken();
                     return;
                 default: // parse error
-                    TokenizerState = HtmlTokenizerState.BogusDocType;
+                    TokenizerState = HtmlTokenizerState.s67_BogusDocType;
                     doctype.ForceQuirksMode = true;
                     break;
             }
@@ -268,17 +268,17 @@ namespace HtmlKit
                         break;
                     case '"':
                     case '\'':
-                        TokenizerState = HtmlTokenizerState.DocTypePublicIdentifierQuoted;
+                        TokenizerState = HtmlTokenizerState.s58_59_DocTypePublicIdentifierQuoted;
                         doctype.PublicIdentifier = string.Empty;
                         quote = c;
                         return;
                     case '>': // parse error
-                        TokenizerState = HtmlTokenizerState.Data;
+                        TokenizerState = HtmlTokenizerState.s01_Data;
                         doctype.ForceQuirksMode = true;
                         EmitAndClearDocTypeToken();
                         return;
                     default: // parse error
-                        TokenizerState = HtmlTokenizerState.BogusDocType;
+                        TokenizerState = HtmlTokenizerState.s67_BogusDocType;
                         doctype.ForceQuirksMode = true;
                         return;
                 }
@@ -310,7 +310,7 @@ namespace HtmlKit
                         name.Append('\uFFFD');
                         break;
                     case '>': // parse error
-                        TokenizerState = HtmlTokenizerState.Data;
+                        TokenizerState = HtmlTokenizerState.s01_Data;
                         doctype.PublicIdentifier = ClearNameBuffer();
                         doctype.ForceQuirksMode = true;
                         EmitAndClearDocTypeToken();
@@ -318,7 +318,7 @@ namespace HtmlKit
                     default:
                         if (c == quote)
                         {
-                            TokenizerState = HtmlTokenizerState.AfterDocTypePublicIdentifier;
+                            TokenizerState = HtmlTokenizerState.s60_AfterDocTypePublicIdentifier;
                             doctype.PublicIdentifier = ClearNameBuffer();
                             return;
                         }
@@ -363,20 +363,20 @@ namespace HtmlKit
                 case '\n':
                 case '\f':
                 case ' ':
-                    TokenizerState = HtmlTokenizerState.BetweenDocTypePublicAndSystemIdentifiers;
+                    TokenizerState = HtmlTokenizerState.s61_BetweenDocTypePublicAndSystemIdentifiers;
                     break;
                 case '>':
-                    TokenizerState = HtmlTokenizerState.Data;
+                    TokenizerState = HtmlTokenizerState.s01_Data;
                     EmitAndClearDocTypeToken();
                     return;
                 case '"':
                 case '\'': // parse error
-                    TokenizerState = HtmlTokenizerState.DocTypeSystemIdentifierQuoted;
+                    TokenizerState = HtmlTokenizerState.s64_65_DocTypeSystemIdentifierQuoted;
                     doctype.SystemIdentifier = string.Empty;
                     quote = c;
                     break;
                 default: // parse error
-                    TokenizerState = HtmlTokenizerState.BogusDocType;
+                    TokenizerState = HtmlTokenizerState.s67_BogusDocType;
                     doctype.ForceQuirksMode = true;
                     break;
             }
@@ -402,17 +402,17 @@ namespace HtmlKit
                     case ' ':
                         break;
                     case '>':
-                        TokenizerState = HtmlTokenizerState.Data;
+                        TokenizerState = HtmlTokenizerState.s01_Data;
                         EmitAndClearDocTypeToken();
                         return;
                     case '"':
                     case '\'':
-                        TokenizerState = HtmlTokenizerState.DocTypeSystemIdentifierQuoted;
+                        TokenizerState = HtmlTokenizerState.s64_65_DocTypeSystemIdentifierQuoted;
                         doctype.SystemIdentifier = string.Empty;
                         quote = c;
                         return;
                     default: // parse error
-                        TokenizerState = HtmlTokenizerState.BogusDocType;
+                        TokenizerState = HtmlTokenizerState.s67_BogusDocType;
                         doctype.ForceQuirksMode = true;
                         return;
                 } 
@@ -449,22 +449,22 @@ namespace HtmlKit
                 case '\n':
                 case '\f':
                 case ' ':
-                    TokenizerState = HtmlTokenizerState.BeforeDocTypeSystemIdentifier;
+                    TokenizerState = HtmlTokenizerState.s63_BeforeDocTypeSystemIdentifier;
                     break;
                 case '"':
                 case '\'': // parse error
-                    TokenizerState = HtmlTokenizerState.DocTypeSystemIdentifierQuoted;
+                    TokenizerState = HtmlTokenizerState.s64_65_DocTypeSystemIdentifierQuoted;
                     doctype.SystemIdentifier = string.Empty;
                     quote = c;
                     break;
                 case '>': // parse error
-                    TokenizerState = HtmlTokenizerState.Data;
+                    TokenizerState = HtmlTokenizerState.s01_Data;
                     doctype.ForceQuirksMode = true;
 
                     EmitAndClearDocTypeToken();
                     return;
                 default: // parse error
-                    TokenizerState = HtmlTokenizerState.BogusDocType;
+                    TokenizerState = HtmlTokenizerState.s67_BogusDocType;
                     doctype.ForceQuirksMode = true;
                     break;
             }
@@ -492,17 +492,17 @@ namespace HtmlKit
                         break;
                     case '"':
                     case '\'':
-                        TokenizerState = HtmlTokenizerState.DocTypeSystemIdentifierQuoted;
+                        TokenizerState = HtmlTokenizerState.s64_65_DocTypeSystemIdentifierQuoted;
                         doctype.SystemIdentifier = string.Empty;
                         quote = c;
                         return;
                     case '>': // parse error
-                        TokenizerState = HtmlTokenizerState.Data;
+                        TokenizerState = HtmlTokenizerState.s01_Data;
                         doctype.ForceQuirksMode = true;
                         EmitAndClearDocTypeToken();
                         return;
                     default: // parse error
-                        TokenizerState = HtmlTokenizerState.BogusDocType;
+                        TokenizerState = HtmlTokenizerState.s67_BogusDocType;
                         doctype.ForceQuirksMode = true;
                         return;
                 } 
@@ -535,7 +535,7 @@ namespace HtmlKit
                         break; //break switch
 
                     case '>': // parse error
-                        TokenizerState = HtmlTokenizerState.Data;
+                        TokenizerState = HtmlTokenizerState.s01_Data;
                         doctype.SystemIdentifier = ClearNameBuffer();
                         doctype.ForceQuirksMode = true;
                         EmitAndClearDocTypeToken();
@@ -543,7 +543,7 @@ namespace HtmlKit
                     default:
                         if (c == quote)
                         {
-                            TokenizerState = HtmlTokenizerState.AfterDocTypeSystemIdentifier;
+                            TokenizerState = HtmlTokenizerState.s66_AfterDocTypeSystemIdentifier;
                             doctype.SystemIdentifier = ClearNameBuffer();
                             return;
                         }
@@ -583,11 +583,11 @@ namespace HtmlKit
                     case ' ':
                         break;
                     case '>':
-                        TokenizerState = HtmlTokenizerState.Data;
+                        TokenizerState = HtmlTokenizerState.s01_Data;
                         EmitAndClearDocTypeToken();
                         return;
                     default: // parse error
-                        TokenizerState = HtmlTokenizerState.BogusDocType;
+                        TokenizerState = HtmlTokenizerState.s67_BogusDocType;
                         return;
                 }
             }
@@ -611,7 +611,7 @@ namespace HtmlKit
                 data.Append(c);
                 if (c == '>')
                 {
-                    TokenizerState = HtmlTokenizerState.Data;
+                    TokenizerState = HtmlTokenizerState.s01_Data;
                     EmitAndClearDocTypeToken();
                     return;
                 }

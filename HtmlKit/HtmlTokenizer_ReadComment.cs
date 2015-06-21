@@ -101,7 +101,7 @@ namespace HtmlKit
 
             if (count == 2)
             {
-                TokenizerState = HtmlTokenizerState.CommentStart;
+                TokenizerState = HtmlTokenizerState.s46_CommentStart;
                 name.Length = 0;
                 return;
             }
@@ -109,7 +109,7 @@ namespace HtmlKit
             if (count == 1)
             {
                 // parse error
-                TokenizerState = HtmlTokenizerState.BogusComment;
+                TokenizerState = HtmlTokenizerState.s44_BogusComment;
                 return;
             }
 
@@ -142,7 +142,7 @@ namespace HtmlKit
                 if (count == 7)
                 {
                     doctype = CreateDocTypeToken(ClearNameBuffer());
-                    TokenizerState = HtmlTokenizerState.DocType;
+                    TokenizerState = HtmlTokenizerState.s52_DocType;
                     return;
                 }
 
@@ -174,13 +174,13 @@ namespace HtmlKit
 
                 if (count == 7)
                 {
-                    TokenizerState = HtmlTokenizerState.CDataSection;
+                    TokenizerState = HtmlTokenizerState.s68_CDataSection;
                     return;
                 }
             }
 
             // parse error
-            TokenizerState = HtmlTokenizerState.BogusComment;
+            TokenizerState = HtmlTokenizerState.s44_BogusComment;
 
 
         }
@@ -194,7 +194,7 @@ namespace HtmlKit
             char c;
             if (!ReadNext(out c))
             {
-                TokenizerState = HtmlTokenizerState.Data;
+                TokenizerState = HtmlTokenizerState.s01_Data;
 
                 EmitCommentToken(string.Empty);
                 return;
@@ -205,17 +205,17 @@ namespace HtmlKit
             switch (c)
             {
                 case '-':
-                    TokenizerState = HtmlTokenizerState.CommentStartDash;
+                    TokenizerState = HtmlTokenizerState.s47_CommentStartDash;
                     break;
                 case '>': // parse error
-                    TokenizerState = HtmlTokenizerState.Data;
+                    TokenizerState = HtmlTokenizerState.s01_Data;
                     EmitCommentToken(string.Empty);
                     return;
                 case '\0':
                     c = '\uFFFD';
                     goto default;
                 default: // parse error
-                    TokenizerState = HtmlTokenizerState.Comment;
+                    TokenizerState = HtmlTokenizerState.s48_Comment;
                     name.Append(c);
                     break;
             }
@@ -230,7 +230,7 @@ namespace HtmlKit
             char c;
             if (!ReadNext(out c))
             {
-                TokenizerState = HtmlTokenizerState.Data;
+                TokenizerState = HtmlTokenizerState.s01_Data;
                 EmitCommentTokenFromNameBuffer();
                 return;
             }
@@ -240,17 +240,17 @@ namespace HtmlKit
             switch (c)
             {
                 case '-':
-                    TokenizerState = HtmlTokenizerState.CommentEnd;
+                    TokenizerState = HtmlTokenizerState.s50_CommentEnd;
                     break;
                 case '>': // parse error
-                    TokenizerState = HtmlTokenizerState.Data;
+                    TokenizerState = HtmlTokenizerState.s01_Data;
                     EmitCommentTokenFromNameBuffer();
                     return;
                 case '\0':
                     c = '\uFFFD';
                     goto default;
                 default: // parse error
-                    TokenizerState = HtmlTokenizerState.Comment;
+                    TokenizerState = HtmlTokenizerState.s48_Comment;
                     name.Append('-');
                     name.Append(c);
                     break;
@@ -272,7 +272,7 @@ namespace HtmlKit
                 switch (c)
                 {
                     case '-':
-                        TokenizerState = HtmlTokenizerState.CommentEndDash;
+                        TokenizerState = HtmlTokenizerState.s49_CommentEndDash;
                         return;
                     case '\0':
                         c = '\uFFFD';
@@ -300,7 +300,7 @@ namespace HtmlKit
             char c;
             if (!ReadNext(out c))
             {
-                TokenizerState = HtmlTokenizerState.Data;
+                TokenizerState = HtmlTokenizerState.s01_Data;
                 EmitCommentTokenFromNameBuffer();
                 return;
             }
@@ -310,17 +310,17 @@ namespace HtmlKit
             switch (c)
             {
                 case '-':
-                    TokenizerState = HtmlTokenizerState.CommentEnd;
+                    TokenizerState = HtmlTokenizerState.s50_CommentEnd;
                     break;
                 case '>': // parse error
-                    TokenizerState = HtmlTokenizerState.Data;
+                    TokenizerState = HtmlTokenizerState.s01_Data;
                     EmitCommentTokenFromNameBuffer();
                     return;
                 case '\0':
                     c = '\uFFFD';
                     goto default;
                 default: // parse error
-                    TokenizerState = HtmlTokenizerState.Comment;
+                    TokenizerState = HtmlTokenizerState.s48_Comment;
                     name.Append('-');
                     name.Append(c);
                     break;
@@ -341,11 +341,11 @@ namespace HtmlKit
                 switch (c)
                 {
                     case '>':
-                        TokenizerState = HtmlTokenizerState.Data;
+                        TokenizerState = HtmlTokenizerState.s01_Data;
                         EmitCommentTokenFromNameBuffer();
                         return;
                     case '!': // parse error
-                        TokenizerState = HtmlTokenizerState.CommentEndBang;
+                        TokenizerState = HtmlTokenizerState.s51_CommentEndBang;
                         return;
                     case '-':
                         name.Append('-');
@@ -354,7 +354,7 @@ namespace HtmlKit
                         c = '\uFFFD';
                         goto default;
                     default:
-                        TokenizerState = HtmlTokenizerState.Comment;
+                        TokenizerState = HtmlTokenizerState.s48_Comment;
                         name.Append(c);
                         return;
                 }
@@ -384,18 +384,18 @@ namespace HtmlKit
             switch (c)
             {
                 case '-':
-                    TokenizerState = HtmlTokenizerState.CommentEndDash;
+                    TokenizerState = HtmlTokenizerState.s49_CommentEndDash;
                     name.Append("--!");
                     break;
                 case '>':
-                    TokenizerState = HtmlTokenizerState.Data;
+                    TokenizerState = HtmlTokenizerState.s01_Data;
                     EmitCommentTokenFromNameBuffer();
                     return;
                 case '\0':
                     c = '\uFFFD';
                     goto default;
                 default: // parse error
-                    TokenizerState = HtmlTokenizerState.Comment;
+                    TokenizerState = HtmlTokenizerState.s48_Comment;
                     name.Append("--!");
                     name.Append(c);
                     break;

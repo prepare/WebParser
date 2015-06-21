@@ -198,27 +198,27 @@ namespace HtmlKit
                     case HtmlTagId.IFrame:
                     case HtmlTagId.NoEmbed:
                     case HtmlTagId.NoFrames:
-                        TokenizerState = HtmlTokenizerState.RawText;
+                        TokenizerState = HtmlTokenizerState.s05_RawText;
                         activeTagName = tag.Name;
                         break;
                     case HtmlTagId.Title:
                     case HtmlTagId.TextArea:
-                        TokenizerState = HtmlTokenizerState.RcData;
+                        TokenizerState = HtmlTokenizerState.s03_RcData;
                         activeTagName = tag.Name;
                         break;
                     case HtmlTagId.PlainText:
-                        TokenizerState = HtmlTokenizerState.PlainText;
+                        TokenizerState = HtmlTokenizerState.s07_PlainText;
                         break;
                     case HtmlTagId.Script:
-                        TokenizerState = HtmlTokenizerState.ScriptData;
+                        TokenizerState = HtmlTokenizerState.s06_ScriptData;
                         break;
                     case HtmlTagId.NoScript:
                         // TODO: only switch into the RawText state if scripting is enabled
-                        TokenizerState = HtmlTokenizerState.RawText;
+                        TokenizerState = HtmlTokenizerState.s05_RawText;
                         activeTagName = tag.Name;
                         break;
                     case HtmlTagId.Html:
-                        TokenizerState = HtmlTokenizerState.Data;
+                        TokenizerState = HtmlTokenizerState.s01_Data;
 
                         for (int i = tag.Attributes.Count; i > 0; i--)
                         {
@@ -234,13 +234,13 @@ namespace HtmlKit
                         }
                         break;
                     default:
-                        TokenizerState = HtmlTokenizerState.Data;
+                        TokenizerState = HtmlTokenizerState.s01_Data;
                         break;
                 }
             }
             else
             {
-                TokenizerState = HtmlTokenizerState.Data;
+                TokenizerState = HtmlTokenizerState.s01_Data;
             }
 
             SetEmitToken(tag);

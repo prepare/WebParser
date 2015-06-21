@@ -49,7 +49,7 @@ namespace HtmlKit
                     case ' ':
                         break;
                     case '/':
-                        TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
+                        TokenizerState = HtmlTokenizerState.s43_SelfClosingStartTag;
                         return;
                     case '>':
                         EmitTagToken();
@@ -64,7 +64,7 @@ namespace HtmlKit
                         c = '\uFFFD';
                         goto default;
                     default:
-                        TokenizerState = HtmlTokenizerState.AttributeName;
+                        TokenizerState = HtmlTokenizerState.s35_AttributeName;
                         name.Append(c);
                         return;
                 }
@@ -93,15 +93,15 @@ namespace HtmlKit
                     case '\n':
                     case '\f':
                     case ' ':
-                        TokenizerState = HtmlTokenizerState.AfterAttributeName;
+                        TokenizerState = HtmlTokenizerState.s36_AfterAttributeName;
                         EmitTagAttribute();
                         return;
                     case '/':
-                        TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
+                        TokenizerState = HtmlTokenizerState.s43_SelfClosingStartTag;
                         EmitTagAttribute();
                         return;
                     case '=':
-                        TokenizerState = HtmlTokenizerState.BeforeAttributeValue;
+                        TokenizerState = HtmlTokenizerState.s37_BeforeAttributeValue;
                         EmitTagAttribute();
                         return;
                     case '>':
@@ -145,10 +145,10 @@ namespace HtmlKit
                     case ' ':
                         break;
                     case '/':
-                        TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
+                        TokenizerState = HtmlTokenizerState.s43_SelfClosingStartTag;
                         return;
                     case '=':
-                        TokenizerState = HtmlTokenizerState.BeforeAttributeValue;
+                        TokenizerState = HtmlTokenizerState.s37_BeforeAttributeValue;
                         return;
                     case '>':
                         EmitTagToken();
@@ -162,7 +162,7 @@ namespace HtmlKit
                         c = '\uFFFD';
                         goto default;
                     default:
-                        TokenizerState = HtmlTokenizerState.AttributeName;
+                        TokenizerState = HtmlTokenizerState.s35_AttributeName;
                         name.Append(c);
                         return;
                 }
@@ -195,14 +195,14 @@ namespace HtmlKit
                         break;
                     case '"':
                     case '\'':
-                        TokenizerState = HtmlTokenizerState.AttributeValueQuoted;
+                        TokenizerState = HtmlTokenizerState.s38_39_AttributeValueQuoted;
                         quote = c;
                         return;
                     case '&':
-                        TokenizerState = HtmlTokenizerState.AttributeValueUnquoted;
+                        TokenizerState = HtmlTokenizerState.s40_AttributeValueUnquoted;
                         return;
                     case '/':
-                        TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
+                        TokenizerState = HtmlTokenizerState.s43_SelfClosingStartTag;
                         return;
                     case '>':
                         EmitTagToken();
@@ -216,7 +216,7 @@ namespace HtmlKit
                         c = '\uFFFD';
                         goto default;
                     default:
-                        TokenizerState = HtmlTokenizerState.AttributeName;
+                        TokenizerState = HtmlTokenizerState.s35_AttributeName;
                         name.Append(c);
                         return;
                 }
@@ -243,7 +243,7 @@ namespace HtmlKit
                 switch (c)
                 {
                     case '&':
-                        TokenizerState = HtmlTokenizerState.CharacterReferenceInAttributeValue;
+                        TokenizerState = HtmlTokenizerState.s41_CharacterReferenceInAttributeValue;
                         return;
                     case '\0':
                         c = '\uFFFD';
@@ -251,7 +251,7 @@ namespace HtmlKit
                     default:
                         if (c == quote)
                         {
-                            TokenizerState = HtmlTokenizerState.AfterAttributeValueQuoted;
+                            TokenizerState = HtmlTokenizerState.s42_AfterAttributeValueQuoted;
                             attribute.Value = ClearNameBuffer();
                             return;
                         }
@@ -287,11 +287,11 @@ namespace HtmlKit
                     case '\n':
                     case '\f':
                     case ' ':
-                        TokenizerState = HtmlTokenizerState.BeforeAttributeName;
+                        TokenizerState = HtmlTokenizerState.s34_BeforeAttributeName;
                         attribute.Value = ClearNameBuffer();
                         return;
                     case '&':
-                        TokenizerState = HtmlTokenizerState.CharacterReferenceInAttributeValue;
+                        TokenizerState = HtmlTokenizerState.s41_CharacterReferenceInAttributeValue;
                         return;
                     case '>':
                         EmitTagToken();
@@ -305,7 +305,7 @@ namespace HtmlKit
                     default:
                         if (c == quote)
                         {
-                            TokenizerState = HtmlTokenizerState.AfterAttributeValueQuoted;
+                            TokenizerState = HtmlTokenizerState.s42_AfterAttributeValueQuoted;
                             attribute.Value = ClearNameBuffer();
                             return;
                         }
@@ -402,9 +402,9 @@ namespace HtmlKit
             }
 
             if (quote == -1)
-                TokenizerState = HtmlTokenizerState.AttributeValueUnquoted;
+                TokenizerState = HtmlTokenizerState.s40_AttributeValueUnquoted;
             else
-                TokenizerState = HtmlTokenizerState.AttributeValueQuoted;
+                TokenizerState = HtmlTokenizerState.s38_39_AttributeValueQuoted;
 
             if (consume)
                 ReadNext();
@@ -432,11 +432,11 @@ namespace HtmlKit
                 case '\n':
                 case '\f':
                 case ' ':
-                    TokenizerState = HtmlTokenizerState.BeforeAttributeName;
+                    TokenizerState = HtmlTokenizerState.s34_BeforeAttributeName;
                     ReadNext(); //consume
                     return;
                 case '/':
-                    TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
+                    TokenizerState = HtmlTokenizerState.s43_SelfClosingStartTag;
                     ReadNext();//consume
                     return;
                 case '>':
@@ -444,7 +444,7 @@ namespace HtmlKit
                     ReadNext();//consume
                     return;
                 default:
-                    TokenizerState = HtmlTokenizerState.BeforeAttributeName;
+                    TokenizerState = HtmlTokenizerState.s34_BeforeAttributeName;
                     break;
             }
         }

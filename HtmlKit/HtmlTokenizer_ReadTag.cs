@@ -45,12 +45,12 @@ namespace HtmlKit
                     case '&':
                         if (DecodeCharacterReferences)
                         {
-                            TokenizerState = HtmlTokenizerState.CharacterReferenceInData;
+                            TokenizerState = HtmlTokenizerState.s02_CharacterReferenceInData;
                             return;
                         } 
                         goto default;
                     case '<':
-                        TokenizerState = HtmlTokenizerState.TagOpen;
+                        TokenizerState = HtmlTokenizerState.s08_TagOpen;
                         EmitDataToken(DecodeCharacterReferences);
                         return;
                     //case 0: // parse error, but emit it anyway
@@ -97,15 +97,15 @@ namespace HtmlKit
 
             switch (charMode)
             {
-                case CharMode.Bang: TokenizerState = HtmlTokenizerState.MarkupDeclarationOpen; break;
-                case CharMode.Quest: TokenizerState = HtmlTokenizerState.BogusComment; break;
-                case CharMode.Slash: TokenizerState = HtmlTokenizerState.EndTagOpen; break;
+                case CharMode.Bang: TokenizerState = HtmlTokenizerState.s45_MarkupDeclarationOpen; break;
+                case CharMode.Quest: TokenizerState = HtmlTokenizerState.s44_BogusComment; break;
+                case CharMode.Slash: TokenizerState = HtmlTokenizerState.s09_EndTagOpen; break;
                 default:
-                    TokenizerState = HtmlTokenizerState.Data;
+                    TokenizerState = HtmlTokenizerState.s01_Data;
                     return;
                 case CharMode.UpperAsciiLetter:
                 case CharMode.LowerAsciiLetter:
-                    TokenizerState = HtmlTokenizerState.TagName;
+                    TokenizerState = HtmlTokenizerState.s10_TagName;
                     isEndTag = false;
                     name.Append(c);
                     break;
@@ -134,15 +134,15 @@ namespace HtmlKit
             switch (charMode)
             {
                 default:
-                    TokenizerState = HtmlTokenizerState.BogusComment;
+                    TokenizerState = HtmlTokenizerState.s44_BogusComment;
                     return;
                 case CharMode.Gt:// parse error
-                    TokenizerState = HtmlTokenizerState.Data;
+                    TokenizerState = HtmlTokenizerState.s01_Data;
                     data.Length = 0;
                     break;
                 case CharMode.UpperAsciiLetter:
                 case CharMode.LowerAsciiLetter:
-                    TokenizerState = HtmlTokenizerState.TagName;
+                    TokenizerState = HtmlTokenizerState.s10_TagName;
                     isEndTag = true;
                     name.Append(c);
                     break;
@@ -168,16 +168,16 @@ namespace HtmlKit
                 {
                     case CharMode.NewLine:
                     case CharMode.WhiteSpace:
-                        TokenizerState = HtmlTokenizerState.BeforeAttributeName;
+                        TokenizerState = HtmlTokenizerState.s34_BeforeAttributeName;
                         tag = CreateTagTokenFromNameBuffer(isEndTag);
                         return;
                     case CharMode.Slash:
-                        TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
+                        TokenizerState = HtmlTokenizerState.s43_SelfClosingStartTag;
                         tag = CreateTagTokenFromNameBuffer(isEndTag);
                         return;
                     case CharMode.Gt:
                         SetEmitToken(CreateTagTokenFromNameBuffer(isEndTag));
-                        TokenizerState = HtmlTokenizerState.Data;
+                        TokenizerState = HtmlTokenizerState.s01_Data;
                         data.Length = 0;
                         return;
                     case CharMode.NullChar:
@@ -218,7 +218,7 @@ namespace HtmlKit
             }
 
             // parse error
-            TokenizerState = HtmlTokenizerState.BeforeAttributeName;
+            TokenizerState = HtmlTokenizerState.s34_BeforeAttributeName;
             // Note: we save the data in case we hit a parse error and have to emit a data token
             data.Append(c);
         }

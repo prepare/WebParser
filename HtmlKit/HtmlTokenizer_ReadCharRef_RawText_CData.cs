@@ -107,7 +107,7 @@ namespace HtmlKit
                     case ' ':
                         if (NameIs(activeTagName))
                         {
-                            TokenizerState = HtmlTokenizerState.BeforeAttributeName;
+                            TokenizerState = HtmlTokenizerState.s34_BeforeAttributeName;
                             break;
                         }
 
@@ -115,7 +115,7 @@ namespace HtmlKit
                     case '/':
                         if (NameIs(activeTagName))
                         {
-                            TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
+                            TokenizerState = HtmlTokenizerState.s43_SelfClosingStartTag;
                             break;
                         }
                         goto default;
@@ -123,7 +123,7 @@ namespace HtmlKit
                         if (NameIs(activeTagName))
                         {
                             SetEmitToken(CreateTagTokenFromNameBuffer(true));
-                            TokenizerState = HtmlTokenizerState.Data;
+                            TokenizerState = HtmlTokenizerState.s01_Data;
                             data.Length = 0;
                             return;
                         }
@@ -156,7 +156,7 @@ namespace HtmlKit
         /// </summary>
         void R02_CharacterReferenceInData()
         {
-            ReadCharacterReference(HtmlTokenizerState.Data);
+            ReadCharacterReference(HtmlTokenizerState.s01_Data);
         }
         /// <summary>
         /// 8.2.4.3 RCDATA state
@@ -172,13 +172,13 @@ namespace HtmlKit
                     case '&':
                         if (DecodeCharacterReferences)
                         {
-                            TokenizerState = HtmlTokenizerState.CharacterReferenceInRcData;
+                            TokenizerState = HtmlTokenizerState.s04_CharacterReferenceInRcData;
                             return;
                         }
 
                         goto default;
                     case '<':
-                        TokenizerState = HtmlTokenizerState.RcDataLessThan;
+                        TokenizerState = HtmlTokenizerState.s11_RcDataLessThan;
                         EmitDataToken(DecodeCharacterReferences);
                         return;
                     case '\0':
@@ -210,7 +210,7 @@ namespace HtmlKit
         /// </summary>
         void R04_CharacterReferenceInRcData()
         {
-            ReadCharacterReference(HtmlTokenizerState.RcData);
+            ReadCharacterReference(HtmlTokenizerState.s03_RcData);
 
         } 
         /// <summary>
@@ -225,7 +225,7 @@ namespace HtmlKit
                 switch (c)
                 {
                     case '<':
-                        TokenizerState = HtmlTokenizerState.RawTextLessThan;
+                        TokenizerState = HtmlTokenizerState.s14_RawTextLessThan;
                         EmitDataToken();
                         return;
                     case '\0':
@@ -336,7 +336,7 @@ namespace HtmlKit
         /// </summary>
         void R14_RawTextLessThan()
         {
-            ReadGenericRawTextLessThan(HtmlTokenizerState.RawText, HtmlTokenizerState.RawTextEndTagOpen);
+            ReadGenericRawTextLessThan(HtmlTokenizerState.s05_RawText, HtmlTokenizerState.s15_RawTextEndTagOpen);
         }
         /// <summary>
         /// 8.2.4.15 RAWTEXT end tag open state
@@ -344,7 +344,7 @@ namespace HtmlKit
         /// </summary>
         void R15_RawTextEndTagOpen()
         {
-            ReadGenericRawTextEndTagOpen(false, HtmlTokenizerState.RawText, HtmlTokenizerState.RawTextEndTagName);
+            ReadGenericRawTextEndTagOpen(false, HtmlTokenizerState.s05_RawText, HtmlTokenizerState.s16_RawTextEndTagName);
         }
         /// <summary>
         /// 8.2.4.16 RAWTEXT end tag name state
@@ -352,7 +352,7 @@ namespace HtmlKit
         /// </summary>
         void R16_RawTextEndTagName()
         {
-            ReadGenericRawTextEndTagName(false, HtmlTokenizerState.RawText);
+            ReadGenericRawTextEndTagName(false, HtmlTokenizerState.s05_RawText);
         }
 
         /// <summary>
@@ -361,7 +361,7 @@ namespace HtmlKit
         /// </summary>
         void R11_RcDataLessThan()
         {
-            ReadGenericRawTextLessThan(HtmlTokenizerState.RcData, HtmlTokenizerState.RcDataEndTagOpen);
+            ReadGenericRawTextLessThan(HtmlTokenizerState.s03_RcData, HtmlTokenizerState.s12_RcDataEndTagOpen);
         }
         /// <summary>
         /// 8.2.4.12 RCDATA end tag open state
@@ -369,7 +369,7 @@ namespace HtmlKit
         /// </summary>
         void R12_RcDataEndTagOpen()
         {
-            ReadGenericRawTextEndTagOpen(DecodeCharacterReferences, HtmlTokenizerState.RcData, HtmlTokenizerState.RcDataEndTagName);
+            ReadGenericRawTextEndTagOpen(DecodeCharacterReferences, HtmlTokenizerState.s03_RcData, HtmlTokenizerState.s13_RcDataEndTagName);
         }
         /// <summary>
         /// 8.2.4.13 RCDATA end tag name state
@@ -377,7 +377,7 @@ namespace HtmlKit
         /// </summary>
         void R13_RcDataEndTagName()
         {
-            ReadGenericRawTextEndTagName(DecodeCharacterReferences, HtmlTokenizerState.RcData);
+            ReadGenericRawTextEndTagName(DecodeCharacterReferences, HtmlTokenizerState.s03_RcData);
         }
 
 
@@ -401,7 +401,7 @@ namespace HtmlKit
 
                     if (cdata[0] == ']' && cdata[1] == ']' && cdata[2] == '>')
                     {
-                        TokenizerState = HtmlTokenizerState.Data;
+                        TokenizerState = HtmlTokenizerState.s01_Data;
                         cdataIndex = 0;
 
                         EmitCDataToken();
