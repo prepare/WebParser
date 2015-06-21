@@ -33,11 +33,10 @@ namespace HtmlKit
     {
         /// <summary>
         /// 8.2.4.44 Bogus comment state
-        /// <see cref="http://www.w3.org/TR/html5/syntax.html#bogus-comment-state"/> 
         /// </summary>
         void R44_BogusComment()
         {
-
+            int nc;
             char c;
 
             if (data.Length > 0)
@@ -47,61 +46,53 @@ namespace HtmlKit
                 data[0] = c;
             }
 
-            while (ReadNext(out c))
+            do
             {
-                switch (c)
+                if ((nc = Read()) == -1)
                 {
-                    case '>':
-                        EmitCommentToken(data.ToString());
-                        return;
-                    case '\0':
-                        c = '\uFFFD';
-                        goto default;
-                    default:
-                        data.Append(c);
-                        break;
+                    TokenizerState = HtmlTokenizerState.EndOfFile;
+                    break;
                 }
-            }
 
-            //eof
-            TokenizerState = HtmlTokenizerState.EndOfFile;
-            EmitCommentToken(data.ToString());
+                if ((c = (char)nc) == '>')
+                    break;
+
+                data.Append(c == '\0' ? '\uFFFD' : c);
+            } while (true);
+
+            EmitCommentToken(data);
         }
         /// <summary>
         /// 8.2.4.45 Markup declaration open state
-        /// <see cref="http://www.w3.org/TR/html5/syntax.html#markup-declaration-open-state"/> 
         /// </summary>
         void R45_MarkupDeclarationOpen()
         {
-            //TODO: review this method again 
-            int count = 0;
-            char c = '\0';//?                
+            int count = 0, nc;
+            char c = '\0';
+
             while (count < 2)
             {
-                if (!ReadNext(out c))
+                if ((nc = Peek()) == -1)
                 {
                     TokenizerState = HtmlTokenizerState.EndOfFile;
-                    EmitDataToken();
+                    EmitDataToken(false);
                     return;
                 }
 
-                if (c != '-')
-                {
+                if ((c = (char)nc) != '-')
                     break;
-                }
-                else
-                {
-                    // Note: we save the data in case we hit a parse error and have to emit a data token
-                    data.Append(c);
-                    ReadNext();
-                    count++;
-                }
+
+                // Note: we save the data in case we hit a parse error and have to emit a data token
+                data.Append(c);
+                Read();
+                count++;
             }
 
+            token = null;
 
             if (count == 2)
             {
-                TokenizerState = HtmlTokenizerState.s46_CommentStart;
+                TokenizerState = HtmlTokenizerState.CommentStart;
                 name.Length = 0;
                 return;
             }
@@ -109,7 +100,7 @@ namespace HtmlKit
             if (count == 1)
             {
                 // parse error
-                TokenizerState = HtmlTokenizerState.s44_BogusComment;
+                TokenizerState = HtmlTokenizerState.BogusComment;
                 return;
             }
 
@@ -118,19 +109,19 @@ namespace HtmlKit
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
                 name.Append(c);
-                ReadNext();
+                Read();
                 count = 1;
 
                 while (count < 7)
                 {
-                    if (!ReadNext(out c))
+                    if ((nc = Read()) == -1)
                     {
                         TokenizerState = HtmlTokenizerState.EndOfFile;
-                        EmitDataToken();
+                        EmitDataToken(false);
                         return;
                     }
 
-                    if (ToLower(c) != DocType[count])
+                    if (ToLower((c = (char)nc)) != DocType[count])
                         break;
 
                     // Note: we save the data in case we hit a parse error and have to emit a data token
@@ -141,8 +132,9 @@ namespace HtmlKit
 
                 if (count == 7)
                 {
-                    doctype = CreateDocTypeToken(ClearNameBuffer());
-                    TokenizerState = HtmlTokenizerState.s52_DocType;
+                    doctype = CreateDocTypeToken(name.ToString());
+                    TokenizerState = HtmlTokenizerState.DocType;
+                    name.Length = 0;
                     return;
                 }
 
@@ -152,19 +144,19 @@ namespace HtmlKit
             {
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
-                ReadNext();
+                Read();
                 count = 1;
 
                 while (count < 7)
                 {
-                    if (!ReadNext(out c))
+                    if ((nc = Read()) == -1)
                     {
                         TokenizerState = HtmlTokenizerState.EndOfFile;
-                        EmitDataToken();
+                        EmitDataToken(false);
                         return;
                     }
 
-                    if (c != CData[count])
+                    if ((c = (char)nc) != CData[count])
                         break;
 
                     // Note: we save the data in case we hit a parse error and have to emit a data token
@@ -174,232 +166,248 @@ namespace HtmlKit
 
                 if (count == 7)
                 {
-                    TokenizerState = HtmlTokenizerState.s68_CDataSection;
+                    TokenizerState = HtmlTokenizerState.CDataSection;
                     return;
                 }
             }
 
             // parse error
-            TokenizerState = HtmlTokenizerState.s44_BogusComment;
+            TokenizerState = HtmlTokenizerState.BogusComment;
 
 
         }
         /// <summary>
         /// 8.2.4.46 Comment start state
-        /// <see cref="http://www.w3.org/TR/html5/syntax.html#comment-start-state"/> 
         /// </summary>
         void R46_CommentStart()
         {
-
+            int nc = Read();
             char c;
-            if (!ReadNext(out c))
+
+            if (nc == -1)
             {
-                TokenizerState = HtmlTokenizerState.s01_Data;
+                TokenizerState = HtmlTokenizerState.Data;
 
                 EmitCommentToken(string.Empty);
                 return;
             }
 
+            c = (char)nc;
+
             data.Append(c);
 
             switch (c)
             {
                 case '-':
-                    TokenizerState = HtmlTokenizerState.s47_CommentStartDash;
+                    TokenizerState = HtmlTokenizerState.CommentStartDash;
                     break;
                 case '>': // parse error
-                    TokenizerState = HtmlTokenizerState.s01_Data;
+                    TokenizerState = HtmlTokenizerState.Data;
                     EmitCommentToken(string.Empty);
                     return;
-                case '\0':
-                    c = '\uFFFD';
-                    goto default;
                 default: // parse error
-                    TokenizerState = HtmlTokenizerState.s48_Comment;
-                    name.Append(c);
+                    TokenizerState = HtmlTokenizerState.Comment;
+                    name.Append(c == '\0' ? '\uFFFD' : c);
                     break;
             }
+
+            token = null;
         }
         /// <summary>
         /// 8.2.4.47 Comment start dash state
-        /// <see cref="http://www.w3.org/TR/html5/syntax.html#comment-start-dash-state"/> 
         /// </summary>
         void R47_CommentStartDash()
         {
-
+            int nc = Read();
             char c;
-            if (!ReadNext(out c))
+
+            if (nc == -1)
             {
-                TokenizerState = HtmlTokenizerState.s01_Data;
-                EmitCommentTokenFromNameBuffer();
+                TokenizerState = HtmlTokenizerState.Data;
+                EmitCommentToken(name);
                 return;
             }
+
+            c = (char)nc;
 
             data.Append(c);
 
             switch (c)
             {
                 case '-':
-                    TokenizerState = HtmlTokenizerState.s50_CommentEnd;
+                    TokenizerState = HtmlTokenizerState.CommentEnd;
                     break;
                 case '>': // parse error
-                    TokenizerState = HtmlTokenizerState.s01_Data;
-                    EmitCommentTokenFromNameBuffer();
+                    TokenizerState = HtmlTokenizerState.Data;
+                    EmitCommentToken(name);
                     return;
-                case '\0':
-                    c = '\uFFFD';
-                    goto default;
                 default: // parse error
-                    TokenizerState = HtmlTokenizerState.s48_Comment;
+                    TokenizerState = HtmlTokenizerState.Comment;
                     name.Append('-');
-                    name.Append(c);
+                    name.Append(c == '\0' ? '\uFFFD' : c);
                     break;
             }
+
+            token = null;
         }
         /// <summary>
         /// 8.2.4.48 Comment state
-        /// <see cref="http://www.w3.org/TR/html5/syntax.html#comment-state"/> 
         /// </summary>
         void R48_Comment()
         {
+            token = null;
 
-            char c;
-            while (ReadNext(out c))
+            do
             {
+                int nc = Read();
+                char c;
+
+                if (nc == -1)
+                {
+                    TokenizerState = HtmlTokenizerState.EndOfFile;
+                    EmitCommentToken(name);
+                    return;
+                }
+
+                c = (char)nc;
+
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
 
                 switch (c)
                 {
                     case '-':
-                        TokenizerState = HtmlTokenizerState.s49_CommentEndDash;
+                        TokenizerState = HtmlTokenizerState.CommentEndDash;
                         return;
-                    case '\0':
-                        c = '\uFFFD';
-                        goto default;
                     default:
-                        name.Append(c);
+                        name.Append(c == '\0' ? '\uFFFD' : c);
                         break;
                 }
-            }
-
-
-            //eof
-            TokenizerState = HtmlTokenizerState.EndOfFile;
-            EmitCommentTokenFromNameBuffer();
+            } while (true);
         }
 
         // FIXME: this is exactly the same as ReadCommentStartDash
         /// <summary>
-		/// 8.2.4.49 Comment end dash state
-		/// <see cref="http://www.w3.org/TR/html5/syntax.html#comment-end-dash-state"/> 
-		/// </summary>
+        /// 8.2.4.49 Comment end dash state
+        /// </summary>
         void R49_CommentEndDash()
         {
-
+            int nc = Read();
             char c;
-            if (!ReadNext(out c))
+
+            if (nc == -1)
             {
-                TokenizerState = HtmlTokenizerState.s01_Data;
-                EmitCommentTokenFromNameBuffer();
+                TokenizerState = HtmlTokenizerState.Data;
+                EmitCommentToken(name);
                 return;
             }
+
+            c = (char)nc;
 
             data.Append(c);
 
             switch (c)
             {
                 case '-':
-                    TokenizerState = HtmlTokenizerState.s50_CommentEnd;
+                    TokenizerState = HtmlTokenizerState.CommentEnd;
                     break;
                 case '>': // parse error
-                    TokenizerState = HtmlTokenizerState.s01_Data;
-                    EmitCommentTokenFromNameBuffer();
+                    TokenizerState = HtmlTokenizerState.Data;
+                    EmitCommentToken(name);
                     return;
-                case '\0':
-                    c = '\uFFFD';
-                    goto default;
                 default: // parse error
-                    TokenizerState = HtmlTokenizerState.s48_Comment;
+                    TokenizerState = HtmlTokenizerState.Comment;
                     name.Append('-');
-                    name.Append(c);
+                    name.Append(c == '\0' ? '\uFFFD' : c);
                     break;
             }
+
+            token = null;
+
+
         }
         /// <summary>
         /// 8.2.4.50 Comment end state
-        /// <see cref="http://www.w3.org/TR/html5/syntax.html#comment-end-state"/> 
         /// </summary>
         void R50_CommentEnd()
         {
+            token = null;
 
-            char c;
-            while (ReadNext(out c))
+            do
             {
+                int nc = Read();
+                char c;
+
+                if (nc == -1)
+                {
+                    TokenizerState = HtmlTokenizerState.EndOfFile;
+                    EmitCommentToken(name);
+                    return;
+                }
+
+                c = (char)nc;
+
                 // Note: we save the data in case we hit a parse error and have to emit a data token
                 data.Append(c);
+
                 switch (c)
                 {
                     case '>':
-                        TokenizerState = HtmlTokenizerState.s01_Data;
-                        EmitCommentTokenFromNameBuffer();
+                        TokenizerState = HtmlTokenizerState.Data;
+                        EmitCommentToken(name);
                         return;
                     case '!': // parse error
-                        TokenizerState = HtmlTokenizerState.s51_CommentEndBang;
+                        TokenizerState = HtmlTokenizerState.CommentEndBang;
                         return;
                     case '-':
                         name.Append('-');
                         break;
-                    case '\0':
-                        c = '\uFFFD';
-                        goto default;
                     default:
-                        TokenizerState = HtmlTokenizerState.s48_Comment;
-                        name.Append(c);
+                        TokenizerState = HtmlTokenizerState.Comment;
+                        name.Append(c == '\0' ? '\uFFFD' : c);
                         return;
                 }
-            }
-
-            //eof
-            TokenizerState = HtmlTokenizerState.EndOfFile;
-            EmitCommentTokenFromNameBuffer();
+            } while (true);
         }
         /// <summary>
         /// 8.2.4.51 Comment end bang state
-        /// <see cref="http://www.w3.org/TR/html5/syntax.html#comment-end-bang-state"/> 
         /// </summary>
         void R51_CommentEndBang()
         {
-
+            int nc = Read();
             char c;
-            if (!ReadNext(out c))
+
+            if (nc == -1)
             {
                 TokenizerState = HtmlTokenizerState.EndOfFile;
-                EmitCommentTokenFromNameBuffer();
+                EmitCommentToken(name);
                 return;
             }
+
+            c = (char)nc;
 
             data.Append(c);
 
             switch (c)
             {
                 case '-':
-                    TokenizerState = HtmlTokenizerState.s49_CommentEndDash;
+                    TokenizerState = HtmlTokenizerState.CommentEndDash;
                     name.Append("--!");
                     break;
                 case '>':
-                    TokenizerState = HtmlTokenizerState.s01_Data;
-                    EmitCommentTokenFromNameBuffer();
+                    TokenizerState = HtmlTokenizerState.Data;
+                    EmitCommentToken(name);
                     return;
-                case '\0':
-                    c = '\uFFFD';
-                    goto default;
                 default: // parse error
-                    TokenizerState = HtmlTokenizerState.s48_Comment;
+                    TokenizerState = HtmlTokenizerState.Comment;
                     name.Append("--!");
-                    name.Append(c);
+                    name.Append(c == '\0' ? '\uFFFD' : c);
                     break;
             }
+
+            token = null;
+
+
         }
 
     }

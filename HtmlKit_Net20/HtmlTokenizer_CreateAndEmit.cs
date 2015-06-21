@@ -24,12 +24,12 @@
 // THE SOFTWARE.
 //
 
-
+ 
 using System.Text;
 
 namespace HtmlKit
 {
-
+ 
     partial class HtmlTokenizer
     {
 
@@ -129,63 +129,62 @@ namespace HtmlKit
             return new HtmlAttribute(name);
         }
 
-        string ClearNameBuffer()
-        {
-            string nameBuffer = name.ToString();
-            name.Length = 0;
-            return nameBuffer;
-        }
-
-        HtmlTagToken CreateTagTokenFromNameBuffer(bool isEndTag)
-        {
-            //each time we create tag token, always clear name ***
-            return CreateTagToken(ClearNameBuffer(), isEndTag);
-        }
 
         void EmitTagAttribute()
         {
-            attribute = CreateAttribute(ClearNameBuffer());
+            attribute = CreateAttribute(name.ToString());
             tag.Attributes.Add(attribute);
-        }
-        void EmitCommentToken(string comment)
-        {
-            SetEmitToken(CreateCommentToken(comment));
-            data.Length = 0;
             name.Length = 0;
         }
-        void EmitCommentTokenFromNameBuffer()
+
+        bool EmitCommentToken(string comment)
         {
-            //each time we create tag token, always clear name ***
-            EmitCommentToken(ClearNameBuffer());
+            token = CreateCommentToken(comment);
             data.Length = 0;
+            name.Length = 0;
+            return true;
         }
-        void EmitDataToken(bool encodeEntities = false)
+
+        void EmitCommentToken(StringBuilder comment)
         {
+            EmitCommentToken(comment.ToString());
+        }
+        void EmitDataToken(bool encodeEntities)
+        {
+
             if (data.Length > 0)
             {
                 var dataToken = CreateDataToken(data.ToString());
                 dataToken.EncodeEntities = encodeEntities;
-                SetEmitToken(dataToken);
+                token = dataToken;
                 data.Length = 0;
+                return;
             }
+            token = null;
         }
         void EmitCDataToken()
         {
             if (data.Length > 0)
             {
-                SetEmitToken(CreateCDataToken(data.ToString()));
+                token = CreateCDataToken(data.ToString());
                 data.Length = 0;
+                return;
             }
+            token = null;
         }
 
         void EmitScriptDataToken()
         {
             if (data.Length > 0)
             {
-
-                SetEmitToken(CreateScriptDataToken(data.ToString()));
+                token = CreateScriptDataToken(data.ToString());
                 data.Length = 0;
+                return;
             }
+
+            token = null;
+
+            return;
         }
         void EmitTagToken()
         {
@@ -198,57 +197,52 @@ namespace HtmlKit
                     case HtmlTagId.IFrame:
                     case HtmlTagId.NoEmbed:
                     case HtmlTagId.NoFrames:
-                        TokenizerState = HtmlTokenizerState.s05_RawText;
+                        TokenizerState = HtmlTokenizerState.RawText;
                         activeTagName = tag.Name;
                         break;
                     case HtmlTagId.Title:
                     case HtmlTagId.TextArea:
-                        TokenizerState = HtmlTokenizerState.s03_RcData;
+                        TokenizerState = HtmlTokenizerState.RcData;
                         activeTagName = tag.Name;
                         break;
                     case HtmlTagId.PlainText:
-                        TokenizerState = HtmlTokenizerState.s07_PlainText;
+                        TokenizerState = HtmlTokenizerState.PlainText;
                         break;
                     case HtmlTagId.Script:
-                        TokenizerState = HtmlTokenizerState.s06_ScriptData;
+                        TokenizerState = HtmlTokenizerState.ScriptData;
                         break;
                     case HtmlTagId.NoScript:
                         // TODO: only switch into the RawText state if scripting is enabled
-                        TokenizerState = HtmlTokenizerState.s05_RawText;
+                        TokenizerState = HtmlTokenizerState.RawText;
                         activeTagName = tag.Name;
                         break;
                     case HtmlTagId.Html:
-                        TokenizerState = HtmlTokenizerState.s01_Data;
+                        TokenizerState = HtmlTokenizerState.Data;
 
                         for (int i = tag.Attributes.Count; i > 0; i--)
                         {
-
                             var attr = tag.Attributes[i - 1];
 
                             if (attr.Id == HtmlAttributeId.XmlNS && attr.Value != null)
                             {
-                                //TODO: and here i-1?
                                 HtmlNamespace = tag.Attributes[i].Value.ToHtmlNamespace();
                                 break;
                             }
                         }
                         break;
                     default:
-                        TokenizerState = HtmlTokenizerState.s01_Data;
+                        TokenizerState = HtmlTokenizerState.Data;
                         break;
                 }
             }
             else
             {
-                TokenizerState = HtmlTokenizerState.s01_Data;
+                TokenizerState = HtmlTokenizerState.Data;
             }
 
-            SetEmitToken(tag);
             data.Length = 0;
+            token = tag;
             tag = null;
         }
-
-
-
     }
 }
