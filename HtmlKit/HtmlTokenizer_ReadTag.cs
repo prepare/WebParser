@@ -32,8 +32,9 @@ namespace HtmlKit
     partial class HtmlTokenizer
     {
         /// <summary>
-        /// 8.2.4.1 Data state
-        /// </summary>
+		/// 8.2.4.1 Data state 
+		/// <see cref="http://www.w3.org/TR/html5/syntax.html#data-state"/> 
+		/// </summary>
         void R01_DataToken()
         {
             char c;
@@ -75,7 +76,8 @@ namespace HtmlKit
 
         /// <summary>
         /// 8.2.4.8 Tag open state
-        /// </summary>        
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#tag-open-state"/> 
+        /// </summary>
         void R08_TagOpen()
         {
 
@@ -111,6 +113,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.9 End tag open state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#end-tag-open-state"/> 
         /// </summary>
         void R09_EndTagOpen()
         {
@@ -150,6 +153,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.10 Tag name state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#tag-name-state"/> 
         /// </summary>
         void R10_TagName()
         {
@@ -193,6 +197,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.43 Self-closing start tag state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#self-closing-start-tag-state"/> 
         /// </summary>
         void R43_SelfClosingStartTag()
         {

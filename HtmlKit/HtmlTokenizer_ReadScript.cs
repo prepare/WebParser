@@ -33,6 +33,7 @@ namespace HtmlKit
     {
         /// <summary>
         /// 8.2.4.6 Script data state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-state"/> 
         /// </summary>
         void R06_ScriptData()
         {
@@ -68,6 +69,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.33 Script data double escape end state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-double-escape-end-state"/> 
         /// </summary>
         void R33_ScriptDataDoubleEscapeEnd()
         {
@@ -106,6 +108,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.17 Script data less-than sign state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-less-than-sign-state"/> 
         /// </summary>
         void R17_ScriptDataLessThan()
         {
@@ -136,8 +139,9 @@ namespace HtmlKit
             }
         }
         /// <summary>
-        /// 8.2.4.18 Script data end tag open state
-        /// </summary>
+		/// 8.2.4.18 Script data end tag open state
+		/// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-end-tag-open-state"/> 
+		/// </summary>
         void R18_ScriptDataEndTagOpen()
         {
 
@@ -163,6 +167,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.19 Script data end tag name state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-end-tag-name-state"/> 
         /// </summary>
         void R19_ScriptDataEndTagName()
         {
@@ -234,6 +239,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.20 Script data escape start state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-escape-start-state"/> 
         /// </summary>
         void R20_ScriptDataEscapeStart()
         {
@@ -253,6 +259,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.21 Script data escape start dash state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-escape-start-dash-state"/> 
         /// </summary>
         void R21_ScriptDataEscapeStartDash()
         {
@@ -272,6 +279,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.22 Script data escaped state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-escaped-state"/> 
         /// </summary>
         void R22_ScriptDataEscaped()
         {
@@ -302,7 +310,8 @@ namespace HtmlKit
 
         }
         /// <summary>
-        /// 8.2.4.23 Script data escaped dash state
+        /// 8.2.4.23 Reads the script data escaped dash.
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-escaped-dash-state"/> 
         /// </summary>
         void R23_ScriptDataEscapedDash()
         {
@@ -336,6 +345,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.24 Script data escaped dash dash state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-escaped-dash-dash-state"/> 
         /// </summary>
         void R24_ScriptDataEscapedDashDash()
         {
@@ -373,6 +383,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.25 Script data escaped less-than sign state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-escaped-dash-dash-state"/> 
         /// </summary>
         void R25_ScriptDataEscapedLessThan()
         {
@@ -406,8 +417,9 @@ namespace HtmlKit
 
         }
         /// <summary>
-        /// 8.2.4.26 Script data escaped end tag open state
-        /// </summary>
+		/// 8.2.4.26 Script data escaped end tag open state
+		/// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-escaped-end-tag-open-state"/> 
+		/// </summary>
         void R26_ScriptDataEscapedEndTagOpen()
         {
 
@@ -437,6 +449,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.27 Script data escaped end tag name state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-escaped-end-tag-name-state"/> 
         /// </summary>
         void R27_ScriptDataEscapedEndTagName()
         {
@@ -503,6 +516,7 @@ namespace HtmlKit
 
         /// <summary>
         /// 8.2.4.28 Script data double escape start state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-double-escape-start-state"/> 
         /// </summary>
         void R28_ScriptDataDoubleEscapeStart()
         {
@@ -542,6 +556,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.29 Script data double escaped state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-double-escaped-state"/> 
         /// </summary>
         void R29_ScriptDataDoubleEscaped()
         {
@@ -574,6 +589,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.30 Script data double escaped dash state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-double-escaped-dash-state"/> 
         /// </summary>
         void R30_ScriptDataDoubleEscapedDash()
         {
@@ -606,6 +622,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.31 Script data double escaped dash dash state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-double-escaped-dash-dash-state"/> 
         /// </summary>
         void R31_ScriptDataDoubleEscapedDashDash()
         {
@@ -639,6 +656,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.32 Script data double escaped less-than sign state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#script-data-double-escaped-less-than-sign-state"/> 
         /// </summary>
         void R32_ScriptDataDoubleEscapedLessThan()
         {

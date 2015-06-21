@@ -30,6 +30,7 @@ namespace HtmlKit
     {
         /// <summary>
         /// 8.2.4.34 Before attribute name state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#before-attribute-name-state"/> 
         /// </summary>
         void R34_BeforeAttributeName()
         {
@@ -74,8 +75,9 @@ namespace HtmlKit
             EmitDataToken();
         }
         /// <summary>
-        /// 8.2.4.35 Attribute name state
-        /// </summary>
+		/// 8.2.4.35 Attribute name state
+		/// <seealso cref="http://www.w3.org/TR/html5/syntax.html#attribute-name-state"/> 
+		/// </summary>
         void R35_AttributeName()
         {
             char c;
@@ -124,6 +126,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.36 After attribute name state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#after-attribute-name-state"/> 
         /// </summary>
         void R36_AfterAttributeName()
         {
@@ -171,6 +174,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.37 Before attribute value state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#before-attribute-value-state"/> 
         /// </summary>
         void R37_BeforeAttributeValue()
         {
@@ -224,8 +228,10 @@ namespace HtmlKit
             EmitDataToken();
         }
         /// <summary>
-        /// 8.2.4.38 Attribute value (double-quoted) state,
+        /// 8.2.4.38 Attribute value (double-quoted) state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#attribute-value-%28double-quoted%29-state"/> 
         /// 8.2.4.39 Attribute value (single-quoted) state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#attribute-value-%28single-quoted%29-state"/> 
         /// </summary>
         void R38_39_AttributeValueQuoted()
         {
@@ -264,6 +270,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.40 Attribute value (unquoted) state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#attribute-value-%28unquoted%29-state"/> 
         /// </summary>
         void R40_AttributeValueUnquoted()
         {
@@ -315,9 +322,9 @@ namespace HtmlKit
             name.Length = 0;
             EmitDataToken();
         }
-
         /// <summary>
         /// 8.2.4.41 Character reference in attribute value state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#character-reference-in-attribute-value-state"/> 
         /// </summary>
         void R41_CharacterReferenceInAttributeValue()
         {
@@ -406,6 +413,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.42 After attribute value (quoted) state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#after-attribute-value-%28quoted%29-state"/> 
         /// </summary>
         void R42_AfterAttributeValueQuoted()
         {

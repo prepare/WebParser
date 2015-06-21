@@ -33,6 +33,7 @@ namespace HtmlKit
     {
         /// <summary>
         /// 8.2.4.52 DOCTYPE state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#doctype-state"/> 
         /// </summary>
         void R52_DocType()
         {
@@ -62,6 +63,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.53 Before DOCTYPE name state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#before-doctype-name-state"/> 
         /// </summary>
         void R53_BeforeDocTypeName()
         {
@@ -103,7 +105,8 @@ namespace HtmlKit
 
         /// <summary>
         /// 8.2.4.54 DOCTYPE name state
-        /// </summary> 
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#doctype-name-state"/> 
+        /// </summary>
         void R54_DocTypeName()
         {
             char c;
@@ -145,8 +148,8 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.55 After DOCTYPE name state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#after-doctype-name-state"/> 
         /// </summary>
-        /// <returns></returns>
         void R55_AfterDocTypeName()
         {
             char c;
@@ -199,7 +202,8 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.56 After DOCTYPE public keyword state
-        /// </summary>         
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#after-doctype-public-keyword-state"/> 
+        /// </summary>
         void R56_AfterDocTypePublicKeyword()
         {
 
@@ -243,7 +247,8 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.57 Before DOCTYPE public identifier state
-        /// </summary>         
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#before-doctype-public-identifier-state"/> 
+        /// </summary>
         void R57_BeforeDocTypePublicIdentifier()
         {
             char c;
@@ -286,8 +291,10 @@ namespace HtmlKit
             EmitAndClearDocTypeToken(); 
         }
         /// <summary>
-        /// 8.2.4.58 DOCTYPE public identifier (double-quoted) state,
+        /// 8.2.4.58 DOCTYPE public identifier (double-quoted) state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#doctype-public-identifier-%28double-quoted%29-state"/> 
         /// 8.2.4.59 DOCTYPE public identifier (single-quoted) state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#doctype-public-identifier-%28single-quoted%29-state"/> 
         /// </summary>
         void R58_59_DocTypePublicIdentifierQuoted()
         {
@@ -332,6 +339,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.60 After DOCTYPE public identifier state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#after-doctype-public-identifier-state"/> 
         /// </summary>
         void R60_AfterDocTypePublicIdentifier()
         {
@@ -375,6 +383,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.61 Between DOCTYPE public and system identifiers state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#between-doctype-public-and-system-identifiers-state"/> 
         /// </summary>
         void R61_BetweenDocTypePublicAndSystemIdentifiers()
         {
@@ -416,8 +425,9 @@ namespace HtmlKit
         }
 
         /// <summary>
-        /// 8.2.4.62 After DOCTYPE system keyword state
-        /// </summary>
+		/// 8.2.4.62 After DOCTYPE system keyword state
+		/// <see cref="http://www.w3.org/TR/html5/syntax.html#after-doctype-system-keyword-state"/> 
+		/// </summary>
         void R62_AfterDocTypeSystemKeyword()
         {
 
@@ -461,6 +471,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.63 Before DOCTYPE system identifier state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#before-doctype-system-identifier-state"/> 
         /// </summary>
         void R63_BeforeDocTypeSystemIdentifier()
         {
@@ -504,8 +515,10 @@ namespace HtmlKit
              
         }
         /// <summary>
-        ///8.2.4.64 DOCTYPE system identifier (double-quoted) state,
-        ///8.2.4.65 DOCTYPE system identifier (single-quoted) state
+        /// 8.2.4.64 DOCTYPE system identifier (double-quoted) state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#doctype-system-identifier-%28double-quoted%29-state"/> 
+        /// 8.2.4.65 DOCTYPE system identifier (single-quoted) state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#doctype-system-identifier-%28single-quoted%29-state"/> 
         /// </summary>
         void R64_65_DocTypeSystemIdentifierQuoted()
         {
@@ -552,6 +565,7 @@ namespace HtmlKit
 
         /// <summary>
         /// 8.2.4.66 After DOCTYPE system identifier state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#after-doctype-system-identifier-state"/> 
         /// </summary>
         void R66_AfterDocTypeSystemIdentifier()
         {
@@ -586,6 +600,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.67 Bogus DOCTYPE state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#bogus-doctype-state"/> 
         /// </summary>
         void R67_BogusDocType()
         {

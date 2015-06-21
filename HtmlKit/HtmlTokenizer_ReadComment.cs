@@ -33,6 +33,7 @@ namespace HtmlKit
     {
         /// <summary>
         /// 8.2.4.44 Bogus comment state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#bogus-comment-state"/> 
         /// </summary>
         void R44_BogusComment()
         {
@@ -68,6 +69,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.45 Markup declaration open state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#markup-declaration-open-state"/> 
         /// </summary>
         void R45_MarkupDeclarationOpen()
         {
@@ -184,6 +186,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.46 Comment start state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#comment-start-state"/> 
         /// </summary>
         void R46_CommentStart()
         {
@@ -219,6 +222,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.47 Comment start dash state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#comment-start-dash-state"/> 
         /// </summary>
         void R47_CommentStartDash()
         {
@@ -254,6 +258,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.48 Comment state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#comment-state"/> 
         /// </summary>
         void R48_Comment()
         {
@@ -286,8 +291,9 @@ namespace HtmlKit
 
         // FIXME: this is exactly the same as ReadCommentStartDash
         /// <summary>
-        /// 8.2.4.49 Comment end dash state
-        /// </summary>
+		/// 8.2.4.49 Comment end dash state
+		/// <see cref="http://www.w3.org/TR/html5/syntax.html#comment-end-dash-state"/> 
+		/// </summary>
         void R49_CommentEndDash()
         {
 
@@ -322,6 +328,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.50 Comment end state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#comment-end-state"/> 
         /// </summary>
         void R50_CommentEnd()
         {
@@ -359,6 +366,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.51 Comment end bang state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#comment-end-bang-state"/> 
         /// </summary>
         void R51_CommentEndBang()
         {

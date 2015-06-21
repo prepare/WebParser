@@ -152,6 +152,7 @@ namespace HtmlKit
 
         /// <summary>
         /// 8.2.4.2 Character reference in data state
+        /// <see cref=" http://www.w3.org/TR/html5/syntax.html#character-reference-in-data-state"/>
         /// </summary>
         void R02_CharacterReferenceInData()
         {
@@ -159,6 +160,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.3 RCDATA state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#rcdata-state"/> 
         /// </summary>
         void R03_RcData()
         {
@@ -204,16 +206,16 @@ namespace HtmlKit
 
         /// <summary>
         /// 8.2.4.4 Character reference in RCDATA state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#character-reference-in-rcdata-state"/> 
         /// </summary>
         void R04_CharacterReferenceInRcData()
         {
             ReadCharacterReference(HtmlTokenizerState.RcData);
 
-        }
-
-
+        } 
         /// <summary>
         /// 8.2.4.5 RAWTEXT state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#rawtext-state"/> 
         /// </summary>
         void R05_RawText()
         {
@@ -250,6 +252,7 @@ namespace HtmlKit
 
         /// <summary>
         /// 8.2.4.7 PLAINTEXT state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#plaintext-state"/> 
         /// </summary>
         void R07_PlainText()
         {
@@ -329,6 +332,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.14 RAWTEXT less-than sign state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#rawtext-less-than-sign-state"/> 
         /// </summary>
         void R14_RawTextLessThan()
         {
@@ -336,6 +340,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.15 RAWTEXT end tag open state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#rawtext-end-tag-open-state"/> 
         /// </summary>
         void R15_RawTextEndTagOpen()
         {
@@ -343,15 +348,16 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.16 RAWTEXT end tag name state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#rawtext-end-tag-name-state"/> 
         /// </summary>
         void R16_RawTextEndTagName()
         {
             ReadGenericRawTextEndTagName(false, HtmlTokenizerState.RawText);
         }
 
-
         /// <summary>
         /// 8.2.4.11 RCDATA less-than sign state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#rcdata-less-than-sign-state"/> 
         /// </summary>
         void R11_RcDataLessThan()
         {
@@ -359,6 +365,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.12 RCDATA end tag open state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#rcdata-end-tag-open-state"/> 
         /// </summary>
         void R12_RcDataEndTagOpen()
         {
@@ -366,6 +373,7 @@ namespace HtmlKit
         }
         /// <summary>
         /// 8.2.4.13 RCDATA end tag name state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#rcdata-end-tag-name-state"/> 
         /// </summary>
         void R13_RcDataEndTagName()
         {
@@ -375,6 +383,7 @@ namespace HtmlKit
 
         /// <summary>
         /// 8.2.4.68 CDATA section state
+        /// <see cref="http://www.w3.org/TR/html5/syntax.html#cdata-section-state"/> 
         /// </summary>
         void R68_CDataSection()
         {
