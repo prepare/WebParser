@@ -239,6 +239,9 @@ namespace HtmlKit
                     case '&':
                         TokenizerState = HtmlTokenizerState.CharacterReferenceInAttributeValue;
                         return;
+                    case '\0':
+                        c = '\uFFFD';
+                        goto default;
                     default:
                         if (c == quote)
                         {
@@ -248,7 +251,7 @@ namespace HtmlKit
                         }
                         else
                         {
-                            name.Append(c == '\0' ? '\uFFFD' : c);
+                            name.Append(c);
                         }
                         break;
                 }
