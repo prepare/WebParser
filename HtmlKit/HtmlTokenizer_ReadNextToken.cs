@@ -131,7 +131,7 @@ namespace HtmlKit
                         R19_ScriptDataEndTagName();
                         break;
                     case HtmlTokenizerState.ScriptDataEscapeStart:                        
-                        R20_ScriptDataEscapeStart();
+                        R20_ScriptDataEscapeStart();                        
                         break;
                     case HtmlTokenizerState.ScriptDataEscapeStartDash:                        
                         R21_ScriptDataEscapeStartDash();
