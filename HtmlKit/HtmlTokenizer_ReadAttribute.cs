@@ -216,7 +216,7 @@ namespace HtmlKit
                         c = '\uFFFD';
                         goto default;
                     default:
-                        TokenizerState = HtmlTokenizerState.s35_AttributeName;
+                        TokenizerState = HtmlTokenizerState.s40_AttributeValueUnquoted;
                         name.Append(c);
                         return;
                 }
@@ -294,6 +294,7 @@ namespace HtmlKit
                         TokenizerState = HtmlTokenizerState.s41_CharacterReferenceInAttributeValue;
                         return;
                     case '>':
+                        attribute.Value = ClearNameBuffer();
                         EmitTagToken();
                         return;
                     case '\'':
@@ -302,17 +303,11 @@ namespace HtmlKit
                     case '`':
                         // parse error
                         goto default;
-                    default:
-                        if (c == quote)
-                        {
-                            TokenizerState = HtmlTokenizerState.s42_AfterAttributeValueQuoted;
-                            attribute.Value = ClearNameBuffer();
-                            return;
-                        }
-                        else
-                        {
-                            name.Append(c == '\0' ? '\uFFFD' : c);
-                        }
+                    case '\0':
+                        c = '\uFFFD';
+                        goto default;
+                    default: 
+                        name.Append(c); 
                         break;
                 }
             }
@@ -433,10 +428,12 @@ namespace HtmlKit
                 case '\f':
                 case ' ':
                     TokenizerState = HtmlTokenizerState.s34_BeforeAttributeName;
+                    data.Append(c);
                     ReadNext(); //consume
                     return;
                 case '/':
                     TokenizerState = HtmlTokenizerState.s43_SelfClosingStartTag;
+                    data.Append(c);
                     ReadNext();//consume
                     return;
                 case '>':
