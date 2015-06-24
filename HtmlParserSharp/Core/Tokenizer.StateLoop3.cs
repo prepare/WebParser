@@ -341,7 +341,8 @@ namespace HtmlParserSharp.Core
                                         cstart = pos;
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
                                         state = TokenizerState.s01_DATA;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                 }
                             }
@@ -739,7 +740,8 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.ATTRIBUTE_VALUE_UNQUOTED, reconsume, pos);
                                         state = TokenizerState.s40_ATTRIBUTE_VALUE_UNQUOTED;
                                         NoteUnquotedAttributeValue();
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                     case '\'':
                                         /*
@@ -958,7 +960,8 @@ namespace HtmlParserSharp.Core
                                          */
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
                                         state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                 }
                             }
@@ -1007,8 +1010,8 @@ namespace HtmlParserSharp.Core
                                      */
                                     //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
                                     state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
-
-                                    reconsume = true;
+                                    reader.StepBack();
+                                    //reconsume = true;
                                     goto continueStateloop;
                             }
                         }
@@ -1304,7 +1307,8 @@ namespace HtmlParserSharp.Core
                                         ClearLongStrBuf();
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
                                         state = TokenizerState.s44_BOGUS_COMMENT;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                 }
                             }
@@ -1337,7 +1341,8 @@ namespace HtmlParserSharp.Core
                                         ErrBogusComment();
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
                                         state = TokenizerState.s44_BOGUS_COMMENT;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                 }
                             }
@@ -1764,7 +1769,8 @@ namespace HtmlParserSharp.Core
                                         ErrBogusComment();
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
                                         state = TokenizerState.s44_BOGUS_COMMENT;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                     }
                                     index++;
@@ -1775,7 +1781,8 @@ namespace HtmlParserSharp.Core
                                     cstart = pos; // start coalescing
                                     //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
                                     state = TokenizerState.s68_CDATA_SECTION;
-                                    reconsume = true;
+                                    //reconsume = true;
+                                    reader.StepBack();
                                     break; // FALL THROUGH goto continueStateloop;
                                 }
                             }
@@ -1848,7 +1855,8 @@ namespace HtmlParserSharp.Core
                                         cstart = pos;
                                         //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
                                         state = TokenizerState.s68_CDATA_SECTION;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                 }
                             }
@@ -1876,8 +1884,8 @@ namespace HtmlParserSharp.Core
                                     cstart = pos;
                                     //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
                                     state = TokenizerState.s68_CDATA_SECTION;
-
-                                    reconsume = true;
+                                    reader.StepBack();
+                                    //reconsume = true;
                                     goto continueStateloop;
 
                             }
@@ -2002,7 +2010,8 @@ namespace HtmlParserSharp.Core
                                     }
                                     //state = Transition(state, returnState, reconsume, pos);
                                     state = returnState;
-                                    reconsume = true;
+                                    //reconsume = true;
+                                    reader.StepBack();
                                     goto continueStateloop;
                                 case '#':
                                     /*
@@ -2019,7 +2028,8 @@ namespace HtmlParserSharp.Core
                                         EmitOrAppendStrBuf(returnState);
                                         //state = Transition(state, returnState, reconsume, pos);
                                         state = returnState;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                     }
                                     if (c >= 'a' && c <= 'z')
@@ -2046,7 +2056,8 @@ namespace HtmlParserSharp.Core
                                         }
                                         //state = Transition(state, returnState, reconsume, pos);
                                         state = returnState;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                     }
                                     // Didn't fail yet
@@ -2134,7 +2145,8 @@ namespace HtmlParserSharp.Core
                                 }
                                 //state = Transition(state, returnState, reconsume, pos);
                                 state = returnState;
-                                reconsume = true;
+                                //reconsume = true;
+                                reader.StepBack();
                                 goto continueStateloop;
                             }
                             // Didn't fail yet
@@ -2251,7 +2263,8 @@ namespace HtmlParserSharp.Core
                                 }
                                 //state = Transition(state, returnState, reconsume, pos);
                                 state = returnState;
-                                reconsume = true;
+                                //reconsume = true;
+                                reader.StepBack();
                                 goto continueStateloop;
                             }
                             else
@@ -2306,7 +2319,8 @@ namespace HtmlParserSharp.Core
                                             AppendStrBufToLongStrBuf();
                                             //state = Transition(state, returnState, reconsume, pos);
                                             state = returnState;
-                                            reconsume = true;
+                                            //reconsume = true;
+                                            reader.StepBack();
                                             goto continueStateloop;
                                         }
                                     }
@@ -2373,7 +2387,8 @@ namespace HtmlParserSharp.Core
                                 }
                                 //state = Transition(state, returnState, reconsume, pos);
                                 state = returnState;
-                                reconsume = true;
+                                //reconsume = true;
+                                reader.StepBack();
                                 goto continueStateloop;
                                 /*
                                  * If the markup contains I'm &notit; I tell you, the
@@ -2434,7 +2449,8 @@ namespace HtmlParserSharp.Core
                                      */
                                     //state = Transition(state, Tokenizer.DECIMAL_NRC_LOOP, reconsume, pos);
                                     state = TokenizerState.DECIMAL_NRC_LOOP;
-                                    reconsume = true;
+                                    //reconsume = true;
+                                    reader.StepBack();
                                     // FALL THROUGH goto continueStateloop;
                                     break;
                             }
@@ -2533,7 +2549,8 @@ namespace HtmlParserSharp.Core
                                         }
                                         //state = Transition(state, returnState, reconsume, pos);
                                         state = returnState;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                     }
                                     else
@@ -2546,7 +2563,8 @@ namespace HtmlParserSharp.Core
                                         }
                                         //state = Transition(state, Tokenizer.HANDLE_NCR_VALUE, reconsume, pos);
                                         state = TokenizerState.HANDLE_NCR_VALUE;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         // FALL THROUGH goto continueStateloop;
                                         goto breakDecimalloop;
                                     }
@@ -2662,7 +2680,8 @@ namespace HtmlParserSharp.Core
                                         }
                                         //state = Transition(state, returnState, reconsume, pos);
                                         state = returnState;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                     }
                                     else
@@ -2675,7 +2694,8 @@ namespace HtmlParserSharp.Core
                                         }
                                         //state = Transition(state, Tokenizer.HANDLE_NCR_VALUE, reconsume, pos);
                                         state = TokenizerState.HANDLE_NCR_VALUE;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                     }
                                 }
@@ -2963,7 +2983,8 @@ namespace HtmlParserSharp.Core
                                         cstart = pos;
                                         //state = Transition(state, returnState, reconsume, pos);
                                         state = returnState;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                 }
                             }
@@ -3005,7 +3026,8 @@ namespace HtmlParserSharp.Core
                                         cstart = pos;
                                         //state = Transition(state, returnState, reconsume, pos);
                                         state = returnState;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                     }
                                     AppendStrBuf(c);
@@ -3314,7 +3336,8 @@ namespace HtmlParserSharp.Core
                                         cstart = pos;
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA, reconsume, pos);
                                         state = TokenizerState.s06_SCRIPT_DATA;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                 }
                             }
@@ -3356,7 +3379,8 @@ namespace HtmlParserSharp.Core
                                          */
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA, reconsume, pos);
                                         state = TokenizerState.s06_SCRIPT_DATA;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                 }
                             }
@@ -3397,7 +3421,8 @@ namespace HtmlParserSharp.Core
                                          */
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA, reconsume, pos);
                                         state = TokenizerState.s06_SCRIPT_DATA;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                 }
                             }
@@ -3664,7 +3689,8 @@ namespace HtmlParserSharp.Core
                                          */
                                         TokenListener.Characters(LT_GT, 0, 1);
                                         cstart = pos;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA_ESCAPED, reconsume, pos);
                                         state = TokenizerState.s22_SCRIPT_DATA_ESCAPED;
                                         goto continueStateloop;
@@ -3695,7 +3721,8 @@ namespace HtmlParserSharp.Core
                                     }
                                     if (folded != Tokenizer.SCRIPT_ARR[index])
                                     {
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA_ESCAPED, reconsume, pos);
                                         state = TokenizerState.s22_SCRIPT_DATA_ESCAPED;
                                         goto continueStateloop;
@@ -3736,7 +3763,8 @@ namespace HtmlParserSharp.Core
                                          * Anything else Reconsume the current input
                                          * character in the script data escaped state.
                                          */
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA_ESCAPED, reconsume, pos);
                                         state = TokenizerState.s22_SCRIPT_DATA_ESCAPED;
                                         goto continueStateloop;
@@ -3979,7 +4007,8 @@ namespace HtmlParserSharp.Core
                                          * character in the script data double escaped
                                          * state.
                                          */
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA_DOUBLE_ESCAPED, reconsume, pos);
                                         state = TokenizerState.s29_SCRIPT_DATA_DOUBLE_ESCAPED;
                                         goto continueStateloop;
@@ -4009,7 +4038,8 @@ namespace HtmlParserSharp.Core
                                     }
                                     if (folded != Tokenizer.SCRIPT_ARR[index])
                                     {
-                                        reconsume = true;
+                                        reader.StepBack();
+                                        //reconsume = true;
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA_DOUBLE_ESCAPED, reconsume, pos);
                                         state = TokenizerState.s29_SCRIPT_DATA_DOUBLE_ESCAPED;
                                         goto continueStateloop;
@@ -4049,7 +4079,8 @@ namespace HtmlParserSharp.Core
                                          * Reconsume the current input character in the
                                          * script data double escaped state.
                                          */
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA_DOUBLE_ESCAPED, reconsume, pos);
                                         state = TokenizerState.s29_SCRIPT_DATA_DOUBLE_ESCAPED;
                                         goto continueStateloop;
@@ -4084,7 +4115,8 @@ namespace HtmlParserSharp.Core
                                         ErrBogusComment();
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
                                         state = TokenizerState.s44_BOGUS_COMMENT;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                     }
                                     index++;
@@ -4094,7 +4126,8 @@ namespace HtmlParserSharp.Core
                                 {
                                     // state = Transition(state, Tokenizer.DOCTYPE, reconsume, pos);
                                     state = TokenizerState.s52_DOCTYPE;
-                                    reconsume = true;
+                                    //reconsume = true;
+                                    reader.StepBack();
                                     goto breakMarkupdeclarationdoctypeloop;
                                     // goto continueStateloop;
                                 }
@@ -4159,7 +4192,8 @@ namespace HtmlParserSharp.Core
                                          */
                                         //state = Transition(state, Tokenizer.BEFORE_DOCTYPE_NAME, reconsume, pos);
                                         state = TokenizerState.s53_BEFORE_DOCTYPE_NAME;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto breakDoctypeloop;
                                     // goto continueStateloop;
                                 }
@@ -4459,7 +4493,8 @@ namespace HtmlParserSharp.Core
                                         // forceQuirks = true;
                                         //state = Transition(state, Tokenizer.BOGUS_DOCTYPE, reconsume, pos);
                                         state = TokenizerState.s67_BOGUS_DOCTYPE;
-                                        reconsume = true;
+                                        //reconsume = true;
+                                        reader.StepBack();
                                         goto continueStateloop;
                                     }
                                     index++;
@@ -4469,7 +4504,9 @@ namespace HtmlParserSharp.Core
                                 {
                                     //state = Transition(state, Tokenizer.AFTER_DOCTYPE_PUBLIC_KEYWORD, reconsume, pos);
                                     state = TokenizerState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD;
-                                    reconsume = true;
+                                    //reconsume = true;
+                                    reader.StepBack();
+                                    
                                     goto breakDoctypeublicloop;
                                     // goto continueStateloop;
                                 }
@@ -5180,7 +5217,8 @@ namespace HtmlParserSharp.Core
                                         BogusDoctype();
                                         //state = Transition(state, Tokenizer.BOGUS_DOCTYPE, reconsume, pos);
                                         state = TokenizerState.s67_BOGUS_DOCTYPE;
-                                        reconsume = true;
+                                        reader.StepBack();
+                                        //reconsume = true;
                                         goto continueStateloop;
                                     }
                                     index++;
@@ -5190,7 +5228,8 @@ namespace HtmlParserSharp.Core
                                 {
                                     //state = Transition(state, Tokenizer.AFTER_DOCTYPE_SYSTEM_KEYWORD, reconsume, pos);
                                     state = TokenizerState.s62_AFTER_DOCTYPE_SYSTEM_KEYWORD;
-                                    reconsume = true;
+                                    //reconsume = true;
+                                    reader.StepBack();
                                     goto breakDoctypeystemloop;
                                     // goto continueStateloop;
                                 }

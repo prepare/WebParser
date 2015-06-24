@@ -49,6 +49,10 @@ namespace HtmlParserSharp.Core
                 return false;
             }
         }
+        public void StepBack()
+        {
+            this.index--;
+        }
 
     }
 
