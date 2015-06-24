@@ -62,6 +62,19 @@ namespace HtmlParserSharp.Core
         {
             get { return this._textBuffer; }
         }
+        internal bool Copy(char[] output, int startIndex, int nChars)
+        {
+            if (startIndex + nChars < _length)
+            {
+                //ok copy
+                Array.Copy(_textBuffer, startIndex, output, 0, nChars);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 
     class TextSnapshot

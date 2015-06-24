@@ -50,84 +50,146 @@ using HtmlParserSharp.Common;
 
 namespace HtmlParserSharp.Core
 {
+    //with html5 state 
+    //review missing state
 
     public enum TokenizerState : byte
     {
-        DATA = 128,
+        s01_DATA = 128,
+        
+        //TODO: 02_CharacterReferenceInData()
 
-        RCDATA = 129,
+        s03_RCDATA = 129,
 
-        SCRIPT_DATA = 2,
+        //TODO: R04_CharacterReferenceInRcData();
 
-        RAWTEXT = 3,
+        s05_RAWTEXT = 3,
 
-        SCRIPT_DATA_ESCAPED = 4,
+        s06_SCRIPT_DATA = 2,
 
-        ATTRIBUTE_VALUE_DOUBLE_QUOTED = 5,
+        s07_PLAINTEXT = 8,
+        
+        s08_TAG_OPEN = 9,
 
-        ATTRIBUTE_VALUE_SINGLE_QUOTED = 6,
+        s09_CLOSE_TAG_OPEN = 10,
 
-        ATTRIBUTE_VALUE_UNQUOTED = 7,
+        s10_TAG_NAME = 11,
 
-        PLAINTEXT = 8,
+        s11_RAWTEXT_RCDATA_LESS_THAN_SIGN = 65,
+        
+        //TODO: R12_RcDataEndTagOpen();
 
-        TAG_OPEN = 9,
+        //TODO:  R13_RcDataEndTagName();
 
-        CLOSE_TAG_OPEN = 10,
+        //TODO: R14_RawTextLessThan();
 
-        TAG_NAME = 11,
+        //TODO: R15_RawTextEndTagOpen();
 
-        BEFORE_ATTRIBUTE_NAME = 12,
+        //TODO: R16_RawTextEndTagName();
 
-        ATTRIBUTE_NAME = 13,
+        s17_SCRIPT_DATA_LESS_THAN_SIGN = 59,
 
-        AFTER_ATTRIBUTE_NAME = 14,
+        //TODO: R18_ScriptDataEndTagOpen();
 
-        BEFORE_ATTRIBUTE_VALUE = 15,
+        //TODO: R19_ScriptDataEndTagName
 
-        AFTER_ATTRIBUTE_VALUE_QUOTED = 16,
+        s20_SCRIPT_DATA_ESCAPE_START = 60,
 
-        BOGUS_COMMENT = 17,
+        s21_SCRIPT_DATA_ESCAPE_START_DASH = 61,
 
-        MARKUP_DECLARATION_OPEN = 18,
+        s22_SCRIPT_DATA_ESCAPED = 4,
 
-        DOCTYPE = 19,
+        s23_SCRIPT_DATA_ESCAPED_DASH = 62,
 
-        BEFORE_DOCTYPE_NAME = 20,
+        s24_SCRIPT_DATA_ESCAPED_DASH_DASH = 63,
 
-        DOCTYPE_NAME = 21,
+        s25_SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN = 66,
 
-        AFTER_DOCTYPE_NAME = 22,
+        //TODO: R26_ScriptDataEscapedEndTagOpen();
 
-        BEFORE_DOCTYPE_PUBLIC_IDENTIFIER = 23,
+        //TODO: R27_ScriptDataEscapedEndTagName();
 
-        DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED = 24,
+        s28_SCRIPT_DATA_DOUBLE_ESCAPE_START = 67,
 
-        DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED = 25,
+        s29_SCRIPT_DATA_DOUBLE_ESCAPED = 68,
 
-        AFTER_DOCTYPE_PUBLIC_IDENTIFIER = 26,
+        s30_SCRIPT_DATA_DOUBLE_ESCAPED_DASH = 70,
 
-        BEFORE_DOCTYPE_SYSTEM_IDENTIFIER = 27,
+        s31_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH = 71,
 
-        DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED = 28,
+        s32_SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN = 69,
 
-        DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED = 29,
+        s33_SCRIPT_DATA_DOUBLE_ESCAPE_END = 72,
 
-        AFTER_DOCTYPE_SYSTEM_IDENTIFIER = 30,
+        s34_BEFORE_ATTRIBUTE_NAME = 12,
 
-        BOGUS_DOCTYPE = 31,
+        s35_ATTRIBUTE_NAME = 13,
 
-        COMMENT_START = 32,
+        s36_AFTER_ATTRIBUTE_NAME = 14,
 
-        COMMENT_START_DASH = 33,
+        s37_BEFORE_ATTRIBUTE_VALUE = 15,
 
-        COMMENT = 34,
+        s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED = 5,
 
-        COMMENT_END_DASH = 35,
+        s39_ATTRIBUTE_VALUE_SINGLE_QUOTED = 6,
 
-        COMMENT_END = 36,
+        s40_ATTRIBUTE_VALUE_UNQUOTED = 7,
 
-        COMMENT_END_BANG = 37,
+        //TODO: R41_CharacterReferenceInAttributeValue()
+
+        s42__AFTER_ATTRIBUTE_VALUE_QUOTED = 16,
+
+        s43_SELF_CLOSING_START_TAG = 54,
+        
+        s44_BOGUS_COMMENT = 17,
+
+        s45_MARKUP_DECLARATION_OPEN = 18,
+
+        s46_COMMENT_START = 32,
+
+        s47_COMMENT_START_DASH = 33,
+
+        s48_COMMENT = 34,
+
+        s49_COMMENT_END_DASH = 35,
+
+        s50_COMMENT_END = 36,
+
+        s51_COMMENT_END_BANG = 37,
+
+        s52_DOCTYPE = 19,
+
+        s53_BEFORE_DOCTYPE_NAME = 20,
+
+        s54_DOCTYPE_NAME = 21,
+
+        s55_AFTER_DOCTYPE_NAME = 22,
+
+        s56_AFTER_DOCTYPE_PUBLIC_KEYWORD = 43,
+
+        s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER = 23,
+
+        s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED = 24,
+
+        s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED = 25,
+
+        s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER = 26,
+
+        s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS = 44,
+
+        s62_AFTER_DOCTYPE_SYSTEM_KEYWORD = 45,
+
+        s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER = 27,
+
+        s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED = 28,
+
+        s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED = 29,
+
+        s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER = 30,
+
+        s67_BOGUS_DOCTYPE = 31,
+
+        s68_CDATA_SECTION = 56,
 
         NON_DATA_END_TAG_NAME = 38,
 
@@ -138,19 +200,10 @@ namespace HtmlParserSharp.Core
         DOCTYPE_UBLIC = 41,
 
         DOCTYPE_YSTEM = 42,
-
-        AFTER_DOCTYPE_PUBLIC_KEYWORD = 43,
-
-        BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS = 44,
-
-        AFTER_DOCTYPE_SYSTEM_KEYWORD = 45,
-
+          
         CONSUME_CHARACTER_REFERENCE = 46,
-
-        /// <summary>
-        /// numeric character reference
-        /// </summary>
-        CONSUME_NCR = 47,
+         
+        CONSUME_NCR = 47, //ncr->numeric character reference
 
         CHARACTER_REFERENCE_TAIL = 48,
 
@@ -163,44 +216,15 @@ namespace HtmlParserSharp.Core
         HANDLE_NCR_VALUE_RECONSUME = 52,
 
         CHARACTER_REFERENCE_HILO_LOOKUP = 53,
-
-        SELF_CLOSING_START_TAG = 54,
-
+         
         CDATA_START = 55,
-
-        CDATA_SECTION = 56,
 
         CDATA_RSQB = 57,
 
         CDATA_RSQB_RSQB = 58,
 
-        SCRIPT_DATA_LESS_THAN_SIGN = 59,
-
-        SCRIPT_DATA_ESCAPE_START = 60,
-
-        SCRIPT_DATA_ESCAPE_START_DASH = 61,
-
-        SCRIPT_DATA_ESCAPED_DASH = 62,
-
-        SCRIPT_DATA_ESCAPED_DASH_DASH = 63,
-
         BOGUS_COMMENT_HYPHEN = 64,
-
-        RAWTEXT_RCDATA_LESS_THAN_SIGN = 65,
-
-        SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN = 66,
-
-        SCRIPT_DATA_DOUBLE_ESCAPE_START = 67,
-
-        SCRIPT_DATA_DOUBLE_ESCAPED = 68,
-
-        SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN = 69,
-
-        SCRIPT_DATA_DOUBLE_ESCAPED_DASH = 70,
-
-        SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH = 71,
-
-        SCRIPT_DATA_DOUBLE_ESCAPE_END = 72,
+             
 
         PROCESSING_INSTRUCTION = 73,
 
@@ -566,7 +590,7 @@ namespace HtmlParserSharp.Core
                 [Local] String endTagExpectation)
         {
             this.stateSave = specialTokenizerState;
-            if (specialTokenizerState == TokenizerState.DATA)
+            if (specialTokenizerState == TokenizerState.s01_DATA)
             {
                 return;
             }
@@ -1136,23 +1160,23 @@ namespace HtmlParserSharp.Core
              */
             switch (state)
             {
-                case TokenizerState.DATA:
-                case TokenizerState.RCDATA:
-                case TokenizerState.SCRIPT_DATA:
-                case TokenizerState.PLAINTEXT:
-                case TokenizerState.RAWTEXT:
-                case TokenizerState.CDATA_SECTION:
-                case TokenizerState.SCRIPT_DATA_ESCAPED:
-                case TokenizerState.SCRIPT_DATA_ESCAPE_START:
-                case TokenizerState.SCRIPT_DATA_ESCAPE_START_DASH:
-                case TokenizerState.SCRIPT_DATA_ESCAPED_DASH:
-                case TokenizerState.SCRIPT_DATA_ESCAPED_DASH_DASH:
-                case TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPE_START:
-                case TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED:
-                case TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN:
-                case TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_DASH:
-                case TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH:
-                case TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPE_END:
+                case TokenizerState.s01_DATA:
+                case TokenizerState.s03_RCDATA:
+                case TokenizerState.s06_SCRIPT_DATA:
+                case TokenizerState.s07_PLAINTEXT:
+                case TokenizerState.s05_RAWTEXT:
+                case TokenizerState.s68_CDATA_SECTION:
+                case TokenizerState.s22_SCRIPT_DATA_ESCAPED:
+                case TokenizerState.s20_SCRIPT_DATA_ESCAPE_START:
+                case TokenizerState.s21_SCRIPT_DATA_ESCAPE_START_DASH:
+                case TokenizerState.s23_SCRIPT_DATA_ESCAPED_DASH:
+                case TokenizerState.s24_SCRIPT_DATA_ESCAPED_DASH_DASH:
+                case TokenizerState.s28_SCRIPT_DATA_DOUBLE_ESCAPE_START:
+                case TokenizerState.s29_SCRIPT_DATA_DOUBLE_ESCAPED:
+                case TokenizerState.s32_SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN:
+                case TokenizerState.s30_SCRIPT_DATA_DOUBLE_ESCAPED_DASH:
+                case TokenizerState.s31_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH:
+                case TokenizerState.s33_SCRIPT_DATA_DOUBLE_ESCAPE_END:
                     cstart = start;
                     break;
                 default:
@@ -1365,8 +1389,8 @@ namespace HtmlParserSharp.Core
             {
                 switch (state)
                 {
-                    case TokenizerState.SCRIPT_DATA_LESS_THAN_SIGN:
-                    case TokenizerState.SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN:
+                    case TokenizerState.s17_SCRIPT_DATA_LESS_THAN_SIGN:
+                    case TokenizerState.s25_SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN:
                         /*
                          * Otherwise, emit a U+003C LESS-THAN SIGN character token
                          */
@@ -1376,7 +1400,7 @@ namespace HtmlParserSharp.Core
                          * state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.TAG_OPEN:
+                    case TokenizerState.s08_TAG_OPEN:
                         /*
                          * The behavior of this state depends on the content model
                          * flag.
@@ -1394,7 +1418,7 @@ namespace HtmlParserSharp.Core
                          * state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.RAWTEXT_RCDATA_LESS_THAN_SIGN:
+                    case TokenizerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN:
                         /*
                          * Emit a U+003C LESS-THAN SIGN character token
                          */
@@ -1421,7 +1445,7 @@ namespace HtmlParserSharp.Core
                          * state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.CLOSE_TAG_OPEN:
+                    case TokenizerState.s09_CLOSE_TAG_OPEN:
                         /* EOF Parse error. */
                         ErrEofAfterLt();
                         /*
@@ -1433,7 +1457,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.TAG_NAME:
+                    case TokenizerState.s10_TAG_NAME:
                         /*
                          * EOF Parse error.
                          */
@@ -1442,16 +1466,16 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.BEFORE_ATTRIBUTE_NAME:
-                    case TokenizerState.AFTER_ATTRIBUTE_VALUE_QUOTED:
-                    case TokenizerState.SELF_CLOSING_START_TAG:
+                    case TokenizerState.s34_BEFORE_ATTRIBUTE_NAME:
+                    case TokenizerState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED:
+                    case TokenizerState.s43_SELF_CLOSING_START_TAG:
                         /* EOF Parse error. */
                         ErrEofWithoutGt();
                         /*
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.ATTRIBUTE_NAME:
+                    case TokenizerState.s35_ATTRIBUTE_NAME:
                         /*
                          * EOF Parse error.
                          */
@@ -1460,24 +1484,24 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.AFTER_ATTRIBUTE_NAME:
-                    case TokenizerState.BEFORE_ATTRIBUTE_VALUE:
+                    case TokenizerState.s36_AFTER_ATTRIBUTE_NAME:
+                    case TokenizerState.s37_BEFORE_ATTRIBUTE_VALUE:
                         /* EOF Parse error. */
                         ErrEofWithoutGt();
                         /*
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED:
-                    case TokenizerState.ATTRIBUTE_VALUE_SINGLE_QUOTED:
-                    case TokenizerState.ATTRIBUTE_VALUE_UNQUOTED:
+                    case TokenizerState.s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED:
+                    case TokenizerState.s39_ATTRIBUTE_VALUE_SINGLE_QUOTED:
+                    case TokenizerState.s40_ATTRIBUTE_VALUE_UNQUOTED:
                         /* EOF Parse error. */
                         ErrEofInAttributeValue();
                         /*
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.BOGUS_COMMENT:
+                    case TokenizerState.s44_BOGUS_COMMENT:
                         EmitComment(0, 0);
                         goto breakEofloop;
                     case TokenizerState.BOGUS_COMMENT_HYPHEN:
@@ -1486,7 +1510,7 @@ namespace HtmlParserSharp.Core
                         // ]NOCPP]
                         EmitComment(0, 0);
                         goto breakEofloop;
-                    case TokenizerState.MARKUP_DECLARATION_OPEN:
+                    case TokenizerState.s45_MARKUP_DECLARATION_OPEN:
                         ErrBogusComment();
                         ClearLongStrBuf();
                         EmitComment(0, 0);
@@ -1529,8 +1553,8 @@ namespace HtmlParserSharp.Core
                             goto breakEofloop;
                         }
                         goto breakEofloop;
-                    case TokenizerState.COMMENT_START:
-                    case TokenizerState.COMMENT:
+                    case TokenizerState.s46_COMMENT_START:
+                    case TokenizerState.s48_COMMENT:
                         /*
                          * EOF Parse error.
                          */
@@ -1541,7 +1565,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.COMMENT_END:
+                    case TokenizerState.s50_COMMENT_END:
                         ErrEofInComment();
                         /* Emit the comment token. */
                         EmitComment(2, 0);
@@ -1549,8 +1573,8 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.COMMENT_END_DASH:
-                    case TokenizerState.COMMENT_START_DASH:
+                    case TokenizerState.s49_COMMENT_END_DASH:
+                    case TokenizerState.s47_COMMENT_START_DASH:
                         ErrEofInComment();
                         /* Emit the comment token. */
                         EmitComment(1, 0);
@@ -1558,7 +1582,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.COMMENT_END_BANG:
+                    case TokenizerState.s51_COMMENT_END_BANG:
                         ErrEofInComment();
                         /* Emit the comment token. */
                         EmitComment(3, 0);
@@ -1566,8 +1590,8 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.DOCTYPE:
-                    case TokenizerState.BEFORE_DOCTYPE_NAME:
+                    case TokenizerState.s52_DOCTYPE:
+                    case TokenizerState.s53_BEFORE_DOCTYPE_NAME:
                         ErrEofInDoctype();
                         /*
                          * Create a new DOCTYPE token. Set its force-quirks flag to
@@ -1582,7 +1606,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.DOCTYPE_NAME:
+                    case TokenizerState.s54_DOCTYPE_NAME:
                         ErrEofInDoctype();
                         StrBufToDoctypeName();
                         /*
@@ -1599,10 +1623,10 @@ namespace HtmlParserSharp.Core
                         goto breakEofloop;
                     case TokenizerState.DOCTYPE_UBLIC:
                     case TokenizerState.DOCTYPE_YSTEM:
-                    case TokenizerState.AFTER_DOCTYPE_NAME:
-                    case TokenizerState.AFTER_DOCTYPE_PUBLIC_KEYWORD:
-                    case TokenizerState.AFTER_DOCTYPE_SYSTEM_KEYWORD:
-                    case TokenizerState.BEFORE_DOCTYPE_PUBLIC_IDENTIFIER:
+                    case TokenizerState.s55_AFTER_DOCTYPE_NAME:
+                    case TokenizerState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD:
+                    case TokenizerState.s62_AFTER_DOCTYPE_SYSTEM_KEYWORD:
+                    case TokenizerState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER:
                         ErrEofInDoctype();
                         /*
                          * Set the DOCTYPE token's force-quirks flag to on.
@@ -1616,8 +1640,8 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED:
-                    case TokenizerState.DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED:
+                    case TokenizerState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED:
+                    case TokenizerState.s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED:
                         /* EOF Parse error. */
                         ErrEofInPublicId();
                         /*
@@ -1633,9 +1657,9 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.AFTER_DOCTYPE_PUBLIC_IDENTIFIER:
-                    case TokenizerState.BEFORE_DOCTYPE_SYSTEM_IDENTIFIER:
-                    case TokenizerState.BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS:
+                    case TokenizerState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER:
+                    case TokenizerState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER:
+                    case TokenizerState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS:
                         ErrEofInDoctype();
                         /*
                          * Set the DOCTYPE token's force-quirks flag to on.
@@ -1649,8 +1673,8 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED:
-                    case TokenizerState.DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED:
+                    case TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED:
+                    case TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED:
                         /* EOF Parse error. */
                         ErrEofInSystemId();
                         /*
@@ -1666,7 +1690,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.AFTER_DOCTYPE_SYSTEM_IDENTIFIER:
+                    case TokenizerState.s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER:
                         ErrEofInDoctype();
                         /*
                          * Set the DOCTYPE token's force-quirks flag to on.
@@ -1680,7 +1704,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.BOGUS_DOCTYPE:
+                    case TokenizerState.s67_BOGUS_DOCTYPE:
                         /*
                          * Emit that DOCTYPE token.
                          */
@@ -1940,7 +1964,7 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.CDATA_RSQB_RSQB:
                         TokenListener.Characters(RSQB_RSQB, 0, 2);
                         goto breakEofloop;
-                    case TokenizerState.DATA:
+                    case TokenizerState.s01_DATA:
                     default:
                         goto breakEofloop;
                 }
@@ -2045,7 +2069,7 @@ namespace HtmlParserSharp.Core
         {
             this.strBuffer = new StringBuilder();
             this.longStrBuffer = new StringBuilder();
-            stateSave = TokenizerState.DATA;
+            stateSave = TokenizerState.s01_DATA;
             // line = 1; XXX line numbers
             lastCR = false;
             index = 0;
