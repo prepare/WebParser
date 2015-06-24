@@ -1,0 +1,55 @@
+﻿using System;
+using System.Text;
+using System.Collections.Generic;
+
+using System.Diagnostics;
+using HtmlParserSharp.Common;
+namespace HtmlParserSharp.Core
+{
+
+    class TokenBufferReader
+    {
+        int index = -1;
+        int totalLength = 0;
+        char[] buffer;
+        public TokenBufferReader(char[] buffer)
+        {
+            this.buffer = buffer;
+            this.totalLength = buffer.Length;
+            this.index = -1;
+        }
+        public int CurrentIndex
+        {
+            get { return this.index; }
+        }
+        public bool ReadNext(out char c)
+        {
+            //1. move 
+            if (index < totalLength)
+            {
+                c = buffer[++index];
+                return true;
+            }
+            else
+            {
+                c = '\0';
+                return false;
+            }
+        }
+        public bool Peek(out char c)
+        {
+            if (index < totalLength)
+            {
+                c = buffer[index + 1];
+                return true;
+            }
+            else
+            {
+                c = '\0';
+                return false;
+            }
+        }
+
+    }
+
+}
