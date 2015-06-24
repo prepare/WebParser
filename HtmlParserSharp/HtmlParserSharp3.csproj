@@ -49,6 +49,7 @@
     <Compile Include="Core\AttributeName.static.cs" />
     <Compile Include="Core\CharsetState.cs" />
     <Compile Include="Core\CoalescingTreeBuilder.cs" />
+    <Compile Include="Core\Tokenizer.StateLoop3.cs" />
     <Compile Include="Core\OldTokenizer.cs" />
     <Compile Include="Core\DispatchGroup.cs" />
     <Compile Include="Core\ElementName.cs" />
