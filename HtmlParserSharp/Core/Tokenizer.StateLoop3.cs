@@ -57,7 +57,7 @@ namespace HtmlParserSharp.Core
            int endPos)
         {
 
-
+            var reader = new TokenBufferReader(buf);
 
             /*
              * Idioms used in this code:
