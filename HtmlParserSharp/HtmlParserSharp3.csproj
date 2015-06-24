@@ -30,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -48,6 +49,7 @@
     <Compile Include="Core\AttributeName.static.cs" />
     <Compile Include="Core\CharsetState.cs" />
     <Compile Include="Core\CoalescingTreeBuilder.cs" />
+    <Compile Include="Core\Tokenizer.StateLoop3.cs" />
     <Compile Include="Core\OldTokenizer.cs" />
     <Compile Include="Core\DispatchGroup.cs" />
     <Compile Include="Core\ElementName.cs" />
@@ -61,9 +63,14 @@
     <Compile Include="Core\Portability.cs" />
     <Compile Include="Core\StackNode.cs" />
     <Compile Include="Core\StateSnapshot.cs" />
+    <Compile Include="Core\TextSnapshot.cs" />
     <Compile Include="Core\Tokenizer.cs" />
+    <Compile Include="Core\Tokenizer.Emit.cs" />
     <Compile Include="Core\Tokenizer.ErrHandling.cs" />
+    <Compile Include="Core\Tokenizer.StateLoop.cs" />
+    <Compile Include="Core\Tokenizer.StateLoop2.cs" />
     <Compile Include="Core\TreeBuilder.cs" />
+    <Compile Include="Core\TreeBuilder.Snapshot.cs" />
     <Compile Include="Core\TreeBuilderConstants.cs" />
     <Compile Include="Core\UTF16Buffer.cs" />
     <Compile Include="LayoutFarm.WebLexer\CssLexer.cs" />
