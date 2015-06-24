@@ -52,8 +52,8 @@ namespace HtmlParserSharp.Core
 {
     partial class Tokenizer
     {
-        int StateLoop3(TokenizerState state, char c,
-           int pos, char[] buf, bool reconsume, TokenizerState returnState,
+        int StateLoop3(TokenizerState state,
+           int pos, char[] buf, TokenizerState returnState,
            int endPos)
         {
 
@@ -149,20 +149,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s01_DATA:
                         /*dataloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
                                 switch (c)
                                 {
                                     case '&':
@@ -209,26 +198,28 @@ namespace HtmlParserSharp.Core
                                 }
                             }
 
-                            //------------
+
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
+                        //------------
                         breakDataloop:
                             goto case TokenizerState.s08_TAG_OPEN;
-                            //------------
+                            //------------                             
+
                         }
                     // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
                     case TokenizerState.s08_TAG_OPEN:
                         /*tagopenloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
                                 /*
                                  * The behavior of this state depends on the content
                                  * model flag.
                                  */
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
+
                                 /*
                                  * If the content model flag is set to the PCDATA state
                                  * Consume the next input character:
@@ -346,6 +337,11 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+
+
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakTagopenloop:
                             goto case TokenizerState.s10_TAG_NAME;
@@ -355,13 +351,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s10_TAG_NAME:
                         /*tagnameloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
+
                                 /*
                                  * Consume the next input character:
                                  */
@@ -443,6 +436,10 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakTagnameloop:
                             goto case TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
@@ -451,23 +448,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s34_BEFORE_ATTRIBUTE_NAME:
                         /*beforeattributenameloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '\r':
@@ -563,6 +547,9 @@ namespace HtmlParserSharp.Core
                                     // goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakBeforeattributenameloop:
                             goto case TokenizerState.s35_ATTRIBUTE_NAME;
@@ -571,13 +558,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s35_ATTRIBUTE_NAME:
                         /*attributenameloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
                                 /*
                                  * Consume the next input character:
                                  */
@@ -683,6 +666,9 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakAttributenameloop:
                             goto case TokenizerState.s37_BEFORE_ATTRIBUTE_VALUE;
@@ -691,16 +677,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s37_BEFORE_ATTRIBUTE_VALUE:
                         /*beforeattributevalueloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '\r':
@@ -809,6 +789,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakBeforeattributevalueloop:
                             goto case TokenizerState.s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED;
@@ -818,23 +801,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED:
                         /*attributevaluedoublequotedloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '"':
@@ -885,6 +855,9 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakAttributevaluedoublequotedloop:
                             goto case TokenizerState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED;
@@ -893,16 +866,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED:
                         /*afterattributevaluequotedloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '\r':
@@ -965,6 +932,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakAfterattributevaluequotedloop:
                             goto case TokenizerState.s43_SELF_CLOSING_START_TAG;
@@ -972,11 +942,12 @@ namespace HtmlParserSharp.Core
                     // FALLTHRU DON'T REORDER
                     case TokenizerState.s43_SELF_CLOSING_START_TAG:
                         {
-                            if (++pos == endPos)
+                            char c;
+                            if (!reader.ReadNext(out c))
                             {
                                 goto breakStateloop;
                             }
-                            c = buf[pos];
+                            //---------------------------------
                             /*
                              * Consume the next input character:
                              */
@@ -1018,23 +989,10 @@ namespace HtmlParserSharp.Core
                     // XXX reorder point
                     case TokenizerState.s40_ATTRIBUTE_VALUE_UNQUOTED:
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '\r':
@@ -1124,20 +1082,15 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //-------------------------------
+                            goto breakStateloop;
                         }
                     // XXX reorder point
                     case TokenizerState.s36_AFTER_ATTRIBUTE_NAME:
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
                                 switch (c)
                                 {
                                     case '\r':
@@ -1236,18 +1189,18 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //-------------------------------
+                            //eof
+                            goto breakStateloop;
                         }
                     // XXX reorder point
                     case TokenizerState.s45_MARKUP_DECLARATION_OPEN:
                         /*markupdeclarationopenloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
+
                                 /*
                                  * If the next two characters are both U+002D
                                  * HYPHEN-MINUS characters (-), consume those two
@@ -1312,6 +1265,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //-------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakMarkupdeclarationopenloop:
                             goto case TokenizerState.MARKUP_DECLARATION_HYPHEN;
@@ -1320,13 +1276,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.MARKUP_DECLARATION_HYPHEN:
                         /*markupdeclarationhyphenloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
                                 switch (c)
                                 {
                                     case '\u0000':
@@ -1346,6 +1298,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //-------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakMarkupdeclarationhyphenloop:
                             goto case TokenizerState.s46_COMMENT_START;
@@ -1354,19 +1309,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s46_COMMENT_START:
                         /*commentstartloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Comment start state
-                                 * 
-                                 * 
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '-':
@@ -1423,6 +1369,9 @@ namespace HtmlParserSharp.Core
                                     // goto continueStateloop;
                                 }
                             }
+                            //-------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakCommentstartloop:
                             goto case TokenizerState.s48_COMMENT;
@@ -1431,16 +1380,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s48_COMMENT:
                         /*commentloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Comment state Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '-':
@@ -1475,6 +1418,9 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //-------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakCommentloop:
                             goto case TokenizerState.s49_COMMENT_END_DASH;
@@ -1483,17 +1429,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s49_COMMENT_END_DASH:
                         /*commentenddashloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Comment end dash state Consume the next input
-                                 * character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '-':
@@ -1535,6 +1474,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //-------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakCommentenddashloop:
                             goto case TokenizerState.s50_COMMENT_END;
@@ -1543,17 +1485,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s50_COMMENT_END:
                         /*commentendloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Comment end dash state Consume the next input
-                                 * character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '>':
@@ -1614,22 +1549,16 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //-------------------------------
+                            //eof
+                            goto breakStateloop;
                         }
                     // XXX reorder point
                     case TokenizerState.s51_COMMENT_END_BANG:
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Comment end bang state
-                                 * 
-                                 * Consume the next input character:
-                                 */
                                 switch (c)
                                 {
                                     case '>':
@@ -1684,20 +1613,22 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //-------------------------------
+                            //eof
+                            goto breakStateloop;
                         }
                     // XXX reorder point
                     case TokenizerState.s47_COMMENT_START_DASH:
                         {
-                            if (++pos == endPos)
+                            char c;
+                            if (!reader.ReadNext(out c))
                             {
+                                //-------------------------------
+                                //eof
                                 goto breakStateloop;
                             }
-                            c = buf[pos];
-                            /*
-                             * Comment start dash state
-                             * 
-                             * Consume the next input character:
-                             */
+                            //----------------------
+
                             switch (c)
                             {
                                 case '-':
@@ -1751,13 +1682,10 @@ namespace HtmlParserSharp.Core
                     // XXX reorder point
                     case TokenizerState.CDATA_START:
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
+
                                 if (index < 6)
                                 { // CDATA_LSQB.Length
                                     if (c == Tokenizer.CDATA_LSQB[index])
@@ -1783,30 +1711,23 @@ namespace HtmlParserSharp.Core
                                     state = TokenizerState.s68_CDATA_SECTION;
                                     //reconsume = true;
                                     reader.StepBack();
-                                    break; // FALL THROUGH goto continueStateloop;
+                                    goto case TokenizerState.s68_CDATA_SECTION;
+                                    //break; // FALL THROUGH goto continueStateloop;
                                 }
                             }
+                            //-------------------------------
+                            //eof
+                            goto breakStateloop;
                             //------------------------------------
-                            goto case TokenizerState.s68_CDATA_SECTION;
+
                         }
                     // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
                     case TokenizerState.s68_CDATA_SECTION:
                         /*cdatasectionloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
                                 switch (c)
                                 {
                                     case ']':
@@ -1828,6 +1749,7 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            goto breakStateloop;
                         //------------------------------------
                         breakCdatasectionloop:
                             goto case TokenizerState.CDATA_RSQB;
@@ -1836,19 +1758,14 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.CDATA_RSQB:
                         /*cdatarsqb:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
                                 switch (c)
                                 {
                                     case ']':
                                         //state = Transition(state, Tokenizer.CDATA_RSQB_RSQB, reconsume, pos);
                                         state = TokenizerState.CDATA_RSQB_RSQB;
-
                                         goto breakCdatarsqb;
                                     default:
                                         TokenListener.Characters(Tokenizer.RSQB_RSQB, 0, 1);
@@ -1860,6 +1777,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //-------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------ 
                         breakCdatarsqb:
                             goto case TokenizerState.CDATA_RSQB_RSQB;
@@ -1867,11 +1787,11 @@ namespace HtmlParserSharp.Core
                     // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
                     case TokenizerState.CDATA_RSQB_RSQB:
                         {
-                            if (++pos == endPos)
+                            char c;
+                            if (!reader.ReadNext(out c))
                             {
                                 goto breakStateloop;
                             }
-                            c = buf[pos];
                             switch (c)
                             {
                                 case '>':
@@ -1894,20 +1814,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s39_ATTRIBUTE_VALUE_SINGLE_QUOTED:
                         /*attributevaluesinglequotedloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
                                 /*
                                  * Consume the next input character:
                                  */
@@ -1960,6 +1869,10 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakAttributevaluesinglequotedloop:
                             goto case TokenizerState.CONSUME_CHARACTER_REFERENCE;
@@ -1967,11 +1880,13 @@ namespace HtmlParserSharp.Core
                     // FALLTHRU DON'T REORDER
                     case TokenizerState.CONSUME_CHARACTER_REFERENCE:
                         {
-                            if (++pos == endPos)
+                            char c;
+                            if (!reader.ReadNext(out c))
                             {
+                                //------------------------------------
+                                //eof
                                 goto breakStateloop;
                             }
-                            c = buf[pos];
                             if (c == '\u0000')
                             {
                                 goto breakStateloop;
@@ -2074,11 +1989,14 @@ namespace HtmlParserSharp.Core
                     // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
                     case TokenizerState.CHARACTER_REFERENCE_HILO_LOOKUP:
                         {
-                            if (++pos == endPos)
+                            char c;
+                            if (reader.ReadNext(out c))
                             {
+                                //------------------------------------
+                                //eof
                                 goto breakStateloop;
                             }
-                            c = buf[pos];
+
                             if (c == '\u0000')
                             {
                                 goto breakStateloop;
@@ -2164,12 +2082,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.CHARACTER_REFERENCE_TAIL:
                         /*outer:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
+
                                 c = buf[pos];
                                 if (c == '\u0000')
                                 {
@@ -2398,15 +2314,22 @@ namespace HtmlParserSharp.Core
                                  * I'm âˆ‰ I tell you.
                                  */
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         }
+
                     // XXX reorder point
                     case TokenizerState.CONSUME_NCR:
                         {
-                            if (++pos == endPos)
+                            char c;
+                            if (!reader.ReadNext(out c))
                             {
+                                //------------------------------------
+                                //eof
                                 goto breakStateloop;
                             }
-                            c = buf[pos];
+
                             prevValue = -1;
                             value = 0;
                             seenDigits = false;
@@ -2461,20 +2384,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.DECIMAL_NRC_LOOP:
                         /*decimalloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
+
                                 // Deal with overflow gracefully
                                 if (value < prevValue)
                                 {
@@ -2570,7 +2483,11 @@ namespace HtmlParserSharp.Core
                                     }
                                 }
                             }
-                        //------------------------------------
+
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
+                        //-------------------------------------
                         breakDecimalloop:
                             goto case TokenizerState.HANDLE_NCR_VALUE;
                         }
@@ -2588,13 +2505,10 @@ namespace HtmlParserSharp.Core
                     // XXX reorder point
                     case TokenizerState.HEX_NCR_LOOP:
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
+
                                 // Deal with overflow gracefully
                                 if (value < prevValue)
                                 {
@@ -2700,25 +2614,18 @@ namespace HtmlParserSharp.Core
                                     }
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         }
                     // XXX reorder point
                     case TokenizerState.s07_PLAINTEXT:
                         /*plaintextloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
+
                                 switch (c)
                                 {
                                     case '\u0000':
@@ -2739,15 +2646,21 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         }
                     // XXX reorder point
                     case TokenizerState.s09_CLOSE_TAG_OPEN:
                         {
-                            if (++pos == endPos)
+                            char c;
+                            if (!reader.ReadNext(out c))
                             {
+                                //------------------------------------
+                                //eof
                                 goto breakStateloop;
                             }
-                            c = buf[pos];
+
                             /*
                              * Otherwise, if the content model flag is set to the PCDATA
                              * state, or if the next few characters do match that tag
@@ -2835,20 +2748,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s03_RCDATA:
                         /*rcdataloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
+
                                 switch (c)
                                 {
                                     case '&':
@@ -2891,25 +2794,18 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         }
                     // XXX reorder point
                     case TokenizerState.s05_RAWTEXT:
                         /*rawtextloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
+
                                 switch (c)
                                 {
                                     case '<':
@@ -2941,6 +2837,9 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakRawtextloop:
                             goto case TokenizerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN;
@@ -2949,13 +2848,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN:
                         /*rawtextrcdatalessthansignloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
                                 switch (c)
                                 {
                                     case '/':
@@ -2988,6 +2883,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakRawtextrcdatalessthansignloop:
                             goto case TokenizerState.NON_DATA_END_TAG_NAME;
@@ -2995,13 +2893,10 @@ namespace HtmlParserSharp.Core
                     // XXX fall thru. don't reorder.
                     case TokenizerState.NON_DATA_END_TAG_NAME:
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
+
                                 /*
                                  * ASSERT! when entering this state, set index to 0 and
                                  * call clearStrBuf() assert (contentModelElement !=
@@ -3119,26 +3014,19 @@ namespace HtmlParserSharp.Core
                                     }
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         }
                     // XXX reorder point
                     // BEGIN HOTSPOT WORKAROUND
                     case TokenizerState.s44_BOGUS_COMMENT:
                         /*boguscommentloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
+
                                 /*
                                  * Consume every character up to and including the first
                                  * U+003E GREATER-THAN SIGN character (>) or the end of
@@ -3184,6 +3072,9 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakBoguscommentloop:
                             goto case TokenizerState.BOGUS_COMMENT_HYPHEN;
@@ -3192,13 +3083,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.BOGUS_COMMENT_HYPHEN:
                         /*boguscommenthyphenloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
+
                                 switch (c)
                                 {
                                     case '>':
@@ -3236,25 +3124,18 @@ namespace HtmlParserSharp.Core
                             continueBoguscommenthyphenloop:
                                 continue;
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         }
                     // XXX reorder point
                     case TokenizerState.s06_SCRIPT_DATA:
                         /*scriptdataloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
+
                                 switch (c)
                                 {
                                     case '<':
@@ -3286,6 +3167,9 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakScriptdataloop:
                             goto case TokenizerState.s17_SCRIPT_DATA_LESS_THAN_SIGN;
@@ -3294,13 +3178,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s17_SCRIPT_DATA_LESS_THAN_SIGN:
                         /*scriptdatalessthansignloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
+
                                 switch (c)
                                 {
                                     case '/':
@@ -3341,6 +3222,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakScriptdatalessthansignloop:
                             goto case TokenizerState.s20_SCRIPT_DATA_ESCAPE_START;
@@ -3349,13 +3233,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s20_SCRIPT_DATA_ESCAPE_START:
                         /*scriptdataescapestartloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
+
                                 /*
                                  * Consume the next input character:
                                  */
@@ -3384,6 +3265,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakScriptdataescapestartloop:
                             goto case TokenizerState.s21_SCRIPT_DATA_ESCAPE_START_DASH;
@@ -3392,16 +3276,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s21_SCRIPT_DATA_ESCAPE_START_DASH:
                         /*scriptdataescapestartdashloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
                                 switch (c)
                                 {
                                     case '-':
@@ -3426,6 +3303,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakScriptdataescapestartdashloop:
                             goto case TokenizerState.s24_SCRIPT_DATA_ESCAPED_DASH_DASH;
@@ -3434,16 +3314,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s24_SCRIPT_DATA_ESCAPED_DASH_DASH:
                         /*scriptdataescapeddashdashloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '-':
@@ -3496,6 +3370,9 @@ namespace HtmlParserSharp.Core
                                     // goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakScriptdataescapeddashdashloop:
                             goto case TokenizerState.s22_SCRIPT_DATA_ESCAPED;
@@ -3504,23 +3381,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s22_SCRIPT_DATA_ESCAPED:
                         /*scriptdataescapedloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '-':
@@ -3561,6 +3425,9 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakScriptdataescapedloop:
                             goto case TokenizerState.s23_SCRIPT_DATA_ESCAPED_DASH;
@@ -3569,16 +3436,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s23_SCRIPT_DATA_ESCAPED_DASH:
                         /*scriptdataescapeddashloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '-':
@@ -3624,6 +3485,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakScriptdataescapeddashloop:
                             goto case TokenizerState.s25_SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN;
@@ -3632,16 +3496,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s25_SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN:
                         /*scriptdataescapedlessthanloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
                                 switch (c)
                                 {
                                     case '/':
@@ -3696,6 +3553,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakScriptdataescapedlessthanloop:
                             goto case TokenizerState.s28_SCRIPT_DATA_DOUBLE_ESCAPE_START;
@@ -3704,13 +3564,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s28_SCRIPT_DATA_DOUBLE_ESCAPE_START:
                         /*scriptdatadoubleescapestartloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
                                 Debug.Assert(index > 0);
                                 if (index < 6)
                                 { // SCRIPT_ARR.Length
@@ -3770,6 +3626,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakScriptdatadoubleescapestartloop:
                             goto case TokenizerState.s29_SCRIPT_DATA_DOUBLE_ESCAPED;
@@ -3778,23 +3637,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s29_SCRIPT_DATA_DOUBLE_ESCAPED:
                         /*scriptdatadoubleescapedloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '-':
@@ -3836,6 +3682,9 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakScriptdatadoubleescapedloop:
                             goto case TokenizerState.s30_SCRIPT_DATA_DOUBLE_ESCAPED_DASH;
@@ -3844,16 +3693,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s30_SCRIPT_DATA_DOUBLE_ESCAPED_DASH:
                         /*scriptdatadoubleescapeddashloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
                                 switch (c)
                                 {
                                     case '-':
@@ -3900,6 +3742,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakScriptdatadoubleescapeddashloop:
                             goto case TokenizerState.s31_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH;
@@ -3908,16 +3753,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s31_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH:
                         /*scriptdatadoubleescapeddashdashloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '-':
@@ -3970,6 +3809,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakScriptdatadoubleescapeddashdashloop:
                             goto case TokenizerState.s32_SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN;
@@ -3978,16 +3820,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s32_SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN:
                         /*scriptdatadoubleescapedlessthanloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
                                 switch (c)
                                 {
                                     case '/':
@@ -4014,6 +3849,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakScriptdatadoubleescapedlessthanloop:
                             goto case TokenizerState.s33_SCRIPT_DATA_DOUBLE_ESCAPE_END;
@@ -4022,13 +3860,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s33_SCRIPT_DATA_DOUBLE_ESCAPE_END:
                         /*scriptdatadoubleescapeendloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
+
                                 if (index < 6)
                                 { // SCRIPT_ARR.Length
                                     char folded = c;
@@ -4087,18 +3922,17 @@ namespace HtmlParserSharp.Core
                                 }
                             }
                         }
-
+                        //------------------------------------
+                        //eof
+                        goto breakStateloop;
                     // XXX reorder point
                     case TokenizerState.MARKUP_DECLARATION_OCTYPE:
                         /*markupdeclarationdoctypeloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
+
                                 if (index < 6)
                                 { // OCTYPE.Length
                                     char folded = c;
@@ -4132,6 +3966,9 @@ namespace HtmlParserSharp.Core
                                     // goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakMarkupdeclarationdoctypeloop:
                             goto case TokenizerState.s52_DOCTYPE;
@@ -4140,20 +3977,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s52_DOCTYPE:
                         /*doctypeloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
                                 InitDoctypeFields();
                                 /*
                                  * Consume the next input character:
@@ -4198,6 +4024,9 @@ namespace HtmlParserSharp.Core
                                     // goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakDoctypeloop:
                             goto case TokenizerState.s53_BEFORE_DOCTYPE_NAME;
@@ -4206,23 +4035,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s53_BEFORE_DOCTYPE_NAME:
                         /*beforedoctypenameloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '\r':
@@ -4293,6 +4109,9 @@ namespace HtmlParserSharp.Core
                                     // goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakBeforedoctypenameloop:
                             goto case TokenizerState.s54_DOCTYPE_NAME;
@@ -4301,16 +4120,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s54_DOCTYPE_NAME:
                         /*doctypenameloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '\r':
@@ -4377,6 +4190,9 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakDoctypenameloop:
                             goto case TokenizerState.s55_AFTER_DOCTYPE_NAME;
@@ -4385,16 +4201,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s55_AFTER_DOCTYPE_NAME:
                         /*afterdoctypenameloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '\r':
@@ -4459,6 +4269,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakAfterdoctypenameloop:
                             goto case TokenizerState.DOCTYPE_UBLIC;
@@ -4467,13 +4280,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.DOCTYPE_UBLIC:
                         /*doctypeublicloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
+
                                 /*
                                  * If the six characters starting from the current input
                                  * character are an ASCII case-insensitive match for the
@@ -4506,11 +4316,14 @@ namespace HtmlParserSharp.Core
                                     state = TokenizerState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD;
                                     //reconsume = true;
                                     reader.StepBack();
-                                    
+
                                     goto breakDoctypeublicloop;
                                     // goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakDoctypeublicloop:
                             goto case TokenizerState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD;
@@ -4519,20 +4332,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD:
                         /*afterdoctypepublickeywordloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
                                 /*
                                  * Consume the next input character:
                                  */
@@ -4627,6 +4429,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakAfterdoctypepublickeywordloop:
                             goto case TokenizerState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER;
@@ -4635,16 +4440,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER:
                         /*beforedoctypepublicidentifierloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
                                 switch (c)
                                 {
                                     case '\r':
@@ -4726,6 +4524,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakBeforedoctypepublicidentifierloop:
                             goto case TokenizerState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED;
@@ -4734,16 +4535,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED:
                         /*doctypepublicidentifierdoublequotedloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
                                 switch (c)
                                 {
                                     case '"':
@@ -4801,6 +4595,9 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakDoctypepublicidentifierdoublequotedloop:
                             goto case TokenizerState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER;
@@ -4809,16 +4606,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER:
                         /*afterdoctypepublicidentifierloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '\r':
@@ -4905,6 +4696,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakAfterdoctypepublicidentifierloop:
                             goto case TokenizerState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS;
@@ -4913,16 +4707,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS:
                         /*betweendoctypepublicandsystemidentifiersloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '\r':
@@ -4998,6 +4786,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakBetweendoctypepublicandsystemidentifiersloop:
                             goto case TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED;
@@ -5006,16 +4797,9 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED:
                         /*doctypesystemidentifierdoublequotedloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
                                 switch (c)
                                 {
                                     case '"':
@@ -5072,6 +4856,9 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         }
                     // next 2 lines were unreachable; commented out
                     //breakDoctypesystemidentifierdoublequotedloop:
@@ -5080,16 +4867,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER:
                         /*afterdoctypesystemidentifierloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '\r':
@@ -5133,6 +4914,9 @@ namespace HtmlParserSharp.Core
                                     // goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakAfterdoctypesystemidentifierloop:
                             goto case TokenizerState.s67_BOGUS_DOCTYPE;
@@ -5140,23 +4924,10 @@ namespace HtmlParserSharp.Core
                     // FALLTHRU DON'T REORDER
                     case TokenizerState.s67_BOGUS_DOCTYPE:
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '>':
@@ -5186,18 +4957,18 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         }
                     // XXX reorder point
                     case TokenizerState.DOCTYPE_YSTEM:
                         /*doctypeystemloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
+
                                 /*
                                  * Otherwise, if the six characters starting from the
                                  * current input character are an ASCII case-insensitive
@@ -5234,6 +5005,9 @@ namespace HtmlParserSharp.Core
                                     // goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakDoctypeystemloop:
                             goto case TokenizerState.s62_AFTER_DOCTYPE_SYSTEM_KEYWORD;
@@ -5242,23 +5016,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s62_AFTER_DOCTYPE_SYSTEM_KEYWORD:
                         /*afterdoctypesystemkeywordloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (reconsume)
-                                {
-                                    reconsume = false;
-                                }
-                                else
-                                {
-                                    if (++pos == endPos)
-                                    {
-                                        goto breakStateloop;
-                                    }
-                                    c = buf[pos];
-                                }
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '\r':
@@ -5351,6 +5112,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakAfterdoctypesystemkeywordloop:
                             goto case TokenizerState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER;
@@ -5359,16 +5123,10 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER:
                         /*beforedoctypesystemidentifierloop:*/
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '\r':
@@ -5450,6 +5208,9 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         //------------------------------------
                         breakBeforedoctypesystemidentifierloop:
                             goto case TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED;
@@ -5457,16 +5218,9 @@ namespace HtmlParserSharp.Core
                     // FALLTHRU DON'T REORDER
                     case TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED:
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
                                 switch (c)
                                 {
                                     case '\'':
@@ -5520,20 +5274,18 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                             // XXX reorder point
+
                         }
                     case TokenizerState.s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED:
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    goto breakStateloop;
-                                }
-                                c = buf[pos];
-                                /*
-                                 * Consume the next input character:
-                                 */
+
                                 switch (c)
                                 {
                                     case '\'':
@@ -5587,19 +5339,17 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         }
                     // XXX reorder point
                     case TokenizerState.PROCESSING_INSTRUCTION:
                         //processinginstructionloop: 
                         {
-                            for (; ; )
+                            char c;
+                            while (reader.ReadNext(out c))
                             {
-                                if (++pos == endPos)
-                                {
-                                    break;
-                                }
-
-                                c = buf[pos];
                                 switch (c)
                                 {
                                     case '?':
@@ -5612,18 +5362,21 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         }
                         //breakProcessingInstructionLoop:
                         break;
-
-
                     case TokenizerState.PROCESSING_INSTRUCTION_QUESTION_MARK:
                         {
-                            if (++pos == endPos)
+                            char c;
+                            if (!reader.ReadNext(out c))
                             {
                                 goto breakStateloop;
+
                             }
-                            c = buf[pos];
+
                             switch (c)
                             {
                                 case '>':
@@ -5635,6 +5388,7 @@ namespace HtmlParserSharp.Core
                                     state = TokenizerState.PROCESSING_INSTRUCTION;
                                     continue;
                             }
+
                         }
                     // END HOTSPOT WORKAROUND
                 }
