@@ -875,7 +875,7 @@ namespace HtmlParserSharp.Core
             }
             cstart = int.MaxValue;
         }
-        
+
         void FlushChars(TextSnapshotReader reader)
         {
             if (reader.Position > cstart)
@@ -1192,7 +1192,8 @@ namespace HtmlParserSharp.Core
              */
 
             // [NOCPP[
-            pos = StateLoop(state, c, pos, buffer.Buffer, false, returnState, buffer.End);
+            //pos = StateLoop(state, c, pos, buffer.Buffer, false, returnState, buffer.End);
+            StateLoop3(state, returnState);
             // ]NOCPP]
             if (pos == buffer.End)
             {
