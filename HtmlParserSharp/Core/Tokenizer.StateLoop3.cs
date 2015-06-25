@@ -184,9 +184,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         EmitCarriageReturn(buf, pos);
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto default;
+                                    case '\n': 
                                     default:
                                         /*
                                          * Anything else Emit the input character as a
@@ -366,9 +364,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
                                         state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -457,10 +453,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        // fall thru
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -572,10 +565,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.AFTER_ATTRIBUTE_NAME, reconsume, pos);
                                         state = TokenizerState.s36_AFTER_ATTRIBUTE_NAME;
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto case ' ';
-                                    // fall thru
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -686,10 +676,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto case ' ';
-                                    // fall thru
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -877,10 +864,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
                                         state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        // fall thru
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -1001,10 +985,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
                                         state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        // fall thru
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -1096,10 +1077,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        // fall thru
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -1741,10 +1719,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         EmitCarriageReturn(buf, pos);
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto default;
-                                    // fall thru
+                                    case '\n': 
                                     default:
                                         continue;
                                 }
@@ -2634,9 +2609,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         EmitCarriageReturn(buf, pos);
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto default;
+                                    case '\n': 
                                     default:
                                         /*
                                          * Anything else Emit the current input
@@ -2689,8 +2662,7 @@ namespace HtmlParserSharp.Core
                                     //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
                                     state = TokenizerState.s44_BOGUS_COMMENT;
                                     goto breakStateloop;
-                                case '\n':
-                                    SilentLineFeed();
+                                case '\n': 
                                     /* Anything else Parse error. */
                                     ErrGarbageAfterLtSlash();
                                     /*
@@ -2783,9 +2755,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         EmitCarriageReturn(buf, pos);
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto default;
+                                    case '\n': 
                                     default:
                                         /*
                                          * Emit the current input character as a
@@ -2826,9 +2796,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         EmitCarriageReturn(buf, pos);
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto default;
+                                    case '\n': 
                                     default:
                                         /*
                                          * Emit the current input character as a
@@ -2943,10 +2911,7 @@ namespace HtmlParserSharp.Core
                                             state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
 
                                             goto breakStateloop;
-                                        case '\n':
-                                            SilentLineFeed();
-                                            goto case ' ';
-                                        // fall thru
+                                        case '\n': 
                                         case ' ':
                                         case '\t':
                                         case '\u000C':
@@ -3155,9 +3120,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         EmitCarriageReturn(buf, pos);
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto default;
+                                    case '\n': 
                                     default:
                                         /*
                                          * Anything else Emit the current input
@@ -3355,9 +3318,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA_ESCAPED, reconsume, pos);
                                         state = TokenizerState.s22_SCRIPT_DATA_ESCAPED;
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto default;
+                                    case '\n': 
                                     default:
                                         /*
                                          * Anything else Emit the current input
@@ -3413,9 +3374,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         EmitCarriageReturn(buf, pos);
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto default;
+                                    case '\n': 
                                     default:
                                         /*
                                          * Anything else Emit the current input
@@ -3471,9 +3430,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA_ESCAPED, reconsume, pos);
                                         state = TokenizerState.s22_SCRIPT_DATA_ESCAPED;
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto default;
+                                    case '\n': 
                                     default:
                                         /*
                                          * Anything else Emit the current input
@@ -3593,9 +3550,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA_DOUBLE_ESCAPED, reconsume, pos);
                                         state = TokenizerState.s29_SCRIPT_DATA_DOUBLE_ESCAPED;
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -3670,9 +3625,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         EmitCarriageReturn(buf, pos);
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto default;
+                                    case '\n': 
                                     default:
                                         /*
                                          * Anything else Emit the current input
@@ -3728,9 +3681,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA_DOUBLE_ESCAPED, reconsume, pos);
                                         state = TokenizerState.s29_SCRIPT_DATA_DOUBLE_ESCAPED;
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto default;
+                                    case '\n': 
                                     default:
                                         /*
                                          * Anything else Emit the current input
@@ -3795,9 +3746,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA_DOUBLE_ESCAPED, reconsume, pos);
                                         state = TokenizerState.s29_SCRIPT_DATA_DOUBLE_ESCAPED;
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto default;
+                                    case '\n': 
                                     default:
                                         /*
                                          * Anything else Emit the current input
@@ -3889,9 +3838,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.SCRIPT_DATA_ESCAPED, reconsume, pos);
                                         state = TokenizerState.s22_SCRIPT_DATA_ESCAPED;
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -3991,10 +3938,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.BEFORE_DOCTYPE_NAME, reconsume, pos);
                                         state = TokenizerState.s53_BEFORE_DOCTYPE_NAME;
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto case ' ';
-                                    // fall thru
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -4044,10 +3988,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        // fall thru
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -4132,10 +4073,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.AFTER_DOCTYPE_NAME, reconsume, pos);
                                         state = TokenizerState.s55_AFTER_DOCTYPE_NAME;
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        // fall thru
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -4210,10 +4148,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        // fall thru
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -4345,10 +4280,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.BEFORE_DOCTYPE_PUBLIC_IDENTIFIER, reconsume, pos);
                                         state = TokenizerState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER;
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        // fall thru
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -4448,10 +4380,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        // fall thru
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -4617,10 +4546,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS, reconsume, pos);
                                         state = TokenizerState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS;
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        // fall thru
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -4716,10 +4642,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto case ' ';
-                                    // fall thru
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -4876,10 +4799,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        goto case ' ';
-                                    // fall thru
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -4945,10 +4865,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        // fall thru
-                                        goto default;
+                                    case '\n': 
                                     default:
                                         /*
                                          * Anything else Stay in the bogus DOCTYPE
@@ -5028,10 +4945,7 @@ namespace HtmlParserSharp.Core
                                         state = TokenizerState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER;
 
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        // fall thru
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':
@@ -5132,10 +5046,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         goto breakStateloop;
-                                    case '\n':
-                                        SilentLineFeed();
-                                        // fall thru
-                                        goto case ' ';
+                                    case '\n': 
                                     case ' ':
                                     case '\t':
                                     case '\u000C':

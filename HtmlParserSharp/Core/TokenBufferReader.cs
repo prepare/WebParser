@@ -12,11 +12,17 @@ namespace HtmlParserSharp.Core
         int index = -1;
         int totalLength = 0;
         char[] buffer;
+        int lineNumber;
+        int columnNumber;
+
         public TokenBufferReader(char[] buffer)
         {
             this.buffer = buffer;
             this.totalLength = buffer.Length;
             this.index = -1;
+
+            this.columnNumber = 1;//init at column 1
+            this.lineNumber = 1; //init at line1
         }
         public int CurrentIndex
         {
@@ -28,6 +34,15 @@ namespace HtmlParserSharp.Core
             if (index < totalLength)
             {
                 c = buffer[++index];
+                switch (c)
+                {
+                    case '\n':
+                        {
+                            //reset 
+                            this.lineNumber++;
+                            this.columnNumber = 1;//reset
+                        } break;
+                }
                 return true;
             }
             else
