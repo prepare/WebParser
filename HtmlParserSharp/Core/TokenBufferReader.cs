@@ -72,7 +72,10 @@ namespace HtmlParserSharp.Core
         {
             //this.cstart = this.index
         }
-
+        public void SkipOneAndStartCollect()
+        {
+            //this.cstart = this.index
+        }
     }
 
 }

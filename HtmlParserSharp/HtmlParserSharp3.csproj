@@ -70,6 +70,13 @@
     <Compile Include="Core\Tokenizer.ErrHandling.cs" />
     <Compile Include="Core\Tokenizer.StateLoop.cs" />
     <Compile Include="Core\Tokenizer.StateLoop2.cs" />
+    <Compile Include="Core\Tokenizer.StateLoop3_Attributes.cs" />
+    <Compile Include="Core\Tokenizer.StateLoop3_Comment.cs" />
+    <Compile Include="Core\Tokenizer.StateLoop3_DocType.cs" />
+    <Compile Include="Core\Tokenizer.StateLoop3_Emitter.cs" />
+    <Compile Include="Core\Tokenizer.StateLoop3_RawText_CData_RcRef.cs" />
+    <Compile Include="Core\Tokenizer.StateLoop3_ScriptData.cs" />
+    <Compile Include="Core\Tokenizer.StateLoop3_Tag.cs" />
     <Compile Include="Core\TreeBuilder.cs" />
     <Compile Include="Core\TreeBuilder.Snapshot.cs" />
     <Compile Include="Core\TreeBuilderConstants.cs" />

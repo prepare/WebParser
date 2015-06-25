@@ -53,9 +53,7 @@ namespace HtmlParserSharp.Core
         int StateLoop(TokenizerState state, char c,
            int pos, char[] buf, bool reconsume, TokenizerState returnState,
            int endPos)
-        {
-
-            
+        {   
 
             /*
              * Idioms used in this code:

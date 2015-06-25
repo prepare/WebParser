@@ -52,45 +52,11 @@ namespace HtmlParserSharp.Core
 {
     partial class Tokenizer
     {
-        TokenBufferReader reader = null;
+      
+        
+        void StateLoop3(TokenizerState state, TokenizerState returnState)
+        {
 
-        void FlushChars()
-        {
-            //if (pos > cstart)
-            //{
-            //    TokenListener.Characters(buf, cstart, pos - cstart);
-            //}
-            //cstart = int.MaxValue;
-            throw new NotImplementedException();
-        }
-        void EmitPlaintextReplacementCharacter()
-        {
-            throw new NotImplementedException();
-        }
-        void EmitReplacementCharacter()
-        {
-            throw new NotImplementedException();
-        }
-        void EmitCarriageReturn()
-        {
-            throw new NotImplementedException();
-        }
-        void EmitDoctypeToken()
-        {
-            throw new NotImplementedException();
-        }
-        TokenizerState EmitCurrentTagToken(bool isSelfClosing)
-        {
-            throw new NotImplementedException();
-        }
-        void EmitComment(int provisionalHyphens)
-        {
-            throw new NotImplementedException();
-        }
-        int StateLoop3(TokenizerState state,
-           int pos, TokenizerState returnState,
-           int endPos)
-        {   
             /*
              * Idioms used in this code:
              * 
@@ -342,7 +308,8 @@ namespace HtmlParserSharp.Core
                                          */
                                         TokenListener.Characters(LT_GT, 0, 2);
                                         /* Switch to the data state. */
-                                        cstart = pos + 1;
+                                        //cstart = pos + 1;
+                                        reader.SkipOneAndStartCollect();
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
                                         state = TokenizerState.s01_DATA;
                                         goto continueStateloop;
@@ -1802,7 +1769,8 @@ namespace HtmlParserSharp.Core
                             switch (c)
                             {
                                 case '>':
-                                    cstart = pos + 1;
+                                    //cstart = pos + 1;
+                                    reader.SkipOneAndStartCollect();
                                     //state = Transition(state, Tokenizer.DATA, reconsume, pos);
                                     state = TokenizerState.s01_DATA;
                                     goto continueStateloop;
@@ -1876,7 +1844,6 @@ namespace HtmlParserSharp.Core
                                         continue;
                                 }
                             }
-
                             //------------------------------------
                             //eof
                             goto breakStateloop;
@@ -2092,8 +2059,6 @@ namespace HtmlParserSharp.Core
                             char c;
                             while (reader.ReadNext(out c))
                             {
-
-
                                 if (c == '\u0000')
                                 {
                                     goto breakStateloop;
@@ -2421,7 +2386,7 @@ namespace HtmlParserSharp.Core
                                         //if ((returnState & DATA_AND_RCDATA_MASK) == 0)
                                         if (((byte)returnState & DATA_AND_RCDATA_MASK) != 0)
                                         {
-                                            cstart = pos + 1;
+                                            reader.SkipOneAndStartCollect();
                                         }
                                         //state = Transition(state, Tokenizer.HANDLE_NCR_VALUE, reconsume, pos);
                                         state = TokenizerState.HANDLE_NCR_VALUE;
@@ -2437,7 +2402,7 @@ namespace HtmlParserSharp.Core
                                         //if ((returnState & DATA_AND_RCDATA_MASK) == 0)
                                         if (((byte)returnState & DATA_AND_RCDATA_MASK) != 0)
                                         {
-                                            cstart = pos + 1;
+                                            reader.SkipOneAndStartCollect();
                                         }
                                         //state = Transition(state, returnState, reconsume, pos);
                                         state = returnState;
@@ -2556,7 +2521,7 @@ namespace HtmlParserSharp.Core
                                         //if ((returnState & DATA_AND_RCDATA_MASK) == 0)
                                         if (((byte)returnState & DATA_AND_RCDATA_MASK) != 0)
                                         {
-                                            cstart = pos + 1;
+                                            reader.SkipOneAndStartCollect();
                                         }
                                         //state = Transition(state, Tokenizer.HANDLE_NCR_VALUE, reconsume, pos);
                                         state = TokenizerState.HANDLE_NCR_VALUE;
@@ -2570,7 +2535,7 @@ namespace HtmlParserSharp.Core
                                         //if ((returnState & DATA_AND_RCDATA_MASK) == 0)
                                         if (((byte)returnState & DATA_AND_RCDATA_MASK) != 0)
                                         {
-                                            cstart = pos + 1;
+                                            reader.SkipOneAndStartCollect();
                                         }
                                         //state = Transition(state, returnState, reconsume, pos);
                                         state = returnState;
@@ -2679,7 +2644,7 @@ namespace HtmlParserSharp.Core
                                     /*
                                      * Switch to the data state.
                                      */
-                                    cstart = pos + 1;
+                                    reader.SkipOneAndStartCollect();
                                     //state = Transition(state, Tokenizer.DATA, reconsume, pos);
                                     state = TokenizerState.s01_DATA;
                                     goto continueStateloop;
@@ -2764,7 +2729,7 @@ namespace HtmlParserSharp.Core
                                          * reference in RCDATA state.
                                          */
                                         //FlushChars(buf, pos);
-                                        FlushChars(reader);
+                                        FlushChars();
                                         ClearStrBufAndAppend(c);
                                         additional = '\u0000';
                                         returnState = state;
@@ -2777,7 +2742,7 @@ namespace HtmlParserSharp.Core
                                          * RCDATA less-than sign state.
                                          */
                                         //FlushChars(buf, pos);
-                                        FlushChars(reader);
+                                        FlushChars();
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.RAWTEXT_RCDATA_LESS_THAN_SIGN, reconsume, pos);
                                         state = TokenizerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN;
@@ -3559,10 +3524,12 @@ namespace HtmlParserSharp.Core
                             {
                                 Debug.Assert(index > 0);
                                 if (index < 6)
-                                { // SCRIPT_ARR.Length
+                                {
+                                    // SCRIPT_ARR.Length
                                     char folded = c;
                                     if (c >= 'A' && c <= 'Z')
                                     {
+                                        //make it lower case 
                                         folded += (char)0x20;
                                     }
                                     if (folded != Tokenizer.SCRIPT_ARR[index])
@@ -3844,10 +3811,10 @@ namespace HtmlParserSharp.Core
                         {
                             char c;
                             while (reader.ReadNext(out c))
-                            {
-
+                            {   
                                 if (index < 6)
-                                { // SCRIPT_ARR.Length
+                                {
+                                    // SCRIPT_ARR.Length
                                     char folded = c;
                                     if (c >= 'A' && c <= 'Z')
                                     {
@@ -5346,7 +5313,6 @@ namespace HtmlParserSharp.Core
             // Save locals
             stateSave = state;
             returnStateSave = returnState;
-            return pos;
         }
 
     }
