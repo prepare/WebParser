@@ -68,6 +68,10 @@ namespace HtmlParserSharp.Core
         {
             this.index--;
         }
+        public void StartCollect()
+        {
+            //this.cstart = this.index
+        }
 
     }
 
