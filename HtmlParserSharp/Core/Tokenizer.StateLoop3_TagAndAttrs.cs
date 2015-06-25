@@ -326,16 +326,14 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                 }
                             }
-
-
                             //------------------------------------
                             //eof
                             goto breakStateloop;
                         //------------------------------------
                         breakTagopenloop:
                             goto case TokenizerState.s10_TAG_NAME;
-                        } 
-                    //TODO: remove  FALL THROUGH DON'T REORDER
+                        }
+                    //  FALL THROUGH DON'T REORDER
                     case TokenizerState.s10_TAG_NAME:
                         /*tagnameloop:*/
                         {
@@ -1161,7 +1159,7 @@ namespace HtmlParserSharp.Core
                             //eof
                             goto breakStateloop;
                         }
-                     
+
                     // XXX reorder point
                     case TokenizerState.s39_ATTRIBUTE_VALUE_SINGLE_QUOTED:
                         /*attributevaluesinglequotedloop:*/
@@ -1663,8 +1661,8 @@ namespace HtmlParserSharp.Core
                                  * I'm âˆ‰ I tell you.
                                  */
                             }
-                            
-                        } 
+
+                        }
                     // XXX reorder point
                     case TokenizerState.s09_CLOSE_TAG_OPEN:
                         {
@@ -1757,61 +1755,7 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                     }
                             }
-                        }
-                    // XXX reorder point
-                    case TokenizerState.s03_RCDATA:
-                        /*rcdataloop:*/
-                        {
-                            char c;
-                            while (reader.ReadNext(out c))
-                            {
-
-                                switch (c)
-                                {
-                                    case '&':
-                                        /*
-                                         * U+0026 AMPERSAND (&) Switch to the character
-                                         * reference in RCDATA state.
-                                         */
-                                        //FlushChars(buf, pos);
-                                        FlushChars();
-                                        ClearStrBufAndAppend(c);
-                                        additional = '\u0000';
-                                        returnState = state;
-                                        //state = Transition(state, Tokenizer.CONSUME_CHARACTER_REFERENCE, reconsume, pos);
-                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE;
-                                        goto continueStateloop;
-                                    case '<':
-                                        /*
-                                         * U+003C LESS-THAN SIGN (<) Switch to the
-                                         * RCDATA less-than sign state.
-                                         */
-                                        //FlushChars(buf, pos);
-                                        FlushChars();
-                                        returnState = state;
-                                        //state = Transition(state, Tokenizer.RAWTEXT_RCDATA_LESS_THAN_SIGN, reconsume, pos);
-                                        state = TokenizerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN;
-                                        goto continueStateloop;
-                                    case '\u0000':
-                                        EmitReplacementCharacter();
-                                        continue;
-                                    case '\r':
-                                        EmitCarriageReturn();
-                                        goto breakStateloop;
-                                    case '\n':
-                                    default:
-                                        /*
-                                         * Emit the current input character as a
-                                         * character token. Stay in the RCDATA state.
-                                         */
-                                        continue;
-                                }
-                            }
-                            //------------------------------------
-                            //eof
-                            goto breakStateloop;
-                        }
-                       
+                        }  
                     // END HOTSPOT WORKAROUND
                 }
             } // stateloop

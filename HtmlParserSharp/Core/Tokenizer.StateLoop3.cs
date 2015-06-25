@@ -5189,7 +5189,6 @@ namespace HtmlParserSharp.Core
                             //eof
                             goto breakStateloop;
                             // XXX reorder point
-
                         }
                     case TokenizerState.s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED:
                         {

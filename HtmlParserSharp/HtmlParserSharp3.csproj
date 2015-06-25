@@ -67,7 +67,6 @@
     <Compile Include="Core\Tokenizer.cs" />
     <Compile Include="Core\Tokenizer.Emit.cs" />
     <Compile Include="Core\Tokenizer.ErrHandling.cs" />
-    <Compile Include="Core\Tokenizer.StateLoop.cs" />
     <Compile Include="Core\Tokenizer.StateLoop3_Comment.cs" />
     <Compile Include="Core\Tokenizer.StateLoop3_DocType.cs" />
     <Compile Include="Core\Tokenizer.StateLoop3_Emitter.cs" />
