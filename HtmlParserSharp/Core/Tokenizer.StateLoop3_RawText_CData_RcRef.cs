@@ -50,8 +50,18 @@ using HtmlParserSharp.Common;
 
 namespace HtmlParserSharp.Core
 {
-    partial class Tokenizer
+    class SubLexerRawTextCDataRcRef : SubLexer
     {
+        char[] endTagExpectationAsArray; // not @Auto!
+        int index;
+        bool endTag; //TODO: review shared endTag with other sublexer? 
+        ElementName tagName; //TODO: review shared tagName with other sublexer? 
+        char additional;
+        /**
+       * The element whose end tag closes the current CDATA or RCDATA element.
+       */
+        ElementName endTagExpectation = null;
+
         void StateLoop3_RawText_CData_RcRef(TokenizerState state, TokenizerState returnState)
         {
 
@@ -134,13 +144,13 @@ namespace HtmlParserSharp.Core
             /*stateloop:*/
             for (; ; )
             {
-                 
+
                 //*************
             continueStateloop:
                 //*************
 
                 switch (state)
-                {   
+                {
                     // XXX reorder point
                     case TokenizerState.CDATA_START:
                         {
@@ -150,7 +160,7 @@ namespace HtmlParserSharp.Core
 
                                 if (index < 6)
                                 { // CDATA_LSQB.Length
-                                    if (c == Tokenizer.CDATA_LSQB[index])
+                                    if (c ==CDATA_LSQB[index])
                                     {
                                         AppendLongStrBuf(c);
                                     }
@@ -227,7 +237,7 @@ namespace HtmlParserSharp.Core
                                         state = TokenizerState.CDATA_RSQB_RSQB;
                                         goto breakCdatarsqb;
                                     default:
-                                        TokenListener.Characters(Tokenizer.RSQB_RSQB, 0, 1);
+                                        TokenListener.Characters(RSQB_RSQB, 0, 1);
                                         reader.StartCollect();
                                         //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
                                         state = TokenizerState.s68_CDATA_SECTION;
@@ -260,7 +270,7 @@ namespace HtmlParserSharp.Core
                                     state = TokenizerState.s01_DATA;
                                     goto continueStateloop;
                                 default:
-                                    TokenListener.Characters(Tokenizer.RSQB_RSQB, 0, 2);
+                                    TokenListener.Characters(RSQB_RSQB, 0, 2);
                                     reader.StartCollect();
                                     //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
                                     state = TokenizerState.s68_CDATA_SECTION;
@@ -269,7 +279,7 @@ namespace HtmlParserSharp.Core
                                     goto continueStateloop;
 
                             }
-                        } 
+                        }
                     // XXX reorder point
                     case TokenizerState.s07_PLAINTEXT:
                         /*plaintextloop:*/
@@ -299,7 +309,7 @@ namespace HtmlParserSharp.Core
                             //------------------------------------
                             //eof
                             goto breakStateloop;
-                        } 
+                        }
                     // XXX reorder point
                     case TokenizerState.s03_RCDATA:
                         /*rcdataloop:*/
@@ -423,7 +433,7 @@ namespace HtmlParserSharp.Core
                                          * Otherwise, emit a U+003C LESS-THAN SIGN
                                          * character token
                                          */
-                                        TokenListener.Characters(Tokenizer.LT_GT, 0, 1);
+                                        TokenListener.Characters(LT_GT, 0, 1);
                                         /*
                                          * and reconsume the current input character in
                                          * the data state.
@@ -468,7 +478,7 @@ namespace HtmlParserSharp.Core
                                     {
 
                                         ErrHtml4LtSlashInRcdata(folded);
-                                        TokenListener.Characters(Tokenizer.LT_SOLIDUS,
+                                        TokenListener.Characters(LT_SOLIDUS,
                                                 0, 2);
                                         EmitStrBuf();
                                         reader.StartCollect();
@@ -567,7 +577,7 @@ namespace HtmlParserSharp.Core
                             //------------------------------------
                             //eof
                             goto breakStateloop;
-                        } 
+                        }
                     case TokenizerState.PROCESSING_INSTRUCTION:
                         //processinginstructionloop: 
                         {

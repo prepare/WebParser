@@ -45,8 +45,153 @@ using HtmlParserSharp.Common;
 
 namespace HtmlParserSharp.Core
 {
-    partial class Tokenizer
+    class SubLexerNCR : SubLexer
     {
+        int value = 0;
+        int index = 0;
+        int prevValue = 0;
+        bool seenDigits;
+        char[] bmpChar = new char[1];
+        char[] astralChar = new char[2];
+
+        /**
+        * The policy for vertical tab and form feed.
+        */
+        XmlViolationPolicy contentSpacePolicy = XmlViolationPolicy.AlterInfoset;
+        void EmitOrAppendTwo(char[] val, TokenizerState returnState)
+        {
+            //TODO: review here=>   use != or == ?
+            //if ((returnState & DATA_AND_RCDATA_MASK) != 0)
+            if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
+            {
+                AppendLongStrBuf(val[0]);
+                AppendLongStrBuf(val[1]);
+            }
+            else
+            {
+                TokenListener.Characters(val, 0, 2);
+            }
+        }
+
+        void EmitOrAppendOne(char[] val, TokenizerState returnState)
+        {
+            if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
+            {
+                AppendLongStrBuf(val[0]);
+            }
+            else
+            {
+                TokenListener.Characters(val, 0, 1);
+            }
+        }
+
+        void HandleNcrValue(TokenizerState returnState)
+        {
+            /*
+             * If one or more characters match the range, then take them all and
+             * interpret the string of characters as a number (either hexadecimal or
+             * decimal as appropriate).
+             */
+            if (value <= 0xFFFF)
+            {
+                if (value >= 0x80 && value <= 0x9f)
+                {
+                    /*
+                     * If that number is one of the numbers in the first column of
+                     * the following table, then this is a parse error.
+                     */
+                    ErrNcrInC1Range();
+                    /*
+                     * Find the row with that number in the first column, and return
+                     * a character token for the Unicode character given in the
+                     * second column of that row.
+                     */
+                    char[] val = NamedCharacters.WINDOWS_1252[value - 0x80];
+                    EmitOrAppendOne(val, returnState);
+                    // [NOCPP[
+                }
+                else if (value == 0xC
+                      && contentSpacePolicy != XmlViolationPolicy.Allow)
+                {
+                    if (contentSpacePolicy == XmlViolationPolicy.AlterInfoset)
+                    {
+                        EmitOrAppendOne(SPACE, returnState);
+                    }
+                    else if (contentSpacePolicy == XmlViolationPolicy.Fatal)
+                    {
+                        Fatal("A character reference expanded to a form feed which is not legal XML 1.0 white space.");
+                    }
+                    // ]NOCPP]
+                }
+                else if (value == 0x0)
+                {
+                    ErrNcrZero();
+                    EmitOrAppendOne(REPLACEMENT_CHARACTER, returnState);
+                }
+                else if ((value & 0xF800) == 0xD800)
+                {
+                    ErrNcrSurrogate();
+                    EmitOrAppendOne( REPLACEMENT_CHARACTER, returnState);
+                }
+                else
+                {
+                    /*
+                     * Otherwise, return a character token for the Unicode character
+                     * whose code point is that number.
+                     */
+                    char ch = (char)value;
+                    // [NOCPP[
+                    if (value == 0x0D)
+                    {
+                        ErrNcrCr();
+                    }
+                    else if ((value <= 0x0008) || (value == 0x000B)
+                          || (value >= 0x000E && value <= 0x001F))
+                    {
+                        ch = ErrNcrControlChar(ch);
+                    }
+                    else if (value >= 0xFDD0 && value <= 0xFDEF)
+                    {
+                        ErrNcrUnassigned();
+                    }
+                    else if ((value & 0xFFFE) == 0xFFFE)
+                    {
+                        ch = ErrNcrNonCharacter(ch);
+                    }
+                    else if (value >= 0x007F && value <= 0x009F)
+                    {
+                        ErrNcrControlChar();
+                    }
+                    else
+                    {
+                        MaybeWarnPrivateUse(ch);
+                    }
+                    // ]NOCPP]
+                    bmpChar[0] = ch;
+                    EmitOrAppendOne(bmpChar, returnState);
+                }
+            }
+            else if (value <= 0x10FFFF)
+            {
+                // [NOCPP[
+                MaybeWarnPrivateUseAstral();
+                if ((value & 0xFFFE) == 0xFFFE)
+                {
+                    ErrAstralNonCharacter(value);
+                }
+                // ]NOCPP]
+                astralChar[0] = (char)(LEAD_OFFSET + (value >> 10));
+                astralChar[1] = (char)(0xDC00 + (value & 0x3FF));
+                EmitOrAppendTwo(astralChar, returnState);
+            }
+            else
+            {
+                ErrNcrOutOfRange();
+                EmitOrAppendOne(REPLACEMENT_CHARACTER, returnState);
+            }
+        }
+
+
         void StateLoop3_NCR(TokenizerState state, TokenizerState returnState)
         {
 
@@ -126,10 +271,10 @@ namespace HtmlParserSharp.Core
              * at the beginning or end of the loop (which doesn't matter in for(;;) loops)
              */
 
+
             /*stateloop:*/
             for (; ; )
             {
-
 
                 //*************
             continueStateloop:
@@ -450,6 +595,6 @@ namespace HtmlParserSharp.Core
             // Save locals
             stateSave = state;
             returnStateSave = returnState;
-        } 
+        }
     }
 }

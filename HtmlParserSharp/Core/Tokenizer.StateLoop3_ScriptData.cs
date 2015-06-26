@@ -41,12 +41,13 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Diagnostics;
-using HtmlParserSharp.Common; 
+using HtmlParserSharp.Common;
 
 namespace HtmlParserSharp.Core
 {
-    partial class Tokenizer
+    class SubLexerScriptData : SubLexer
     {
+        int index;  
         void StateLoop3_ScriptData(TokenizerState state, TokenizerState returnState)
         {
 
@@ -137,7 +138,7 @@ namespace HtmlParserSharp.Core
 
                 switch (state)
                 {
-                   
+
                     // XXX reorder point
                     case TokenizerState.s06_SCRIPT_DATA:
                         /*scriptdataloop:*/
@@ -579,7 +580,7 @@ namespace HtmlParserSharp.Core
                                         //make it lower case 
                                         folded += (char)0x20;
                                     }
-                                    if (folded != Tokenizer.SCRIPT_ARR[index])
+                                    if (folded != SCRIPT_ARR[index])
                                     {
                                         //reconsume = true;
                                         reader.StepBack();
@@ -867,7 +868,7 @@ namespace HtmlParserSharp.Core
                                     {
                                         folded += (char)0x20;
                                     }
-                                    if (folded != Tokenizer.SCRIPT_ARR[index])
+                                    if (folded != SCRIPT_ARR[index])
                                     {
                                         reader.StepBack();
                                         //reconsume = true;
@@ -918,7 +919,7 @@ namespace HtmlParserSharp.Core
                         }
                         //------------------------------------
                         //eof
-                        goto breakStateloop; 
+                        goto breakStateloop;
                     // END HOTSPOT WORKAROUND
                 }
             } // stateloop

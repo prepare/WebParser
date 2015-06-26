@@ -45,8 +45,277 @@ using HtmlParserSharp.Common;
 
 namespace HtmlParserSharp.Core
 {
-    partial class Tokenizer
+
+    class SubLexerTagAndAttr : SubLexer
     {
+        int entCol;
+        int hi;
+        int lo;
+        int candidate;
+        bool endTag;
+        int strBufMark;
+      
+        char firstCharKey;
+       
+        bool newAttributesEachTime;
+        bool metaBoundaryPassed;
+        bool html4ModeCompatibleWithXhtml1Schemata;
+        /// <summary>
+        /// true when HTML4-specific additional errors are requested
+        /// </summary>
+        bool html4;
+
+        /**
+       * The attribute holder.
+       */
+        HtmlAttributes attributes;
+        int mappingLangToXmlLang;
+        int cstart;
+        /**
+         * The current tag token name.
+         */
+        ElementName tagName = null;
+        XmlViolationPolicy namePolicy = XmlViolationPolicy.AlterInfoset;
+        XmlViolationPolicy xmlnsPolicy = XmlViolationPolicy.AlterInfoset;
+        /// <summary>
+        /// The current attribute name.
+        /// </summary>
+        AttributeName attributeName = null;
+        char additional;
+        void SetAdditionalAndRememberAmpersandLocation(char add)
+        {
+            additional = add;
+            // [NOCPP[
+            //ampersandLocation = new Location(this.LineNumber, this.ColumnNumber);
+            // ]NOCPP]
+        }
+        private void ResetAttributes()
+        {
+            // [NOCPP[
+            if (newAttributesEachTime)
+            {
+                // ]NOCPP]
+                attributes = null;
+                // [NOCPP[
+            }
+            else
+            {
+                attributes.Clear(mappingLangToXmlLang);
+            }
+            // ]NOCPP]
+        }
+        void StrBufToElementNameString()
+        {
+            // if (strBufOffset != -1) {
+            // return ElementName.elementNameByBuffer(buf, strBufOffset, strBufLen);
+            // } else {
+
+            tagName = ElementName.ElementNameByBuffer(CopyFromStringBuiler(strBuffer, 0, this.strBuffer.Length));
+            // }
+        }
+
+        
+        TokenizerState EmitCurrentTagToken(bool selfClosing, int pos)
+        {
+            cstart = pos + 1;
+            MaybeErrSlashInEndTag(selfClosing);
+            stateSave = TokenizerState.s01_DATA;
+            HtmlAttributes attrs = attributes ?? HtmlAttributes.EMPTY_ATTRIBUTES;
+
+            if (endTag)
+            {
+                /*
+                 * When an end tag token is emitted, the content model flag must be
+                 * switched to the PCDATA state.
+                 */
+                MaybeErrAttributesOnEndTag(attrs);
+                TokenListener.EndTag(tagName);
+            }
+            else
+            {
+                TokenListener.StartTag(tagName, attrs, selfClosing);
+            }
+            tagName = null;
+            ResetAttributes();
+            /*
+             * The token handler may have called setStateAndEndTagExpectation
+             * and changed stateSave since the start of this method.
+             */
+            return stateSave;
+        }
+        void EmitOrAppendTwo(char[] val, TokenizerState returnState)
+        {
+            //TODO: review here=>   use != or == ?
+            //if ((returnState & DATA_AND_RCDATA_MASK) != 0)
+            if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
+            {
+                AppendLongStrBuf(val[0]);
+                AppendLongStrBuf(val[1]);
+            }
+            else
+            {
+                TokenListener.Characters(val, 0, 2);
+            }
+        }
+
+        void EmitOrAppendOne(char[] val, TokenizerState returnState)
+        {
+            if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
+            {
+                AppendLongStrBuf(val[0]);
+            }
+            else
+            {
+                TokenListener.Characters(val, 0, 1);
+            }
+        }
+
+        void AttributeNameComplete()
+        {
+
+
+            // if (strBufOffset != -1) {
+            // attributeName = AttributeName.nameByBuffer(buf, strBufOffset,
+            // strBufLen, namePolicy != XmlViolationPolicy.ALLOW);
+            // } else {
+            char[] copyBuffer = CopyFromStringBuiler(this.strBuffer, 0, this.strBuffer.Length);
+            attributeName = AttributeName.NameByBuffer(copyBuffer, 0, copyBuffer.Length
+                    , namePolicy != XmlViolationPolicy.Allow
+                    );
+            // }
+
+            if (attributes == null)
+            {
+                attributes = new HtmlAttributes(mappingLangToXmlLang);
+            }
+
+            /*
+             * When the user agent leaves the attribute name state (and before
+             * emitting the tag token, if appropriate), the complete attribute's
+             * name must be compared to the other attributes on the same token; if
+             * there is already an attribute on the token with the exact same name,
+             * then this is a parse error and the new attribute must be dropped,
+             * along with the value that gets associated with it (if any).
+             */
+            if (attributes.Contains(attributeName))
+            {
+                ErrDuplicateAttribute();
+                attributeName = null;
+            }
+        }
+
+        void AddAttributeWithoutValue()
+        {
+
+            //NoteAttributeWithoutValue();
+
+            // [NOCPP[
+            if (metaBoundaryPassed && AttributeName.CHARSET == attributeName
+                    && ElementName.META == tagName)
+            {
+                Err("A \u201Ccharset\u201D attribute on a \u201Cmeta\u201D element found after the first 512 bytes.");
+            }
+            // ]NOCPP]
+            if (attributeName != null)
+            {
+                //TODO: not need to validate this on lexer
+                //consider validate on the listenser side
+
+                if (html4)
+                {
+                    if (attributeName.IsBoolean)
+                    {
+                        if (html4ModeCompatibleWithXhtml1Schemata)
+                        {
+                            attributes.AddAttribute(attributeName,
+                                    attributeName.GetLocal(AttributeName.HTML),
+                                    xmlnsPolicy);
+                        }
+                        else
+                        {
+                            attributes.AddAttribute(attributeName, "", xmlnsPolicy);
+                        }
+                    }
+                    else
+                    {
+                        if (AttributeName.BORDER != attributeName)
+                        {
+                            Err("Attribute value omitted for a non-bool attribute. (HTML4-only error.)");
+                            attributes.AddAttribute(attributeName, "", xmlnsPolicy);
+                        }
+                    }
+                }
+                else
+                {
+                    if (AttributeName.SRC == attributeName
+                            || AttributeName.HREF == attributeName)
+                    {
+                        Warn("Attribute \u201C"
+                                + attributeName.GetLocal(AttributeName.HTML)
+                                + "\u201D without an explicit value seen. The attribute may be dropped by IE7.");
+                    }
+                    attributes.AddAttribute(attributeName,
+                            String.Empty
+                            , xmlnsPolicy
+                    );
+                }
+                attributeName = null; // attributeName has been adopted by the
+                // |attributes| object
+            }
+        }
+        string LongStrBufToString()
+        {
+            return this.longStrBuffer.ToString();
+        }
+        void AddAttributeWithValue()
+        {
+
+            // [NOCPP[
+            if (metaBoundaryPassed && ElementName.META == tagName
+                    && AttributeName.CHARSET == attributeName)
+            {
+                Err("A \u201Ccharset\u201D attribute on a \u201Cmeta\u201D element found after the first 512 bytes.");
+            }
+            // ]NOCPP]
+            if (attributeName != null)
+            {
+                String val = LongStrBufToString(); // Ownership transferred to
+                // HtmlAttributes
+
+                // [NOCPP[
+                if (!endTag && html4 && html4ModeCompatibleWithXhtml1Schemata
+                        && attributeName.IsCaseFolded)
+                {
+                    val = NewAsciiLowerCaseStringFromString(val);
+                }
+                // ]NOCPP]
+                attributes.AddAttribute(attributeName, val
+                    // [NOCPP[
+                        , xmlnsPolicy
+                    // ]NOCPP]
+                );
+                attributeName = null; // attributeName has been adopted by the
+                // |attributes| object
+            }
+        }
+        static String NewAsciiLowerCaseStringFromString(String str)
+        {
+            if (str == null)
+            {
+                return null;
+            }
+            char[] buf = new char[str.Length];
+            for (int i = 0; i < str.Length; i++)
+            {
+                char c = str[i];
+                if (c >= 'A' && c <= 'Z')
+                {
+                    c += (char)0x20;
+                }
+                buf[i] = c;
+            }
+            return new String(buf);
+        }
         void StateLoop3_Tag(TokenizerState state, TokenizerState returnState)
         {
 
@@ -1298,11 +1567,11 @@ namespace HtmlParserSharp.Core
                                     }
                                     if (c >= 'a' && c <= 'z')
                                     {
-                                        firstCharKey = c - 'a' + 26;
+                                        firstCharKey = (char)(c - 'a' + 26);
                                     }
                                     else if (c >= 'A' && c <= 'Z')
                                     {
-                                        firstCharKey = c - 'A';
+                                        firstCharKey = (char)(c - 'A');
                                     }
                                     else
                                     {
@@ -1755,7 +2024,7 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                     }
                             }
-                        }  
+                        }
                     // END HOTSPOT WORKAROUND
                 }
             } // stateloop

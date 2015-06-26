@@ -50,8 +50,92 @@ using HtmlParserSharp.Common;
 
 namespace HtmlParserSharp.Core
 {
-    partial class Tokenizer
+    class SubLexerComment : SubLexer
     {
+        int index = 0;
+        XmlViolationPolicy commentPolicy = XmlViolationPolicy.AlterInfoset;
+        /*@Inline*/
+        void AppendSecondHyphenToBogusComment()
+        {
+            // [NOCPP[
+            switch (commentPolicy)
+            {
+                case XmlViolationPolicy.AlterInfoset:
+                    // detachLongStrBuf();
+                    AppendLongStrBuf(' ');
+                    // FALLTHROUGH
+                    goto case XmlViolationPolicy.Allow;
+                case XmlViolationPolicy.Allow:
+                    Warn("The document is not mappable to XML 1.0 due to two consecutive hyphens in a comment.");
+                    // ]NOCPP]
+                    AppendLongStrBuf('-');
+                    // [NOCPP[
+                    break;
+                case XmlViolationPolicy.Fatal:
+                    Fatal("The document is not mappable to XML 1.0 due to two consecutive hyphens in a comment.");
+                    break;
+            }
+            // ]NOCPP]
+        }
+
+        // [NOCPP[
+        void MaybeAppendSpaceToBogusComment()
+        {
+            switch (commentPolicy)
+            {
+                case XmlViolationPolicy.AlterInfoset:
+                    // detachLongStrBuf();
+                    AppendLongStrBuf(' ');
+                    // FALLTHROUGH
+                    goto case XmlViolationPolicy.Allow;
+                case XmlViolationPolicy.Allow:
+                    Warn("The document is not mappable to XML 1.0 due to a trailing hyphen in a comment.");
+                    break;
+                case XmlViolationPolicy.Fatal:
+                    Fatal("The document is not mappable to XML 1.0 due to a trailing hyphen in a comment.");
+                    break;
+            }
+        }
+
+        /*@Inline*/
+        void AdjustDoubleHyphenAndAppendToLongStrBufCarriageReturn()
+        {
+            SilentCarriageReturn();
+            AdjustDoubleHyphenAndAppendToLongStrBufAndErr('\n');
+        }
+        /*@Inline*/
+        void AdjustDoubleHyphenAndAppendToLongStrBufLineFeed()
+        {
+            //SilentLineFeed();
+            AdjustDoubleHyphenAndAppendToLongStrBufAndErr('\n');
+        }
+        /*@Inline*/
+        void AdjustDoubleHyphenAndAppendToLongStrBufAndErr(char c)
+        {
+            ErrConsecutiveHyphens();
+            // [NOCPP[
+            switch (commentPolicy)
+            {
+                case XmlViolationPolicy.AlterInfoset:
+                    // detachLongStrBuf();
+                    longStrBuffer.Length--;
+                    AppendLongStrBuf(' ');
+                    AppendLongStrBuf('-');
+
+                    // FALLTHROUGH
+                    goto case XmlViolationPolicy.Allow;
+                case XmlViolationPolicy.Allow:
+                    Warn("The document is not mappable to XML 1.0 due to two consecutive hyphens in a comment.");
+                    // ]NOCPP]
+                    AppendLongStrBuf(c);
+                    // [NOCPP[
+                    break;
+                case XmlViolationPolicy.Fatal:
+                    Fatal("The document is not mappable to XML 1.0 due to two consecutive hyphens in a comment.");
+                    break;
+            }
+            // ]NOCPP]
+        }
         void StateLoop3_Comment(TokenizerState state, TokenizerState returnState)
         {
 
@@ -637,7 +721,7 @@ namespace HtmlParserSharp.Core
 
                                 if (index < 6)
                                 { // CDATA_LSQB.Length
-                                    if (c == Tokenizer.CDATA_LSQB[index])
+                                    if (c ==  CDATA_LSQB[index])
                                     {
                                         AppendLongStrBuf(c);
                                     }
@@ -714,7 +798,7 @@ namespace HtmlParserSharp.Core
                                         state = TokenizerState.CDATA_RSQB_RSQB;
                                         goto breakCdatarsqb;
                                     default:
-                                        TokenListener.Characters(Tokenizer.RSQB_RSQB, 0, 1);
+                                        TokenListener.Characters( RSQB_RSQB, 0, 1);
                                         reader.StartCollect();
                                         //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
                                         state = TokenizerState.s68_CDATA_SECTION;
@@ -747,7 +831,7 @@ namespace HtmlParserSharp.Core
                                     state = TokenizerState.s01_DATA;
                                     goto continueStateloop;
                                 default:
-                                    TokenListener.Characters(Tokenizer.RSQB_RSQB, 0, 2);
+                                    TokenListener.Characters( RSQB_RSQB, 0, 2);
                                     reader.StartCollect();
                                     //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
                                     state = TokenizerState.s68_CDATA_SECTION;

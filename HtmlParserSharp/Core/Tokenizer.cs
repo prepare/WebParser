@@ -760,6 +760,7 @@ namespace HtmlParserSharp.Core
         {
             this.longStrBuffer.Append(stBuilder.ToString());
         }
+        
         /*@Inline*/
         void AppendSecondHyphenToBogusComment()
         {

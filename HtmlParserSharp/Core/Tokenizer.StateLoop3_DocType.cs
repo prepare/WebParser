@@ -45,8 +45,72 @@ using HtmlParserSharp.Common;
 
 namespace HtmlParserSharp.Core
 {
-    partial class Tokenizer
+    class SubLexerDocType : SubLexer
     {
+        int index;
+        string doctypeName;
+        bool forceQuirks;
+        string publicIdentifier;
+        string systemIdentifier;
+
+        XmlViolationPolicy commentPolicy = XmlViolationPolicy.AlterInfoset;
+        // ]NOCPP]
+        void InitDoctypeFields()
+        {
+            doctypeName = "";
+            systemIdentifier = null;
+            publicIdentifier = null;
+            forceQuirks = false;
+        }
+        /*@Inline*/
+        void AdjustDoubleHyphenAndAppendToLongStrBufAndErr(char c)
+        {
+            ErrConsecutiveHyphens();
+            // [NOCPP[
+            switch (commentPolicy)
+            {
+                case XmlViolationPolicy.AlterInfoset:
+                    // detachLongStrBuf();
+                    longStrBuffer.Length--;
+                    AppendLongStrBuf(' ');
+                    AppendLongStrBuf('-');
+
+                    // FALLTHROUGH
+                    goto case XmlViolationPolicy.Allow;
+                case XmlViolationPolicy.Allow:
+                    Warn("The document is not mappable to XML 1.0 due to two consecutive hyphens in a comment.");
+                    // ]NOCPP]
+                    AppendLongStrBuf(c);
+                    // [NOCPP[
+                    break;
+                case XmlViolationPolicy.Fatal:
+                    Fatal("The document is not mappable to XML 1.0 due to two consecutive hyphens in a comment.");
+                    break;
+            }
+            // ]NOCPP]
+        }
+
+        void BogusDoctype()
+        {
+            ErrBogusDoctype();
+            forceQuirks = true;
+        }
+
+        void BogusDoctypeWithoutQuirks()
+        {
+            ErrBogusDoctype();
+            forceQuirks = false;
+        }
+
+        string LongStrBufToString()
+        {
+            return this.longStrBuffer.ToString();
+        }
+        
+        void StrBufToDoctypeName()
+        {
+            doctypeName = Portability.NewLocalNameFromBuffer(this.strBuffer.ToString());
+        }
         void StateLoop3_DocType(TokenizerState state, TokenizerState returnState)
         {
 
@@ -137,7 +201,7 @@ namespace HtmlParserSharp.Core
 
                 switch (state)
                 {
-                  
+
                     // XXX reorder point
                     case TokenizerState.MARKUP_DECLARATION_OCTYPE:
                         /*markupdeclarationdoctypeloop:*/
@@ -153,7 +217,7 @@ namespace HtmlParserSharp.Core
                                     {
                                         folded += (char)0x20;
                                     }
-                                    if (folded == Tokenizer.OCTYPE[index])
+                                    if (folded == OCTYPE[index])
                                     {
                                         AppendLongStrBuf(c);
                                     }
@@ -498,7 +562,7 @@ namespace HtmlParserSharp.Core
                                     {
                                         folded += (char)0x20;
                                     }
-                                    if (folded != Tokenizer.UBLIC[index])
+                                    if (folded != UBLIC[index])
                                     {
                                         BogusDoctype();
                                         // forceQuirks = true;

@@ -47,6 +47,7 @@
     <Compile Include="Core\AttributeName.cs" />
     <Compile Include="Core\AttributeName.Generated.cs" />
     <Compile Include="Core\AttributeName.static.cs" />
+    <Compile Include="Core\Tokenizer.SubLexer.cs" />
     <Compile Include="Core\TokenBufferReader.cs" />
     <Compile Include="Core\CharsetState.cs" />
     <Compile Include="Core\CoalescingTreeBuilder.cs" />
