@@ -346,7 +346,7 @@ namespace HtmlParserSharp.Core
                                         SetAdditionalAndRememberAmpersandLocation('\u0000');
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.CONSUME_CHARACTER_REFERENCE, reconsume, pos);
-                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE_p;
+                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE_i;
 
                                         goto continueStateloop;
                                     case '<':
@@ -995,7 +995,7 @@ namespace HtmlParserSharp.Core
                                         SetAdditionalAndRememberAmpersandLocation('\"');
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.CONSUME_CHARACTER_REFERENCE, reconsume, pos);
-                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE_p;
+                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE_i;
 
                                         goto continueStateloop;
                                     case '\r':
@@ -1188,7 +1188,7 @@ namespace HtmlParserSharp.Core
                                         SetAdditionalAndRememberAmpersandLocation('>');
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.CONSUME_CHARACTER_REFERENCE, reconsume, pos);
-                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE_p;
+                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE_i;
                                         goto continueStateloop;
                                     case '>':
                                         /*
@@ -1384,7 +1384,7 @@ namespace HtmlParserSharp.Core
                                         SetAdditionalAndRememberAmpersandLocation('\'');
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.CONSUME_CHARACTER_REFERENCE, reconsume, pos);
-                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE_p;
+                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE_i;
                                         goto breakAttributevaluesinglequotedloop;
                                     // goto continueStateloop;
                                     case '\r':
@@ -1415,10 +1415,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakAttributevaluesinglequotedloop:
-                            goto case TokenizerState.CONSUME_CHARACTER_REFERENCE_p;
+                            goto case TokenizerState.CONSUME_CHARACTER_REFERENCE_i;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.CONSUME_CHARACTER_REFERENCE_p:
+                    case TokenizerState.CONSUME_CHARACTER_REFERENCE_i:
                         {
                             char c;
                             if (!reader.ReadNext(out c))

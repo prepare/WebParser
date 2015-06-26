@@ -55,27 +55,24 @@ namespace HtmlParserSharp.Core
 
     public enum TokenizerState : byte
     {
-        s01_DATA_i = 128,
 
-        //TODO: 02_CharacterReferenceInData()
+        s01_DATA_i = 128, //comment, doctype,rawtext,tag 
+        //TODO: 02_CharacterReferenceInData() 
+        s03_RCDATA_p = 129, //rawtext 
+        //TODO: R04_CharacterReferenceInRcData(); 
+        s05_RAWTEXT_p = 3, //rawtext
 
-        s03_RCDATA_p = 129,
+        s06_SCRIPT_DATA_p = 2,//script data
 
-        //TODO: R04_CharacterReferenceInRcData();
+        s07_PLAINTEXT_p = 8,//rawtext
 
-        s05_RAWTEXT_p = 3,
+        s08_TAG_OPEN_p = 9, //tag
 
-        s06_SCRIPT_DATA_p = 2,
+        s09_CLOSE_TAG_OPEN_p = 10, //tag
 
-        s07_PLAINTEXT_p = 8,
+        s10_TAG_NAME_p = 11, //tag
 
-        s08_TAG_OPEN_p = 9,
-
-        s09_CLOSE_TAG_OPEN_p = 10,
-
-        s10_TAG_NAME_p = 11,
-
-        s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p = 65,
+        s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p = 65, //tag
 
         //TODO: R12_RcDataEndTagOpen();
 
@@ -87,148 +84,144 @@ namespace HtmlParserSharp.Core
 
         //TODO: R16_RawTextEndTagName();
 
-        s17_SCRIPT_DATA_LESS_THAN_SIGN_p = 59,
 
+
+        s17_SCRIPT_DATA_LESS_THAN_SIGN_p = 59,//script
         //TODO: R18_ScriptDataEndTagOpen();
-
         //TODO: R19_ScriptDataEndTagName
+        s20_SCRIPT_DATA_ESCAPE_START_p = 60,//script
+        s21_SCRIPT_DATA_ESCAPE_START_DASH_p = 61,//script
 
-        s20_SCRIPT_DATA_ESCAPE_START_p = 60,
+        s22_SCRIPT_DATA_ESCAPED_p = 4,//script
 
-        s21_SCRIPT_DATA_ESCAPE_START_DASH_p = 61,
+        s23_SCRIPT_DATA_ESCAPED_DASH_p = 62,//script
 
-        s22_SCRIPT_DATA_ESCAPED_p = 4,
+        s24_SCRIPT_DATA_ESCAPED_DASH_DASH_p = 63,//script
 
-        s23_SCRIPT_DATA_ESCAPED_DASH_p = 62,
-
-        s24_SCRIPT_DATA_ESCAPED_DASH_DASH_p = 63,
-
-        s25_SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_p = 66,
+        s25_SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_p = 66,//script
 
         //TODO: R26_ScriptDataEscapedEndTagOpen();
 
         //TODO: R27_ScriptDataEscapedEndTagName();
 
-        s28_SCRIPT_DATA_DOUBLE_ESCAPE_START_p = 67,
+        s28_SCRIPT_DATA_DOUBLE_ESCAPE_START_p = 67,//script
 
-        s29_SCRIPT_DATA_DOUBLE_ESCAPED_p = 68,
+        s29_SCRIPT_DATA_DOUBLE_ESCAPED_p = 68,//script
 
-        s30_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_p = 70,
+        s30_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_p = 70,//script
 
-        s31_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH_p = 71,
+        s31_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH_p = 71,//script
 
-        s32_SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_p = 69,
+        s32_SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_p = 69,//script
 
-        s33_SCRIPT_DATA_DOUBLE_ESCAPE_END_p = 72,
+        s33_SCRIPT_DATA_DOUBLE_ESCAPE_END_p = 72,//script
 
-        s34_BEFORE_ATTRIBUTE_NAME_i = 12,
+        s34_BEFORE_ATTRIBUTE_NAME_i = 12, //rawtext, tag
         //------------------------------------------------------------
 
 
-        s35_ATTRIBUTE_NAME_p = 13,
+        s35_ATTRIBUTE_NAME_p = 13, //tag
 
-        s36_AFTER_ATTRIBUTE_NAME_p = 14,
+        s36_AFTER_ATTRIBUTE_NAME_p = 14, //tag
 
-        s37_BEFORE_ATTRIBUTE_VALUE_p = 15,
+        s37_BEFORE_ATTRIBUTE_VALUE_p = 15, //tag
 
-        s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED_p = 5,
+        s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED_p = 5, //tag
 
-        s39_ATTRIBUTE_VALUE_SINGLE_QUOTED_p = 6,
+        s39_ATTRIBUTE_VALUE_SINGLE_QUOTED_p = 6, //tag
 
-        s40_ATTRIBUTE_VALUE_UNQUOTED_p = 7,
+        s40_ATTRIBUTE_VALUE_UNQUOTED_p = 7, //tag
 
         //TODO: R41_CharacterReferenceInAttributeValue()
 
-        s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p = 16,
+        s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p = 16, //tag
+        CHARACTER_REFERENCE_HILO_LOOKUP_p = 53,//tag,
+        CHARACTER_REFERENCE_TAIL_p = 48, //tag
 
-        s43_SELF_CLOSING_START_TAG_i = 54,
-        CONSUME_CHARACTER_REFERENCE_p = 46,
-        CHARACTER_REFERENCE_HILO_LOOKUP_p = 53,
         //------------------
-        s44_BOGUS_COMMENT_i = 17,
+        s43_SELF_CLOSING_START_TAG_i = 54, //tag,rawtext 
+        CONSUME_CHARACTER_REFERENCE_i = 46, //tag,rawtext
 
-        s45_MARKUP_DECLARATION_OPEN_i = 18,
+        //------------------
+        s44_BOGUS_COMMENT_i = 17,//doctype,rawtext,tag
 
-        s46_COMMENT_START_p = 32,
+        s45_MARKUP_DECLARATION_OPEN_i = 18, //comment, tag
 
-        s47_COMMENT_START_DASH_p = 33,
+        s46_COMMENT_START_p = 32, //comment
 
-        s48_COMMENT_p = 34,
+        s47_COMMENT_START_DASH_p = 33, //comment
 
-        s49_COMMENT_END_DASH_p = 35,
+        s48_COMMENT_p = 34, //comment
 
-        s50_COMMENT_END_p = 36,
+        s49_COMMENT_END_DASH_p = 35, //comment
 
-        s51_COMMENT_END_BANG_p = 37,
+        s50_COMMENT_END_p = 36, //comment
 
-        MARKUP_DECLARATION_HYPHEN_p = 39,
-        MARKUP_DECLARATION_OCTYPE_p = 40,
+        s51_COMMENT_END_BANG_p = 37, //comment
 
+        MARKUP_DECLARATION_HYPHEN_p = 39, //comment
+        MARKUP_DECLARATION_OCTYPE_p = 40, //comment
+        BOGUS_COMMENT_HYPHEN_p = 64,//comment
         //------------------
         //for doctype
 
-        s52_DOCTYPE_p = 19,
+        s52_DOCTYPE_p = 19, //doctype
 
-        s53_BEFORE_DOCTYPE_NAME_p = 20,
+        s53_BEFORE_DOCTYPE_NAME_p = 20,//doctype
 
-        s54_DOCTYPE_NAME_p = 21,
+        s54_DOCTYPE_NAME_p = 21,//doctype
 
-        s55_AFTER_DOCTYPE_NAME_p = 22,
+        s55_AFTER_DOCTYPE_NAME_p = 22,//doctype
 
-        s56_AFTER_DOCTYPE_PUBLIC_KEYWORD_p = 43,
+        s56_AFTER_DOCTYPE_PUBLIC_KEYWORD_p = 43,//doctype
 
-        s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER_p = 23,
+        s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER_p = 23,//doctype
 
-        s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_p = 24,
+        s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_p = 24,//doctype
 
-        s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_p = 25,
+        s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_p = 25,//doctype
 
-        s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER_p = 26,
+        s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER_p = 26,//doctype
 
-        s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS_p = 44,
+        s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS_p = 44,//doctype
 
-        s62_AFTER_DOCTYPE_SYSTEM_KEYWORD_p = 45,
+        s62_AFTER_DOCTYPE_SYSTEM_KEYWORD_p = 45,//doctype
 
-        s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER_p = 27,
+        s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER_p = 27,//doctype
 
-        s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_p = 28,
+        s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_p = 28,//doctype
 
-        s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_p = 29,
+        s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_p = 29,//doctype
 
-        s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER_p = 30,
+        s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER_p = 30,//doctype
 
-        s67_BOGUS_DOCTYPE_p = 31,
-        DOCTYPE_UBLIC_p = 41,
-        DOCTYPE_YSTEM_p = 42,
+        s67_BOGUS_DOCTYPE_p = 31,//doctype
+        DOCTYPE_UBLIC_p = 41,//doctype
+        DOCTYPE_YSTEM_p = 42,//doctype
 
-        s68_CDATA_SECTION_i = 56,
-        NON_DATA_END_TAG_NAME_i = 38,
+        s68_CDATA_SECTION_i = 56, //comment, rawtext
+        NON_DATA_END_TAG_NAME_i = 38, //scriptdata, rawtext
+
+        CONSUME_NCR_i = 47, //ncr->numeric character reference, used by ncr,text
 
 
-        CONSUME_NCR_i = 47, //ncr->numeric character reference
-
-        CHARACTER_REFERENCE_TAIL_p = 48,
 
         HEX_NCR_LOOP_p = 49,//ncr -> numeric character reference
 
-        DECIMAL_NRC_LOOP_p = 50,
+        DECIMAL_NRC_LOOP_p = 50, //ncr
 
-        HANDLE_NCR_VALUE_p = 51,
+        HANDLE_NCR_VALUE_p = 51,//ncr
 
-        HANDLE_NCR_VALUE_RECONSUME_p = 52,
+        HANDLE_NCR_VALUE_RECONSUME_p = 52,//ncr 
 
+        CDATA_START_i = 55,//comment,rawtext
 
+        CDATA_RSQB_i = 57,//comment,rawtext
 
-        CDATA_START_i = 55,
+        CDATA_RSQB_RSQB_i = 58,//comment,rawtext 
 
-        CDATA_RSQB_i = 57,
-
-        CDATA_RSQB_RSQB_i = 58,
-
-        BOGUS_COMMENT_HYPHEN_p = 64,
-
-        PROCESSING_INSTRUCTION_i = 73,
-        PROCESSING_INSTRUCTION_QUESTION_MARK_i = 74
+        PROCESSING_INSTRUCTION_i = 73, //doctype, rawtext
+        PROCESSING_INSTRUCTION_QUESTION_MARK_i = 74//doctype, rawtext
     }
 
     /// <summary>
@@ -1716,7 +1709,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.CONSUME_CHARACTER_REFERENCE_p:
+                    case TokenizerState.CONSUME_CHARACTER_REFERENCE_i:
                         /*
                          * Unlike the definition is the spec, this state does not
                          * return a value and never requires the caller to
