@@ -120,7 +120,7 @@ namespace HtmlParserSharp.Core
         {
             cstart = pos + 1;
             MaybeErrSlashInEndTag(selfClosing);
-            stateSave = TokenizerState.s01_DATA;
+            stateSave = TokenizerState.s01_DATA_i;
             HtmlAttributes attrs = attributes ?? HtmlAttributes.EMPTY_ATTRIBUTES;
 
             if (endTag)
@@ -328,7 +328,7 @@ namespace HtmlParserSharp.Core
 
                 switch (state)
                 {
-                    case TokenizerState.s01_DATA:
+                    case TokenizerState.s01_DATA_i:
                         /*dataloop:*/
                         {
                             char c;
@@ -346,7 +346,7 @@ namespace HtmlParserSharp.Core
                                         SetAdditionalAndRememberAmpersandLocation('\u0000');
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.CONSUME_CHARACTER_REFERENCE, reconsume, pos);
-                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE;
+                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE_p;
 
                                         goto continueStateloop;
                                     case '<':
@@ -357,7 +357,7 @@ namespace HtmlParserSharp.Core
                                         FlushChars();
 
                                         //state = Transition(state, Tokenizer.TAG_OPEN, reconsume, pos);
-                                        state = TokenizerState.s08_TAG_OPEN;
+                                        state = TokenizerState.s08_TAG_OPEN_p;
                                         goto breakDataloop; // FALL THROUGH continue
                                     // stateloop;
                                     case '\u0000':
@@ -384,11 +384,11 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------
                         breakDataloop:
-                            goto case TokenizerState.s08_TAG_OPEN;
+                            goto case TokenizerState.s08_TAG_OPEN_p;
                             //------------      
                         }
                     // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
-                    case TokenizerState.s08_TAG_OPEN:
+                    case TokenizerState.s08_TAG_OPEN_p:
                         /*tagopenloop:*/
                         {
                             char c;
@@ -419,7 +419,7 @@ namespace HtmlParserSharp.Core
                                     ClearStrBufAndAppend((char)(c + 0x20));
                                     /* then switch to the tag name state. */
                                     //state = Transition(state, Tokenizer.TAG_NAME, reconsume, pos);
-                                    state = TokenizerState.s10_TAG_NAME;
+                                    state = TokenizerState.s10_TAG_NAME_p;
                                     /*
                                      * (Don't emit the token yet; further details will
                                      * be filled in before it is emitted.)
@@ -441,7 +441,7 @@ namespace HtmlParserSharp.Core
                                     ClearStrBufAndAppend(c);
                                     /* then switch to the tag name state. */
                                     //state = Transition(state, Tokenizer.TAG_NAME, reconsume, pos);
-                                    state = TokenizerState.s10_TAG_NAME;
+                                    state = TokenizerState.s10_TAG_NAME_p;
                                     /*
                                      * (Don't emit the token yet; further details will
                                      * be filled in before it is emitted.)
@@ -457,7 +457,7 @@ namespace HtmlParserSharp.Core
                                          * markup declaration open state.
                                          */
                                         //state = Transition(state, Tokenizer.MARKUP_DECLARATION_OPEN, reconsume, pos);
-                                        state = TokenizerState.s45_MARKUP_DECLARATION_OPEN;
+                                        state = TokenizerState.s45_MARKUP_DECLARATION_OPEN_i;
                                         goto continueStateloop;
                                     case '/':
                                         /*
@@ -465,7 +465,7 @@ namespace HtmlParserSharp.Core
                                          * open state.
                                          */
                                         //state = Transition(state, Tokenizer.CLOSE_TAG_OPEN, reconsume, pos);
-                                        state = TokenizerState.s09_CLOSE_TAG_OPEN;
+                                        state = TokenizerState.s09_CLOSE_TAG_OPEN_p;
                                         goto continueStateloop;
                                     case '?':
                                         /*
@@ -477,7 +477,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         ClearLongStrBufAndAppend(c);
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
-                                        state = TokenizerState.s44_BOGUS_COMMENT;
+                                        state = TokenizerState.s44_BOGUS_COMMENT_i;
                                         goto continueStateloop;
                                     case '>':
                                         /*
@@ -494,7 +494,7 @@ namespace HtmlParserSharp.Core
                                         //cstart = pos + 1;
                                         reader.SkipOneAndStartCollect();
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     default:
                                         /*
@@ -511,7 +511,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         reader.StartCollect();
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto continueStateloop;
@@ -522,10 +522,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakTagopenloop:
-                            goto case TokenizerState.s10_TAG_NAME;
+                            goto case TokenizerState.s10_TAG_NAME_p;
                         }
                     //  FALL THROUGH DON'T REORDER
-                    case TokenizerState.s10_TAG_NAME:
+                    case TokenizerState.s10_TAG_NAME_p:
                         /*tagnameloop:*/
                         {
                             char c;
@@ -541,7 +541,7 @@ namespace HtmlParserSharp.Core
                                         SilentCarriageReturn();
                                         StrBufToElementNameString();
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
-                                        state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
+                                        state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
                                         goto breakStateloop;
                                     case '\n':
                                     case ' ':
@@ -554,7 +554,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         StrBufToElementNameString();
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
-                                        state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
+                                        state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
                                         goto breakTagnameloop;
                                     // goto continueStateloop;
                                     case '/':
@@ -564,7 +564,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         StrBufToElementNameString();
                                         //state = Transition(state, Tokenizer.SELF_CLOSING_START_TAG, reconsume, pos);
-                                        state = TokenizerState.s43_SELF_CLOSING_START_TAG;
+                                        state = TokenizerState.s43_SELF_CLOSING_START_TAG_i;
                                         goto continueStateloop;
                                     case '>':
                                         /*
@@ -617,10 +617,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakTagnameloop:
-                            goto case TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
+                            goto case TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s34_BEFORE_ATTRIBUTE_NAME:
+                    case TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i:
                         /*beforeattributenameloop:*/
                         {
                             char c;
@@ -648,7 +648,7 @@ namespace HtmlParserSharp.Core
                                          * start tag state.
                                          */
                                         //state = Transition(state, Tokenizer.SELF_CLOSING_START_TAG, reconsume, pos);
-                                        state = TokenizerState.s43_SELF_CLOSING_START_TAG;
+                                        state = TokenizerState.s43_SELF_CLOSING_START_TAG_i;
 
                                         goto continueStateloop;
                                     case '>':
@@ -714,7 +714,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the attribute name state.
                                          */
                                         //state = Transition(state, Tokenizer.ATTRIBUTE_NAME, reconsume, pos);
-                                        state = TokenizerState.s35_ATTRIBUTE_NAME;
+                                        state = TokenizerState.s35_ATTRIBUTE_NAME_p;
                                         goto breakBeforeattributenameloop;
                                     // goto continueStateloop;
                                 }
@@ -724,10 +724,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakBeforeattributenameloop:
-                            goto case TokenizerState.s35_ATTRIBUTE_NAME;
+                            goto case TokenizerState.s35_ATTRIBUTE_NAME_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s35_ATTRIBUTE_NAME:
+                    case TokenizerState.s35_ATTRIBUTE_NAME_p:
                         /*attributenameloop:*/
                         {
                             char c;
@@ -742,7 +742,7 @@ namespace HtmlParserSharp.Core
                                         SilentCarriageReturn();
                                         AttributeNameComplete();
                                         //state = Transition(state, Tokenizer.AFTER_ATTRIBUTE_NAME, reconsume, pos);
-                                        state = TokenizerState.s36_AFTER_ATTRIBUTE_NAME;
+                                        state = TokenizerState.s36_AFTER_ATTRIBUTE_NAME_p;
                                         goto breakStateloop;
                                     case '\n':
                                     case ' ':
@@ -755,7 +755,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         AttributeNameComplete();
                                         //state = Transition(state, Tokenizer.AFTER_ATTRIBUTE_NAME, reconsume, pos);
-                                        state = TokenizerState.s36_AFTER_ATTRIBUTE_NAME;
+                                        state = TokenizerState.s36_AFTER_ATTRIBUTE_NAME_p;
                                         goto continueStateloop;
                                     case '/':
                                         /*
@@ -765,7 +765,7 @@ namespace HtmlParserSharp.Core
                                         AttributeNameComplete();
                                         AddAttributeWithoutValue();
                                         //state = Transition(state, Tokenizer.SELF_CLOSING_START_TAG, reconsume, pos);
-                                        state = TokenizerState.s43_SELF_CLOSING_START_TAG;
+                                        state = TokenizerState.s43_SELF_CLOSING_START_TAG_i;
                                         goto continueStateloop;
                                     case '=':
                                         /*
@@ -774,7 +774,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         AttributeNameComplete();
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_VALUE, reconsume, pos);
-                                        state = TokenizerState.s37_BEFORE_ATTRIBUTE_VALUE;
+                                        state = TokenizerState.s37_BEFORE_ATTRIBUTE_VALUE_p;
                                         goto breakAttributenameloop;
                                     // goto continueStateloop;
                                     case '>':
@@ -840,10 +840,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakAttributenameloop:
-                            goto case TokenizerState.s37_BEFORE_ATTRIBUTE_VALUE;
+                            goto case TokenizerState.s37_BEFORE_ATTRIBUTE_VALUE_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s37_BEFORE_ATTRIBUTE_VALUE:
+                    case TokenizerState.s37_BEFORE_ATTRIBUTE_VALUE_p:
                         /*beforeattributevalueloop:*/
                         {
                             char c;
@@ -872,7 +872,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         ClearLongStrBuf();
                                         //state = Transition(state, Tokenizer.ATTRIBUTE_VALUE_DOUBLE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED;
+                                        state = TokenizerState.s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED_p;
 
                                         goto breakBeforeattributevalueloop;
                                     // goto continueStateloop;
@@ -884,7 +884,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         ClearLongStrBuf();
                                         //state = Transition(state, Tokenizer.ATTRIBUTE_VALUE_UNQUOTED, reconsume, pos);
-                                        state = TokenizerState.s40_ATTRIBUTE_VALUE_UNQUOTED;
+                                        state = TokenizerState.s40_ATTRIBUTE_VALUE_UNQUOTED_p;
                                         NoteUnquotedAttributeValue();
                                         //reconsume = true;
                                         reader.StepBack();
@@ -896,7 +896,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         ClearLongStrBuf();
                                         //state = Transition(state, Tokenizer.ATTRIBUTE_VALUE_SINGLE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s39_ATTRIBUTE_VALUE_SINGLE_QUOTED;
+                                        state = TokenizerState.s39_ATTRIBUTE_VALUE_SINGLE_QUOTED_p;
                                         goto continueStateloop;
                                     case '>':
                                         /*
@@ -949,7 +949,7 @@ namespace HtmlParserSharp.Core
                                          */
 
                                         //state = Transition(state, Tokenizer.ATTRIBUTE_VALUE_UNQUOTED, reconsume, pos);
-                                        state = TokenizerState.s40_ATTRIBUTE_VALUE_UNQUOTED;
+                                        state = TokenizerState.s40_ATTRIBUTE_VALUE_UNQUOTED_p;
 
                                         NoteUnquotedAttributeValue();
                                         goto continueStateloop;
@@ -960,11 +960,11 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakBeforeattributevalueloop:
-                            goto case TokenizerState.s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED;
+                            goto case TokenizerState.s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED_p;
                         }
 
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED:
+                    case TokenizerState.s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED_p:
                         /*attributevaluedoublequotedloop:*/
                         {
                             char c;
@@ -981,7 +981,7 @@ namespace HtmlParserSharp.Core
                                         AddAttributeWithValue();
 
                                         //state = Transition(state, Tokenizer.AFTER_ATTRIBUTE_VALUE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED;
+                                        state = TokenizerState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p;
                                         goto breakAttributevaluedoublequotedloop;
                                     // goto continueStateloop;
                                     case '&':
@@ -995,7 +995,7 @@ namespace HtmlParserSharp.Core
                                         SetAdditionalAndRememberAmpersandLocation('\"');
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.CONSUME_CHARACTER_REFERENCE, reconsume, pos);
-                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE;
+                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE_p;
 
                                         goto continueStateloop;
                                     case '\r':
@@ -1026,10 +1026,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakAttributevaluedoublequotedloop:
-                            goto case TokenizerState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED;
+                            goto case TokenizerState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED:
+                    case TokenizerState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p:
                         /*afterattributevaluequotedloop:*/
                         {
                             char c;
@@ -1041,7 +1041,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
-                                        state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
+                                        state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
                                         goto breakStateloop;
                                     case '\n':
                                     case ' ':
@@ -1053,7 +1053,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the before attribute name state.
                                          */
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
-                                        state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
+                                        state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
                                         goto continueStateloop;
                                     case '/':
                                         /*
@@ -1061,7 +1061,7 @@ namespace HtmlParserSharp.Core
                                          * start tag state.
                                          */
                                         //state = Transition(state, Tokenizer.SELF_CLOSING_START_TAG, reconsume, pos);
-                                        state = TokenizerState.s43_SELF_CLOSING_START_TAG;
+                                        state = TokenizerState.s43_SELF_CLOSING_START_TAG_i;
                                         goto breakAfterattributevaluequotedloop;
                                     // goto continueStateloop;
                                     case '>':
@@ -1089,7 +1089,7 @@ namespace HtmlParserSharp.Core
                                          * attribute name state.
                                          */
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
-                                        state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
+                                        state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto continueStateloop;
@@ -1100,10 +1100,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakAfterattributevaluequotedloop:
-                            goto case TokenizerState.s43_SELF_CLOSING_START_TAG;
+                            goto case TokenizerState.s43_SELF_CLOSING_START_TAG_i;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s43_SELF_CLOSING_START_TAG:
+                    case TokenizerState.s43_SELF_CLOSING_START_TAG_i:
                         {
                             char c;
                             if (!reader.ReadNext(out c))
@@ -1143,14 +1143,14 @@ namespace HtmlParserSharp.Core
                                      * name state.
                                      */
                                     //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
-                                    state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
+                                    state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
                                     reader.StepBack();
                                     //reconsume = true;
                                     goto continueStateloop;
                             }
                         }
                     // XXX reorder point
-                    case TokenizerState.s40_ATTRIBUTE_VALUE_UNQUOTED:
+                    case TokenizerState.s40_ATTRIBUTE_VALUE_UNQUOTED_p:
                         {
                             char c;
                             while (reader.ReadNext(out c))
@@ -1162,7 +1162,7 @@ namespace HtmlParserSharp.Core
                                         SilentCarriageReturn();
                                         AddAttributeWithValue();
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
-                                        state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
+                                        state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
                                         goto breakStateloop;
                                     case '\n':
                                     case ' ':
@@ -1175,7 +1175,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         AddAttributeWithValue();
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
-                                        state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
+                                        state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
                                         goto continueStateloop;
                                     case '&':
                                         /*
@@ -1188,7 +1188,7 @@ namespace HtmlParserSharp.Core
                                         SetAdditionalAndRememberAmpersandLocation('>');
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.CONSUME_CHARACTER_REFERENCE, reconsume, pos);
-                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE;
+                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE_p;
                                         goto continueStateloop;
                                     case '>':
                                         /*
@@ -1246,7 +1246,7 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         }
                     // XXX reorder point
-                    case TokenizerState.s36_AFTER_ATTRIBUTE_NAME:
+                    case TokenizerState.s36_AFTER_ATTRIBUTE_NAME_p:
                         {
                             char c;
                             while (reader.ReadNext(out c))
@@ -1273,7 +1273,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         AddAttributeWithoutValue();
                                         //state = Transition(state, Tokenizer.SELF_CLOSING_START_TAG, reconsume, pos);
-                                        state = TokenizerState.s43_SELF_CLOSING_START_TAG;
+                                        state = TokenizerState.s43_SELF_CLOSING_START_TAG_i;
                                         goto continueStateloop;
                                     case '=':
                                         /*
@@ -1281,7 +1281,7 @@ namespace HtmlParserSharp.Core
                                          * attribute value state.
                                          */
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_VALUE, reconsume, pos);
-                                        state = TokenizerState.s37_BEFORE_ATTRIBUTE_VALUE;
+                                        state = TokenizerState.s37_BEFORE_ATTRIBUTE_VALUE_p;
                                         goto continueStateloop;
                                     case '>':
                                         /*
@@ -1342,7 +1342,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the attribute name state.
                                          */
                                         //state = Transition(state, Tokenizer.ATTRIBUTE_NAME, reconsume, pos);
-                                        state = TokenizerState.s35_ATTRIBUTE_NAME;
+                                        state = TokenizerState.s35_ATTRIBUTE_NAME_p;
                                         goto continueStateloop;
                                 }
                             }
@@ -1352,7 +1352,7 @@ namespace HtmlParserSharp.Core
                         }
 
                     // XXX reorder point
-                    case TokenizerState.s39_ATTRIBUTE_VALUE_SINGLE_QUOTED:
+                    case TokenizerState.s39_ATTRIBUTE_VALUE_SINGLE_QUOTED_p:
                         /*attributevaluesinglequotedloop:*/
                         {
                             char c;
@@ -1371,7 +1371,7 @@ namespace HtmlParserSharp.Core
                                         AddAttributeWithValue();
 
                                         //state = Transition(state, Tokenizer.AFTER_ATTRIBUTE_VALUE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED;
+                                        state = TokenizerState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p;
                                         goto continueStateloop;
                                     case '&':
                                         /*
@@ -1384,7 +1384,7 @@ namespace HtmlParserSharp.Core
                                         SetAdditionalAndRememberAmpersandLocation('\'');
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.CONSUME_CHARACTER_REFERENCE, reconsume, pos);
-                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE;
+                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE_p;
                                         goto breakAttributevaluesinglequotedloop;
                                     // goto continueStateloop;
                                     case '\r':
@@ -1415,10 +1415,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakAttributevaluesinglequotedloop:
-                            goto case TokenizerState.CONSUME_CHARACTER_REFERENCE;
+                            goto case TokenizerState.CONSUME_CHARACTER_REFERENCE_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.CONSUME_CHARACTER_REFERENCE:
+                    case TokenizerState.CONSUME_CHARACTER_REFERENCE_p:
                         {
                             char c;
                             if (!reader.ReadNext(out c))
@@ -1475,7 +1475,7 @@ namespace HtmlParserSharp.Core
                                      */
                                     AppendStrBuf('#');
                                     //state = Transition(state, Tokenizer.CONSUME_NCR, reconsume, pos);
-                                    state = TokenizerState.CONSUME_NCR;
+                                    state = TokenizerState.CONSUME_NCR_i;
                                     goto continueStateloop;
                                 default:
                                     if (c == additional)
@@ -1518,16 +1518,16 @@ namespace HtmlParserSharp.Core
                                     // Didn't fail yet
                                     AppendStrBuf(c);
                                     //state = Transition(state, Tokenizer.CHARACTER_REFERENCE_HILO_LOOKUP, reconsume, pos);
-                                    state = TokenizerState.CHARACTER_REFERENCE_HILO_LOOKUP;
+                                    state = TokenizerState.CHARACTER_REFERENCE_HILO_LOOKUP_p;
 
                                     // FALL THROUGH goto continueStateloop;
                                     break;
                             }
                             //------------------------------------
-                            goto case TokenizerState.CHARACTER_REFERENCE_HILO_LOOKUP;
+                            goto case TokenizerState.CHARACTER_REFERENCE_HILO_LOOKUP_p;
                         }
                     // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
-                    case TokenizerState.CHARACTER_REFERENCE_HILO_LOOKUP:
+                    case TokenizerState.CHARACTER_REFERENCE_HILO_LOOKUP_p:
                         {
                             char c;
                             if (reader.ReadNext(out c))
@@ -1615,11 +1615,11 @@ namespace HtmlParserSharp.Core
                             candidate = -1;
                             strBufMark = 0;
                             //state = Transition(state, Tokenizer.CHARACTER_REFERENCE_TAIL, reconsume, pos);
-                            state = TokenizerState.CHARACTER_REFERENCE_TAIL;
+                            state = TokenizerState.CHARACTER_REFERENCE_TAIL_p;
                             // FALL THROUGH goto continueStateloop;
-                            goto case TokenizerState.CHARACTER_REFERENCE_TAIL;
+                            goto case TokenizerState.CHARACTER_REFERENCE_TAIL_p;
                         }
-                    case TokenizerState.CHARACTER_REFERENCE_TAIL:
+                    case TokenizerState.CHARACTER_REFERENCE_TAIL_p:
                         /*outer:*/
                         {
                             char c;
@@ -1855,7 +1855,7 @@ namespace HtmlParserSharp.Core
 
                         }
                     // XXX reorder point
-                    case TokenizerState.s09_CLOSE_TAG_OPEN:
+                    case TokenizerState.s09_CLOSE_TAG_OPEN_p:
                         {
                             char c;
                             if (!reader.ReadNext(out c))
@@ -1880,7 +1880,7 @@ namespace HtmlParserSharp.Core
                                      */
                                     reader.SkipOneAndStartCollect();
                                     //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                    state = TokenizerState.s01_DATA;
+                                    state = TokenizerState.s01_DATA_i;
                                     goto continueStateloop;
                                 case '\r':
                                     SilentCarriageReturn();
@@ -1891,7 +1891,7 @@ namespace HtmlParserSharp.Core
                                      */
                                     ClearLongStrBufAndAppend('\n');
                                     //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
-                                    state = TokenizerState.s44_BOGUS_COMMENT;
+                                    state = TokenizerState.s44_BOGUS_COMMENT_i;
                                     goto breakStateloop;
                                 case '\n':
                                     /* Anything else Parse error. */
@@ -1901,7 +1901,7 @@ namespace HtmlParserSharp.Core
                                      */
                                     ClearLongStrBufAndAppend('\n');
                                     //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
-                                    state = TokenizerState.s44_BOGUS_COMMENT;
+                                    state = TokenizerState.s44_BOGUS_COMMENT_i;
                                     goto continueStateloop;
                                 case '\u0000':
                                     c = '\uFFFD';
@@ -1930,7 +1930,7 @@ namespace HtmlParserSharp.Core
                                          * filled in before it is emitted.)
                                          */
                                         //state = Transition(state, Tokenizer.TAG_NAME, reconsume, pos);
-                                        state = TokenizerState.s10_TAG_NAME;
+                                        state = TokenizerState.s10_TAG_NAME_p;
                                         goto continueStateloop;
                                     }
                                     else
@@ -1942,7 +1942,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         ClearLongStrBufAndAppend(c);
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
-                                        state = TokenizerState.s44_BOGUS_COMMENT;
+                                        state = TokenizerState.s44_BOGUS_COMMENT_i;
                                         goto continueStateloop;
                                     }
                             }

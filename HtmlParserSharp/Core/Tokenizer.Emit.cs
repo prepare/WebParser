@@ -57,7 +57,7 @@ namespace HtmlParserSharp.Core
         {
             cstart = pos + 1;
             MaybeErrSlashInEndTag(selfClosing);
-            stateSave = TokenizerState.s01_DATA;
+            stateSave = TokenizerState.s01_DATA_i;
             HtmlAttributes attrs = attributes ?? HtmlAttributes.EMPTY_ATTRIBUTES;
 
             if (endTag)

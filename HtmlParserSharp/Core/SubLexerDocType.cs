@@ -216,7 +216,7 @@ namespace HtmlParserSharp.Core
                 {
 
                     // XXX reorder point
-                    case TokenizerState.MARKUP_DECLARATION_OCTYPE:
+                    case TokenizerState.MARKUP_DECLARATION_OCTYPE_p:
                         /*markupdeclarationdoctypeloop:*/
                         {
                             char c;
@@ -238,7 +238,7 @@ namespace HtmlParserSharp.Core
                                     {
                                         ErrBogusComment();
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
-                                        state = TokenizerState.s44_BOGUS_COMMENT;
+                                        state = TokenizerState.s44_BOGUS_COMMENT_i;
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto continueStateloop;
@@ -249,7 +249,7 @@ namespace HtmlParserSharp.Core
                                 else
                                 {
                                     // state = Transition(state, Tokenizer.DOCTYPE, reconsume, pos);
-                                    state = TokenizerState.s52_DOCTYPE;
+                                    state = TokenizerState.s52_DOCTYPE_p;
                                     //reconsume = true;
                                     reader.StepBack();
                                     goto breakMarkupdeclarationdoctypeloop;
@@ -261,10 +261,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakMarkupdeclarationdoctypeloop:
-                            goto case TokenizerState.s52_DOCTYPE;
+                            goto case TokenizerState.s52_DOCTYPE_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s52_DOCTYPE:
+                    case TokenizerState.s52_DOCTYPE_p:
                         /*doctypeloop:*/
                         {
                             char c;
@@ -279,7 +279,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         //state = Transition(state, Tokenizer.BEFORE_DOCTYPE_NAME, reconsume, pos);
-                                        state = TokenizerState.s53_BEFORE_DOCTYPE_NAME;
+                                        state = TokenizerState.s53_BEFORE_DOCTYPE_NAME_p;
                                         goto breakStateloop;
                                     case '\n':
                                     case ' ':
@@ -291,7 +291,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the before DOCTYPE name state.
                                          */
                                         //state = Transition(state, Tokenizer.BEFORE_DOCTYPE_NAME, reconsume, pos);
-                                        state = TokenizerState.s53_BEFORE_DOCTYPE_NAME;
+                                        state = TokenizerState.s53_BEFORE_DOCTYPE_NAME_p;
                                         goto breakDoctypeloop;
                                     // goto continueStateloop;
                                     default:
@@ -304,7 +304,7 @@ namespace HtmlParserSharp.Core
                                          * DOCTYPE name state.
                                          */
                                         //state = Transition(state, Tokenizer.BEFORE_DOCTYPE_NAME, reconsume, pos);
-                                        state = TokenizerState.s53_BEFORE_DOCTYPE_NAME;
+                                        state = TokenizerState.s53_BEFORE_DOCTYPE_NAME_p;
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto breakDoctypeloop;
@@ -316,10 +316,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakDoctypeloop:
-                            goto case TokenizerState.s53_BEFORE_DOCTYPE_NAME;
+                            goto case TokenizerState.s53_BEFORE_DOCTYPE_NAME_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s53_BEFORE_DOCTYPE_NAME:
+                    case TokenizerState.s53_BEFORE_DOCTYPE_NAME_p:
                         /*beforedoctypenameloop:*/
                         {
                             char c;
@@ -359,7 +359,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     case '\u0000':
                                         c = '\uFFFD';
@@ -388,7 +388,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the DOCTYPE name state.
                                          */
                                         //state = Transition(state, Tokenizer.DOCTYPE_NAME, reconsume, pos);
-                                        state = TokenizerState.s54_DOCTYPE_NAME;
+                                        state = TokenizerState.s54_DOCTYPE_NAME_p;
                                         goto breakBeforedoctypenameloop;
                                     // goto continueStateloop;
                                 }
@@ -398,10 +398,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakBeforedoctypenameloop:
-                            goto case TokenizerState.s54_DOCTYPE_NAME;
+                            goto case TokenizerState.s54_DOCTYPE_NAME_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s54_DOCTYPE_NAME:
+                    case TokenizerState.s54_DOCTYPE_NAME_p:
                         /*doctypenameloop:*/
                         {
                             char c;
@@ -414,7 +414,7 @@ namespace HtmlParserSharp.Core
                                         SilentCarriageReturn();
                                         StrBufToDoctypeName();
                                         //state = Transition(state, Tokenizer.AFTER_DOCTYPE_NAME, reconsume, pos);
-                                        state = TokenizerState.s55_AFTER_DOCTYPE_NAME;
+                                        state = TokenizerState.s55_AFTER_DOCTYPE_NAME_p;
                                         goto breakStateloop;
                                     case '\n':
                                     case ' ':
@@ -427,7 +427,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         StrBufToDoctypeName();
                                         //state = Transition(state, Tokenizer.AFTER_DOCTYPE_NAME, reconsume, pos);
-                                        state = TokenizerState.s55_AFTER_DOCTYPE_NAME;
+                                        state = TokenizerState.s55_AFTER_DOCTYPE_NAME_p;
                                         goto breakDoctypenameloop;
                                     // goto continueStateloop;
                                     case '>':
@@ -441,7 +441,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     case '\u0000':
                                         c = '\uFFFD';
@@ -476,10 +476,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakDoctypenameloop:
-                            goto case TokenizerState.s55_AFTER_DOCTYPE_NAME;
+                            goto case TokenizerState.s55_AFTER_DOCTYPE_NAME_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s55_AFTER_DOCTYPE_NAME:
+                    case TokenizerState.s55_AFTER_DOCTYPE_NAME_p:
                         /*afterdoctypenameloop:*/
                         {
                             char c;
@@ -511,13 +511,13 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     case 'p':
                                     case 'P':
                                         index = 0;
                                         //state = Transition(state, Tokenizer.DOCTYPE_UBLIC, reconsume, pos);
-                                        state = TokenizerState.DOCTYPE_UBLIC;
+                                        state = TokenizerState.DOCTYPE_UBLIC_p;
 
                                         goto breakAfterdoctypenameloop;
                                     // goto continueStateloop;
@@ -525,7 +525,7 @@ namespace HtmlParserSharp.Core
                                     case 'S':
                                         index = 0;
                                         //state = Transition(state, Tokenizer.DOCTYPE_YSTEM, reconsume, pos);
-                                        state = TokenizerState.DOCTYPE_YSTEM;
+                                        state = TokenizerState.DOCTYPE_YSTEM_p;
                                         goto continueStateloop;
                                     default:
                                         /*
@@ -542,7 +542,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the bogus DOCTYPE state.
                                          */
                                         //state = Transition(state, Tokenizer.BOGUS_DOCTYPE, reconsume, pos);
-                                        state = TokenizerState.s67_BOGUS_DOCTYPE;
+                                        state = TokenizerState.s67_BOGUS_DOCTYPE_p;
 
                                         goto continueStateloop;
                                 }
@@ -552,10 +552,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakAfterdoctypenameloop:
-                            goto case TokenizerState.DOCTYPE_UBLIC;
+                            goto case TokenizerState.DOCTYPE_UBLIC_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.DOCTYPE_UBLIC:
+                    case TokenizerState.DOCTYPE_UBLIC_p:
                         /*doctypeublicloop:*/
                         {
                             char c;
@@ -580,7 +580,7 @@ namespace HtmlParserSharp.Core
                                         BogusDoctype();
                                         // forceQuirks = true;
                                         //state = Transition(state, Tokenizer.BOGUS_DOCTYPE, reconsume, pos);
-                                        state = TokenizerState.s67_BOGUS_DOCTYPE;
+                                        state = TokenizerState.s67_BOGUS_DOCTYPE_p;
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto continueStateloop;
@@ -591,7 +591,7 @@ namespace HtmlParserSharp.Core
                                 else
                                 {
                                     //state = Transition(state, Tokenizer.AFTER_DOCTYPE_PUBLIC_KEYWORD, reconsume, pos);
-                                    state = TokenizerState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD;
+                                    state = TokenizerState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD_p;
                                     //reconsume = true;
                                     reader.StepBack();
 
@@ -604,10 +604,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakDoctypeublicloop:
-                            goto case TokenizerState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD;
+                            goto case TokenizerState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD:
+                    case TokenizerState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD_p:
                         /*afterdoctypepublickeywordloop:*/
                         {
                             char c;
@@ -621,7 +621,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         //state = Transition(state, Tokenizer.BEFORE_DOCTYPE_PUBLIC_IDENTIFIER, reconsume, pos);
-                                        state = TokenizerState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER;
+                                        state = TokenizerState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER_p;
                                         goto breakStateloop;
                                     case '\n':
                                     case ' ':
@@ -634,7 +634,7 @@ namespace HtmlParserSharp.Core
                                          * identifier state.
                                          */
                                         //state = Transition(state, Tokenizer.BEFORE_DOCTYPE_PUBLIC_IDENTIFIER, reconsume, pos);
-                                        state = TokenizerState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER;
+                                        state = TokenizerState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER_p;
                                         goto breakAfterdoctypepublickeywordloop;
                                     // FALL THROUGH continue stateloop
                                     case '"':
@@ -652,7 +652,7 @@ namespace HtmlParserSharp.Core
                                          * (double-quoted) state.
                                          */
                                         //state = Transition(state, Tokenizer.DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED;
+                                        state = TokenizerState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_p;
                                         goto continueStateloop;
                                     case '\'':
                                         /*
@@ -669,7 +669,7 @@ namespace HtmlParserSharp.Core
                                          * (single-quoted) state.
                                          */
                                         //state = Transition(state, Tokenizer.DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED;
+                                        state = TokenizerState.s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_p;
                                         goto continueStateloop;
                                     case '>':
                                         /* U+003E GREATER-THAN SIGN (>) Parse error. */
@@ -687,7 +687,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     default:
                                         BogusDoctype();
@@ -700,7 +700,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the bogus DOCTYPE state.
                                          */
                                         //state = Transition(state, Tokenizer.BOGUS_DOCTYPE, reconsume, pos);
-                                        state = TokenizerState.s67_BOGUS_DOCTYPE;
+                                        state = TokenizerState.s67_BOGUS_DOCTYPE_p;
                                         goto continueStateloop;
                                 }
                             }
@@ -709,10 +709,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakAfterdoctypepublickeywordloop:
-                            goto case TokenizerState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER;
+                            goto case TokenizerState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER:
+                    case TokenizerState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER_p:
                         /*beforedoctypepublicidentifierloop:*/
                         {
                             char c;
@@ -746,7 +746,7 @@ namespace HtmlParserSharp.Core
                                          * (double-quoted) state.
                                          */
                                         //state = Transition(state, Tokenizer.DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED;
+                                        state = TokenizerState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_p;
                                         goto breakBeforedoctypepublicidentifierloop;
                                     // goto continueStateloop;
                                     case '\'':
@@ -761,7 +761,7 @@ namespace HtmlParserSharp.Core
                                          * (single-quoted) state.
                                          */
                                         //state = Transition(state, Tokenizer.DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED;
+                                        state = TokenizerState.s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_p;
                                         goto continueStateloop;
                                     case '>':
                                         /* U+003E GREATER-THAN SIGN (>) Parse error. */
@@ -779,7 +779,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     default:
                                         BogusDoctype();
@@ -792,7 +792,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the bogus DOCTYPE state.
                                          */
                                         //state = Transition(state, Tokenizer.BOGUS_DOCTYPE, reconsume, pos);
-                                        state = TokenizerState.s67_BOGUS_DOCTYPE;
+                                        state = TokenizerState.s67_BOGUS_DOCTYPE_p;
                                         goto continueStateloop;
                                 }
                             }
@@ -801,10 +801,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakBeforedoctypepublicidentifierloop:
-                            goto case TokenizerState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED;
+                            goto case TokenizerState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED:
+                    case TokenizerState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_p:
                         /*doctypepublicidentifierdoublequotedloop:*/
                         {
                             char c;
@@ -819,7 +819,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         publicIdentifier = LongStrBufToString();
                                         //state = Transition(state, Tokenizer.AFTER_DOCTYPE_PUBLIC_IDENTIFIER, reconsume, pos);
-                                        state = TokenizerState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER;
+                                        state = TokenizerState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER_p;
                                         goto breakDoctypepublicidentifierdoublequotedloop;
                                     // goto continueStateloop;
                                     case '>':
@@ -841,7 +841,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     case '\r':
                                         AppendLongStrBufCarriageReturn();
@@ -872,10 +872,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakDoctypepublicidentifierdoublequotedloop:
-                            goto case TokenizerState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER;
+                            goto case TokenizerState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER:
+                    case TokenizerState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER_p:
                         /*afterdoctypepublicidentifierloop:*/
                         {
                             char c;
@@ -887,7 +887,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         //state = Transition(state, Tokenizer.BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS, reconsume, pos);
-                                        state = TokenizerState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS;
+                                        state = TokenizerState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS_p;
                                         goto breakStateloop;
                                     case '\n':
                                     case ' ':
@@ -900,7 +900,7 @@ namespace HtmlParserSharp.Core
                                          * system identifiers state.
                                          */
                                         //state = Transition(state, Tokenizer.BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS, reconsume, pos);
-                                        state = TokenizerState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS;
+                                        state = TokenizerState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS_p;
 
                                         goto breakAfterdoctypepublicidentifierloop;
                                     // goto continueStateloop;
@@ -914,7 +914,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     case '"':
                                         /*
@@ -931,7 +931,7 @@ namespace HtmlParserSharp.Core
                                          * (double-quoted) state.
                                          */
                                         //state = Transition(state, Tokenizer.DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED;
+                                        state = TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_p;
                                         goto continueStateloop;
                                     case '\'':
                                         /*
@@ -948,7 +948,7 @@ namespace HtmlParserSharp.Core
                                          * (single-quoted) state.
                                          */
                                         //state = Transition(state, Tokenizer.DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED;
+                                        state = TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_p;
                                         goto continueStateloop;
                                     default:
                                         BogusDoctype();
@@ -961,7 +961,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the bogus DOCTYPE state.
                                          */
                                         //state = Transition(state, Tokenizer.BOGUS_DOCTYPE, reconsume, pos);
-                                        state = TokenizerState.s67_BOGUS_DOCTYPE;
+                                        state = TokenizerState.s67_BOGUS_DOCTYPE_p;
                                         goto continueStateloop;
                                 }
                             }
@@ -970,10 +970,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakAfterdoctypepublicidentifierloop:
-                            goto case TokenizerState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS;
+                            goto case TokenizerState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS:
+                    case TokenizerState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS_p:
                         /*betweendoctypepublicandsystemidentifiersloop:*/
                         {
                             char c;
@@ -1006,7 +1006,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     case '"':
                                         /*
@@ -1020,7 +1020,7 @@ namespace HtmlParserSharp.Core
                                          * (double-quoted) state.
                                          */
                                         //state = Transition(state, Tokenizer.DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED;
+                                        state = TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_p;
                                         goto breakBetweendoctypepublicandsystemidentifiersloop;
                                     // goto continueStateloop;
                                     case '\'':
@@ -1035,7 +1035,7 @@ namespace HtmlParserSharp.Core
                                          * (single-quoted) state.
                                          */
                                         //state = Transition(state, Tokenizer.DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED;
+                                        state = TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_p;
                                         goto continueStateloop;
                                     default:
                                         BogusDoctype();
@@ -1048,7 +1048,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the bogus DOCTYPE state.
                                          */
                                         //state = Transition(state, Tokenizer.BOGUS_DOCTYPE, reconsume, pos);
-                                        state = TokenizerState.s67_BOGUS_DOCTYPE;
+                                        state = TokenizerState.s67_BOGUS_DOCTYPE_p;
                                         goto continueStateloop;
                                 }
                             }
@@ -1057,10 +1057,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakBetweendoctypepublicandsystemidentifiersloop:
-                            goto case TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED;
+                            goto case TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED:
+                    case TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_p:
                         /*doctypesystemidentifierdoublequotedloop:*/
                         {
                             char c;
@@ -1075,7 +1075,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         systemIdentifier = LongStrBufToString();
                                         //state = Transition(state, Tokenizer.AFTER_DOCTYPE_SYSTEM_IDENTIFIER, reconsume, pos);
-                                        state = TokenizerState.s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER;
+                                        state = TokenizerState.s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER_p;
                                         goto continueStateloop;
                                     case '>':
                                         /*
@@ -1096,7 +1096,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     case '\r':
                                         AppendLongStrBufCarriageReturn();
@@ -1130,7 +1130,7 @@ namespace HtmlParserSharp.Core
                     //breakDoctypesystemidentifierdoublequotedloop:
                     //	goto case TokenizerState.AFTER_DOCTYPE_SYSTEM_IDENTIFIER;
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER:
+                    case TokenizerState.s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER_p:
                         /*afterdoctypesystemidentifierloop:*/
                         {
                             char c;
@@ -1162,7 +1162,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     default:
                                         /*
@@ -1172,7 +1172,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         BogusDoctypeWithoutQuirks();
                                         //state = Transition(state, Tokenizer.BOGUS_DOCTYPE, reconsume, pos);
-                                        state = TokenizerState.s67_BOGUS_DOCTYPE;
+                                        state = TokenizerState.s67_BOGUS_DOCTYPE_p;
                                         goto breakAfterdoctypesystemidentifierloop;
                                     // goto continueStateloop;
                                 }
@@ -1182,10 +1182,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakAfterdoctypesystemidentifierloop:
-                            goto case TokenizerState.s67_BOGUS_DOCTYPE;
+                            goto case TokenizerState.s67_BOGUS_DOCTYPE_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s67_BOGUS_DOCTYPE:
+                    case TokenizerState.s67_BOGUS_DOCTYPE_p:
                         {
                             char c;
                             while (reader.ReadNext(out c))
@@ -1203,7 +1203,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     case '\r':
                                         SilentCarriageReturn();
@@ -1222,7 +1222,7 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         }
                     // XXX reorder point
-                    case TokenizerState.DOCTYPE_YSTEM:
+                    case TokenizerState.DOCTYPE_YSTEM_p:
                         /*doctypeystemloop:*/
                         {
                             char c;
@@ -1247,7 +1247,7 @@ namespace HtmlParserSharp.Core
                                     {
                                         BogusDoctype();
                                         //state = Transition(state, Tokenizer.BOGUS_DOCTYPE, reconsume, pos);
-                                        state = TokenizerState.s67_BOGUS_DOCTYPE;
+                                        state = TokenizerState.s67_BOGUS_DOCTYPE_p;
                                         reader.StepBack();
                                         //reconsume = true;
                                         goto continueStateloop;
@@ -1258,7 +1258,7 @@ namespace HtmlParserSharp.Core
                                 else
                                 {
                                     //state = Transition(state, Tokenizer.AFTER_DOCTYPE_SYSTEM_KEYWORD, reconsume, pos);
-                                    state = TokenizerState.s62_AFTER_DOCTYPE_SYSTEM_KEYWORD;
+                                    state = TokenizerState.s62_AFTER_DOCTYPE_SYSTEM_KEYWORD_p;
                                     //reconsume = true;
                                     reader.StepBack();
                                     goto breakDoctypeystemloop;
@@ -1270,10 +1270,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakDoctypeystemloop:
-                            goto case TokenizerState.s62_AFTER_DOCTYPE_SYSTEM_KEYWORD;
+                            goto case TokenizerState.s62_AFTER_DOCTYPE_SYSTEM_KEYWORD_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s62_AFTER_DOCTYPE_SYSTEM_KEYWORD:
+                    case TokenizerState.s62_AFTER_DOCTYPE_SYSTEM_KEYWORD_p:
                         /*afterdoctypesystemkeywordloop:*/
                         {
                             char c;
@@ -1285,7 +1285,7 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         SilentCarriageReturn();
                                         //state = Transition(state, Tokenizer.BEFORE_DOCTYPE_SYSTEM_IDENTIFIER, reconsume, pos);
-                                        state = TokenizerState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER;
+                                        state = TokenizerState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER_p;
 
                                         goto breakStateloop;
                                     case '\n':
@@ -1299,7 +1299,7 @@ namespace HtmlParserSharp.Core
                                          * identifier state.
                                          */
                                         //state = Transition(state, Tokenizer.BEFORE_DOCTYPE_SYSTEM_IDENTIFIER, reconsume, pos);
-                                        state = TokenizerState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER;
+                                        state = TokenizerState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER_p;
                                         goto breakAfterdoctypesystemkeywordloop;
                                     // FALL THROUGH continue stateloop
                                     case '"':
@@ -1317,7 +1317,7 @@ namespace HtmlParserSharp.Core
                                          * (double-quoted) state.
                                          */
                                         //state = Transition(state, Tokenizer.DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED;
+                                        state = TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_p;
                                         goto continueStateloop;
                                     case '\'':
                                         /*
@@ -1334,7 +1334,7 @@ namespace HtmlParserSharp.Core
                                          * (single-quoted) state.
                                          */
                                         //state = Transition(state, Tokenizer.DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED;
+                                        state = TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_p;
                                         goto continueStateloop;
                                     case '>':
                                         /* U+003E GREATER-THAN SIGN (>) Parse error. */
@@ -1352,7 +1352,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     default:
                                         BogusDoctype();
@@ -1365,7 +1365,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the bogus DOCTYPE state.
                                          */
                                         //state = Transition(state, Tokenizer.BOGUS_DOCTYPE, reconsume, pos);
-                                        state = TokenizerState.s67_BOGUS_DOCTYPE;
+                                        state = TokenizerState.s67_BOGUS_DOCTYPE_p;
                                         goto continueStateloop;
                                 }
                             }
@@ -1374,10 +1374,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakAfterdoctypesystemkeywordloop:
-                            goto case TokenizerState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER;
+                            goto case TokenizerState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER:
+                    case TokenizerState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER_p:
                         /*beforedoctypesystemidentifierloop:*/
                         {
                             char c;
@@ -1412,7 +1412,7 @@ namespace HtmlParserSharp.Core
                                          * (double-quoted) state.
                                          */
                                         //state = Transition(state, Tokenizer.DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED;
+                                        state = TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_p;
                                         goto continueStateloop;
                                     case '\'':
                                         /*
@@ -1426,7 +1426,7 @@ namespace HtmlParserSharp.Core
                                          * (single-quoted) state.
                                          */
                                         //state = Transition(state, Tokenizer.DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED, reconsume, pos);
-                                        state = TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED;
+                                        state = TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_p;
                                         goto breakBeforedoctypesystemidentifierloop;
                                     // goto continueStateloop;
                                     case '>':
@@ -1445,7 +1445,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     default:
                                         BogusDoctype();
@@ -1458,7 +1458,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the bogus DOCTYPE state.
                                          */
                                         //state = Transition(state, Tokenizer.BOGUS_DOCTYPE, reconsume, pos);
-                                        state = TokenizerState.s67_BOGUS_DOCTYPE;
+                                        state = TokenizerState.s67_BOGUS_DOCTYPE_p;
                                         goto continueStateloop;
                                 }
                             }
@@ -1467,10 +1467,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakBeforedoctypesystemidentifierloop:
-                            goto case TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED;
+                            goto case TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED:
+                    case TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_p:
                         {
                             char c;
                             while (reader.ReadNext(out c))
@@ -1484,7 +1484,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         systemIdentifier = LongStrBufToString();
                                         //state = Transition(state, Tokenizer.AFTER_DOCTYPE_SYSTEM_IDENTIFIER, reconsume, pos);
-                                        state = TokenizerState.s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER;
+                                        state = TokenizerState.s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER_p;
                                         goto continueStateloop;
                                     case '>':
                                         ErrGtInSystemId();
@@ -1502,7 +1502,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     case '\r':
                                         AppendLongStrBufCarriageReturn();
@@ -1534,7 +1534,7 @@ namespace HtmlParserSharp.Core
                             // XXX reorder point
 
                         }
-                    case TokenizerState.s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED:
+                    case TokenizerState.s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_p:
                         {
                             char c;
                             while (reader.ReadNext(out c))
@@ -1549,7 +1549,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         publicIdentifier = LongStrBufToString();
                                         //state = Transition(state, Tokenizer.AFTER_DOCTYPE_PUBLIC_IDENTIFIER, reconsume, pos);
-                                        state = TokenizerState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER;
+                                        state = TokenizerState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER_p;
                                         goto continueStateloop;
                                     case '>':
                                         ErrGtInPublicId();
@@ -1567,7 +1567,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA;
+                                        state = TokenizerState.s01_DATA_i;
                                         goto continueStateloop;
                                     case '\r':
                                         AppendLongStrBufCarriageReturn();
@@ -1598,7 +1598,7 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         }
                     // XXX reorder point
-                    case TokenizerState.PROCESSING_INSTRUCTION:
+                    case TokenizerState.PROCESSING_INSTRUCTION_i:
                         //processinginstructionloop: 
                         {
                             char c;
@@ -1608,7 +1608,7 @@ namespace HtmlParserSharp.Core
                                 {
                                     case '?':
                                         //state = Transition(state,Tokenizer.PROCESSING_INSTRUCTION_QUESTION_MARK,reconsume, pos);
-                                        state = TokenizerState.PROCESSING_INSTRUCTION_QUESTION_MARK;
+                                        state = TokenizerState.PROCESSING_INSTRUCTION_QUESTION_MARK_i;
 
                                         break;
                                     // continue stateloop;
@@ -1621,7 +1621,7 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         }
                     //breakProcessingInstructionLoop: 
-                    case TokenizerState.PROCESSING_INSTRUCTION_QUESTION_MARK:
+                    case TokenizerState.PROCESSING_INSTRUCTION_QUESTION_MARK_i:
                         {
                             char c;
                             if (!reader.ReadNext(out c))
@@ -1634,11 +1634,11 @@ namespace HtmlParserSharp.Core
                             {
                                 case '>':
                                     //state = Transition(state, Tokenizer.DATA,reconsume, pos);
-                                    state = TokenizerState.s01_DATA;
+                                    state = TokenizerState.s01_DATA_i;
                                     continue;
                                 default:
                                     //state = Transition(state,Tokenizer.PROCESSING_INSTRUCTION,reconsume, pos);
-                                    state = TokenizerState.PROCESSING_INSTRUCTION;
+                                    state = TokenizerState.PROCESSING_INSTRUCTION_i;
                                     continue;
                             }
 
