@@ -1194,7 +1194,7 @@ namespace HtmlParserSharp.Core
 
             // [NOCPP[
             //pos = StateLoop(state, c, pos, buffer.Buffer, false, returnState, buffer.End);
-            StateLoop(state, returnState);
+            StateLoop3(state, returnState);
             // ]NOCPP]
             if (pos == buffer.End)
             {
