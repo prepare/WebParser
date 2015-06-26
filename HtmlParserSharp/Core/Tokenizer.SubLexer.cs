@@ -55,82 +55,26 @@ namespace HtmlParserSharp.Core
         protected TokenizerState returnStateSave;
         public event EventHandler<ParserErrorEventArgs> ErrorEvent;
         protected const byte DATA_AND_RCDATA_MASK = (byte)0xF0;
-        /// <summary>
-        /// Magic value for UTF-16 operations.
-        /// </summary>
-        protected const int LEAD_OFFSET = (0xD800 - (0x10000 >> 10));
-
+       
         /// <summary>
         /// UTF-16 code unit array containing less than and greater than for emitting
         /// those characters on certain parse errors.
         /// </summary>
         protected static readonly char[] LT_GT = { '<', '>' };
 
-        /// <summary>
-        /// UTF-16 code unit array containing less than and solidus for emitting
-        /// those characters on certain parse errors.
-        /// </summary>
-        protected static readonly char[] LT_SOLIDUS = { '<', '/' };
-
+       
         /// <summary>
         /// UTF-16 code unit array containing ]] for emitting those characters on
         /// state transitions.
         /// </summary>
-        protected static readonly char[] RSQB_RSQB = { ']', ']' };
-
-        /// <summary>
-        /// Array version of U+FFFD.
-        /// </summary>
-        protected static readonly char[] REPLACEMENT_CHARACTER = { '\uFFFD' };
-
-        // [NOCPP[
-
-        /// <summary>
-        /// Array version of space.
-        /// </summary>
-        protected static readonly char[] SPACE = { ' ' };
-
-        // ]NOCPP]
-
-        /// <summary>
-        /// Array version of line feed.
-        /// </summary>
-        protected static readonly char[] LF = { '\n' };
-
-        /// <summary>
-        /// Buffer growth parameter.
-        /// </summary>
-        protected const int BUFFER_GROW_BY = 1024;
-
+        protected static readonly char[] RSQB_RSQB = { ']', ']' }; 
         /// <summary>
         /// "CDATA[" as <code>char[]</code>
         /// </summary>
         protected static readonly char[] CDATA_LSQB = "CDATA[".ToCharArray();
 
-        /// <summary>
-        /// "octype" as <code>char[]</code>
-        /// </summary>
-        protected static readonly char[] OCTYPE = "octype".ToCharArray();
-
-        /// <summary>
-        /// "ublic" as <code>char[]</code>
-        /// </summary>
-        protected static readonly char[] UBLIC = "ublic".ToCharArray();
-
-        /// <summary>
-        /// "ystem" as  <code>char[]</code>
-        /// </summary>
-        protected static readonly char[] YSTEM = "ystem".ToCharArray();
-        protected static readonly char[] TITLE_ARR = "title".ToCharArray();
-        protected static readonly char[] SCRIPT_ARR = "script".ToCharArray();
-        protected static readonly char[] STYLE_ARR = "style".ToCharArray();
-        protected static readonly char[] PLAINTEXT_ARR = "plaintext".ToCharArray();
-        protected static readonly char[] XMP_ARR = "xmp".ToCharArray();
-        protected static readonly char[] TEXTAREA_ARR = "textarea".ToCharArray();
-        protected static readonly char[] IFRAME_ARR = "iframe".ToCharArray();
-        protected static readonly char[] NOEMBED_ARR = "noembed".ToCharArray();
-        protected static readonly char[] NOSCRIPT_ARR = "noscript".ToCharArray();
-        protected static readonly char[] NOFRAMES_ARR = "noframes".ToCharArray();
+       
+         
 
         /// <summary>
         ///  Buffer for short identifiers.

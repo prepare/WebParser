@@ -52,6 +52,19 @@ namespace HtmlParserSharp.Core
         bool forceQuirks;
         string publicIdentifier;
         string systemIdentifier;
+        /// <summary>
+        /// "octype" as <code>char[]</code>
+        /// </summary>
+        static readonly char[] OCTYPE = "octype".ToCharArray();
+
+        /// <summary>
+        /// "ublic" as <code>char[]</code>
+        /// </summary>
+        static readonly char[] UBLIC = "ublic".ToCharArray();
+        /// <summary>
+        /// "ystem" as  <code>char[]</code>
+        /// </summary>
+        static readonly char[] YSTEM = "ystem".ToCharArray();
 
         XmlViolationPolicy commentPolicy = XmlViolationPolicy.AlterInfoset;
         // ]NOCPP]
@@ -106,7 +119,7 @@ namespace HtmlParserSharp.Core
         {
             return this.longStrBuffer.ToString();
         }
-        
+
         void StrBufToDoctypeName()
         {
             doctypeName = Portability.NewLocalNameFromBuffer(this.strBuffer.ToString());

@@ -51,7 +51,11 @@ using HtmlParserSharp.Common;
 namespace HtmlParserSharp.Core
 {
     class SubLexerRawTextCDataRcRef : SubLexer
-    {
+    {   /// <summary>
+        /// UTF-16 code unit array containing less than and solidus for emitting
+        /// those characters on certain parse errors.
+        /// </summary>
+        protected static readonly char[] LT_SOLIDUS = { '<', '/' }; 
         char[] endTagExpectationAsArray; // not @Auto!
         int index;
         bool endTag; //TODO: review shared endTag with other sublexer? 

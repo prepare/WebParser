@@ -53,7 +53,20 @@ namespace HtmlParserSharp.Core
         bool seenDigits;
         char[] bmpChar = new char[1];
         char[] astralChar = new char[2];
+        /// <summary>
+        /// Magic value for UTF-16 operations.
+        /// </summary>
+        const int LEAD_OFFSET = (0xD800 - (0x10000 >> 10));
+        /// <summary>
+        /// Array version of U+FFFD.
+        /// </summary>
+        static readonly char[] REPLACEMENT_CHARACTER = { '\uFFFD' };
+        // [NOCPP[
 
+        /// <summary>
+        /// Array version of space.
+        /// </summary>
+        static readonly char[] SPACE = { ' ' };
         /**
         * The policy for vertical tab and form feed.
         */
@@ -131,7 +144,7 @@ namespace HtmlParserSharp.Core
                 else if ((value & 0xF800) == 0xD800)
                 {
                     ErrNcrSurrogate();
-                    EmitOrAppendOne( REPLACEMENT_CHARACTER, returnState);
+                    EmitOrAppendOne(REPLACEMENT_CHARACTER, returnState);
                 }
                 else
                 {

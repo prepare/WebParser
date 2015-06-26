@@ -47,7 +47,8 @@ namespace HtmlParserSharp.Core
 {
     class SubLexerScriptData : SubLexer
     {
-        int index;  
+        int index;
+        static readonly char[] SCRIPT_ARR = "script".ToCharArray();
         void StateLoop3_ScriptData(TokenizerState state, TokenizerState returnState)
         {
 

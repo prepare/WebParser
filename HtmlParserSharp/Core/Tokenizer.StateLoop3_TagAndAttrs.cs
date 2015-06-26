@@ -54,9 +54,9 @@ namespace HtmlParserSharp.Core
         int candidate;
         bool endTag;
         int strBufMark;
-      
+
         char firstCharKey;
-       
+
         bool newAttributesEachTime;
         bool metaBoundaryPassed;
         bool html4ModeCompatibleWithXhtml1Schemata;
@@ -89,6 +89,7 @@ namespace HtmlParserSharp.Core
             //ampersandLocation = new Location(this.LineNumber, this.ColumnNumber);
             // ]NOCPP]
         }
+
         private void ResetAttributes()
         {
             // [NOCPP[
@@ -114,7 +115,7 @@ namespace HtmlParserSharp.Core
             // }
         }
 
-        
+
         TokenizerState EmitCurrentTagToken(bool selfClosing, int pos)
         {
             cstart = pos + 1;
