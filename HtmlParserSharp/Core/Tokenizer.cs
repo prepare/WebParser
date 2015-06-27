@@ -55,7 +55,7 @@ namespace HtmlParserSharp.Core
 
     public enum TokenizerState : byte
     {
-
+        
         s01_DATA_i = 128, //comment, doctype,rawtext,tag 
 
         //TODO: 02_CharacterReferenceInData() 
@@ -63,34 +63,25 @@ namespace HtmlParserSharp.Core
         //TODO: R04_CharacterReferenceInRcData(); 
         s05_RAWTEXT_p = 3, //rawtext 
         s07_PLAINTEXT_p = 8,//rawtext 
+        s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p = 65, //rawtext
 
-        s08_TAG_OPEN_p = 9, //tag
-
-        s09_CLOSE_TAG_OPEN_p = 10, //tag
-
-        s10_TAG_NAME_p = 11, //tag
-
-        s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p = 65, //tag 
         s34_BEFORE_ATTRIBUTE_NAME_i = 12, //rawtext, tag
         //------------------------------------------------------------
-         
-        s35_ATTRIBUTE_NAME_p = 13, //tag
 
-        s36_AFTER_ATTRIBUTE_NAME_p = 14, //tag
+        //s35_ATTRIBUTE_NAME_p = 13, //tag
 
-        s37_BEFORE_ATTRIBUTE_VALUE_p = 15, //tag
+        //s36_AFTER_ATTRIBUTE_NAME_p = 14, //tag
 
-        s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED_p = 5, //tag
+        //s37_BEFORE_ATTRIBUTE_VALUE_p = 15, //tag
 
-        s39_ATTRIBUTE_VALUE_SINGLE_QUOTED_p = 6, //tag
+        //s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED_p = 5, //tag
 
-        s40_ATTRIBUTE_VALUE_UNQUOTED_p = 7, //tag
-
-        //TODO: R41_CharacterReferenceInAttributeValue()
-
-        s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p = 16, //tag
-        CHARACTER_REFERENCE_HILO_LOOKUP_p = 53,//tag,
-        CHARACTER_REFERENCE_TAIL_p = 48, //tag
+        //s39_ATTRIBUTE_VALUE_SINGLE_QUOTED_p = 6, //tag 
+        //s40_ATTRIBUTE_VALUE_UNQUOTED_p = 7, //tag 
+        ////TODO: R41_CharacterReferenceInAttributeValue() 
+        //s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p = 16, //tag
+        //CHARACTER_REFERENCE_HILO_LOOKUP_p = 53,//tag,
+        //CHARACTER_REFERENCE_TAIL_p = 48, //tag
 
         //------------------
         s43_SELF_CLOSING_START_TAG_i = 54, //tag,rawtext 
@@ -1057,7 +1048,7 @@ namespace HtmlParserSharp.Core
              */
             switch (state)
             {
-                case  TokenizerState.s01_DATA_i:
+                case TokenizerState.s01_DATA_i:
                 case TokenizerState.s03_RCDATA_p:
                 case (TokenizerState)ScriptDataLexerState.s06_SCRIPT_DATA_p:
                 case TokenizerState.s07_PLAINTEXT_p:
@@ -1298,7 +1289,7 @@ namespace HtmlParserSharp.Core
                          * state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s08_TAG_OPEN_p:
+                    case (TokenizerState)SubLexerTagState.s08_TAG_OPEN_p:
                         /*
                          * The behavior of this state depends on the content model
                          * flag.
@@ -1315,6 +1306,7 @@ namespace HtmlParserSharp.Core
                          * and reconsume the current input character in the data
                          * state.
                          */
+
                         goto breakEofloop;
                     case TokenizerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p:
                         /*
@@ -1343,7 +1335,7 @@ namespace HtmlParserSharp.Core
                          * state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s09_CLOSE_TAG_OPEN_p:
+                    case (TokenizerState)SubLexerTagState.s09_CLOSE_TAG_OPEN_p:
                         /* EOF Parse error. */
                         ErrEofAfterLt();
                         /*
@@ -1355,7 +1347,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s10_TAG_NAME_p:
+                    case (TokenizerState)SubLexerTagState.s10_TAG_NAME_p:
                         /*
                          * EOF Parse error.
                          */
@@ -1365,7 +1357,7 @@ namespace HtmlParserSharp.Core
                          */
                         goto breakEofloop;
                     case TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i:
-                    case TokenizerState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p:
+                    case (TokenizerState)SubLexerTagState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p:
                     case TokenizerState.s43_SELF_CLOSING_START_TAG_i:
                         /* EOF Parse error. */
                         ErrEofWithoutGt();
@@ -1373,26 +1365,27 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s35_ATTRIBUTE_NAME_p:
+                    case (TokenizerState)SubLexerTagState.s35_ATTRIBUTE_NAME_p:
+
                         /*
-                         * EOF Parse error.
-                         */
+                             * EOF Parse error.
+                             */
                         ErrEofInAttributeName();
                         /*
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s36_AFTER_ATTRIBUTE_NAME_p:
-                    case TokenizerState.s37_BEFORE_ATTRIBUTE_VALUE_p:
+                    case (TokenizerState)SubLexerTagState.s36_AFTER_ATTRIBUTE_NAME_p:
+                    case (TokenizerState)SubLexerTagState.s37_BEFORE_ATTRIBUTE_VALUE_p:
                         /* EOF Parse error. */
                         ErrEofWithoutGt();
                         /*
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED_p:
-                    case TokenizerState.s39_ATTRIBUTE_VALUE_SINGLE_QUOTED_p:
-                    case TokenizerState.s40_ATTRIBUTE_VALUE_UNQUOTED_p:
+                    case (TokenizerState)SubLexerTagState.s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED_p:
+                    case (TokenizerState)SubLexerTagState.s39_ATTRIBUTE_VALUE_SINGLE_QUOTED_p:
+                    case (TokenizerState)SubLexerTagState.s40_ATTRIBUTE_VALUE_UNQUOTED_p:
                         /* EOF Parse error. */
                         ErrEofInAttributeValue();
                         /*
@@ -1634,12 +1627,12 @@ namespace HtmlParserSharp.Core
                         EmitOrAppendStrBuf(returnState);
                         state = returnState;
                         continue;
-                    case TokenizerState.CHARACTER_REFERENCE_HILO_LOOKUP_p:
+                    case (TokenizerState)SubLexerTagState.CHARACTER_REFERENCE_HILO_LOOKUP_p:
                         ErrNoNamedCharacterMatch();
                         EmitOrAppendStrBuf(returnState);
                         state = returnState;
                         continue;
-                    case TokenizerState.CHARACTER_REFERENCE_TAIL_p:
+                    case (TokenizerState)SubLexerTagState.CHARACTER_REFERENCE_TAIL_p:
                         /*outer:*/
                         for (; ; )
                         {

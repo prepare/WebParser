@@ -346,6 +346,7 @@ namespace HtmlParserSharp.Core
                                         FlushChars();
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.RAWTEXT_RCDATA_LESS_THAN_SIGN, reconsume, pos);
+
                                         state = TokenizerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p;
                                         goto continueStateloop;
                                     case '\u0000':
@@ -415,6 +416,7 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p:
                         /*rawtextrcdatalessthansignloop:*/
                         {
+                            
                             char c;
                             while (reader.ReadNext(out c))
                             {
