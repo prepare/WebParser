@@ -60,11 +60,8 @@ namespace HtmlParserSharp.Core
         //TODO: 02_CharacterReferenceInData() 
         s03_RCDATA_p = 129, //rawtext 
         //TODO: R04_CharacterReferenceInRcData(); 
-        s05_RAWTEXT_p = 3, //rawtext
-
-      
-
-        s07_PLAINTEXT_p = 8,//rawtext
+        s05_RAWTEXT_p = 3, //rawtext 
+        s07_PLAINTEXT_p = 8,//rawtext 
 
         s08_TAG_OPEN_p = 9, //tag
 
@@ -165,31 +162,23 @@ namespace HtmlParserSharp.Core
         //------------------
         //for doctype
 
-
-
         s68_CDATA_SECTION_i = 56, //comment, rawtext
         NON_DATA_END_TAG_NAME_i = 38, //scriptdata, rawtext
 
-        CONSUME_NCR_i = 47, //ncr->numeric character reference, used by ncr,text
 
-
-
-        HEX_NCR_LOOP_p = 49,//ncr -> numeric character reference
-
-        DECIMAL_NRC_LOOP_p = 50, //ncr
-
-        HANDLE_NCR_VALUE_p = 51,//ncr
-
+        CONSUME_NCR_i = 47, //ncr->numeric character reference, used by ncr,text 
+        HEX_NCR_LOOP_p = 49,//ncr -> numeric character reference 
+        DECIMAL_NRC_LOOP_p = 50, //ncr 
+        HANDLE_NCR_VALUE_p = 51,//ncr 
         HANDLE_NCR_VALUE_RECONSUME_p = 52,//ncr 
 
+
+
         CDATA_START_i = 55,//comment,rawtext
-
-        CDATA_RSQB_i = 57,//comment,rawtext
-
-        CDATA_RSQB_RSQB_i = 58,//comment,rawtext 
-
-        PROCESSING_INSTRUCTION_i = 73, //doctype, rawtext
-        PROCESSING_INSTRUCTION_QUESTION_MARK_i = 74//doctype, rawtext
+        CDATA_RSQB_p = 57,// rawtext
+        CDATA_RSQB_RSQB_p = 58,//rawtext 
+        PROCESSING_INSTRUCTION_p = 73, // rawtext
+        PROCESSING_INSTRUCTION_QUESTION_MARK_p = 74// rawtext
     }
 
 
@@ -1925,10 +1914,10 @@ namespace HtmlParserSharp.Core
                         HandleNcrValue(returnState);
                         state = returnState;
                         continue;
-                    case TokenizerState.CDATA_RSQB_i:
+                    case TokenizerState.CDATA_RSQB_p:
                         TokenListener.Characters(RSQB_RSQB, 0, 1);
                         goto breakEofloop;
-                    case TokenizerState.CDATA_RSQB_RSQB_i:
+                    case TokenizerState.CDATA_RSQB_RSQB_p:
                         TokenListener.Characters(RSQB_RSQB, 0, 2);
                         goto breakEofloop;
                     case TokenizerState.s01_DATA_i:
