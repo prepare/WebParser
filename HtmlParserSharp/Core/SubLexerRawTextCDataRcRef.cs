@@ -184,10 +184,10 @@ namespace HtmlParserSharp.Core
                                 {
                                     reader.StartCollect(); // start coalescing
                                     //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
-                                    state = TokenizerState.s68_CDATA_SECTION_i;
+                                    state = TokenizerState.s68_CDATA_SECTION_p;
                                     //reconsume = true;
                                     reader.StepBack();
-                                    goto case TokenizerState.s68_CDATA_SECTION_i;
+                                    goto case TokenizerState.s68_CDATA_SECTION_p;
                                     //break; // FALL THROUGH goto continueStateloop;
                                 }
                             }
@@ -198,7 +198,7 @@ namespace HtmlParserSharp.Core
 
                         }
                     // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
-                    case TokenizerState.s68_CDATA_SECTION_i:
+                    case TokenizerState.s68_CDATA_SECTION_p:
                         /*cdatasectionloop:*/
                         {
                             char c;
@@ -244,7 +244,7 @@ namespace HtmlParserSharp.Core
                                         TokenListener.Characters(RSQB_RSQB, 0, 1);
                                         reader.StartCollect();
                                         //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
-                                        state = TokenizerState.s68_CDATA_SECTION_i;
+                                        state = TokenizerState.s68_CDATA_SECTION_p;
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto continueStateloop;
@@ -277,7 +277,7 @@ namespace HtmlParserSharp.Core
                                     TokenListener.Characters(RSQB_RSQB, 0, 2);
                                     reader.StartCollect();
                                     //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
-                                    state = TokenizerState.s68_CDATA_SECTION_i;
+                                    state = TokenizerState.s68_CDATA_SECTION_p;
                                     reader.StepBack();
                                     //reconsume = true;
                                     goto continueStateloop;

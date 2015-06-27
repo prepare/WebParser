@@ -51,9 +51,7 @@ using HtmlParserSharp.Common;
 namespace HtmlParserSharp.Core
 {
     public enum CommentLexerState
-    {
-        s45_MARKUP_DECLARATION_OPEN_i = 18, //comment, tag
-
+    {   
         s46_COMMENT_START_p = 32, //comment
 
         s47_COMMENT_START_DASH_p = 33, //comment

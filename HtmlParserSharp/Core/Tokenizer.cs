@@ -57,6 +57,7 @@ namespace HtmlParserSharp.Core
     {
 
         s01_DATA_i = 128, //comment, doctype,rawtext,tag 
+
         //TODO: 02_CharacterReferenceInData() 
         s03_RCDATA_p = 129, //rawtext 
         //TODO: R04_CharacterReferenceInRcData(); 
@@ -69,54 +70,10 @@ namespace HtmlParserSharp.Core
 
         s10_TAG_NAME_p = 11, //tag
 
-        s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p = 65, //tag
-
-        //TODO: R12_RcDataEndTagOpen();
-
-        //TODO:  R13_RcDataEndTagName();
-
-        //TODO: R14_RawTextLessThan();
-
-        //TODO: R15_RawTextEndTagOpen();
-
-        //TODO: R16_RawTextEndTagName();
-
-
-
-        //s17_SCRIPT_DATA_LESS_THAN_SIGN_p = 59,//script
-        ////TODO: R18_ScriptDataEndTagOpen();
-        ////TODO: R19_ScriptDataEndTagName
-        //s20_SCRIPT_DATA_ESCAPE_START_p = 60,//script
-        //s21_SCRIPT_DATA_ESCAPE_START_DASH_p = 61,//script
-
-        //s22_SCRIPT_DATA_ESCAPED_p = 4,//script
-
-        //s23_SCRIPT_DATA_ESCAPED_DASH_p = 62,//script
-
-        //s24_SCRIPT_DATA_ESCAPED_DASH_DASH_p = 63,//script
-
-        //s25_SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_p = 66,//script
-
-        ////TODO: R26_ScriptDataEscapedEndTagOpen();
-
-        ////TODO: R27_ScriptDataEscapedEndTagName();
-
-        //s28_SCRIPT_DATA_DOUBLE_ESCAPE_START_p = 67,//script
-
-        //s29_SCRIPT_DATA_DOUBLE_ESCAPED_p = 68,//script
-
-        //s30_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_p = 70,//script
-
-        //s31_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH_p = 71,//script
-
-        //s32_SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_p = 69,//script
-
-        //s33_SCRIPT_DATA_DOUBLE_ESCAPE_END_p = 72,//script
-
+        s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p = 65, //tag 
         s34_BEFORE_ATTRIBUTE_NAME_i = 12, //rawtext, tag
         //------------------------------------------------------------
-
-
+         
         s35_ATTRIBUTE_NAME_p = 13, //tag
 
         s36_AFTER_ATTRIBUTE_NAME_p = 14, //tag
@@ -157,12 +114,14 @@ namespace HtmlParserSharp.Core
         s51_COMMENT_END_BANG_p = 37, //comment
 
         MARKUP_DECLARATION_HYPHEN_p = 39, //comment
-        MARKUP_DECLARATION_OCTYPE_i = 40, //comment
+        
         BOGUS_COMMENT_HYPHEN_p = 64,//comment
+
+        MARKUP_DECLARATION_OCTYPE_i = 40, //comment,doctype
         //------------------
         //for doctype
 
-        s68_CDATA_SECTION_i = 56, //comment, rawtext
+        s68_CDATA_SECTION_p = 56, //rawtext
         NON_DATA_END_TAG_NAME_i = 38, //scriptdata, rawtext
 
 
@@ -1120,7 +1079,7 @@ namespace HtmlParserSharp.Core
                 case (TokenizerState)ScriptDataLexerState.s06_SCRIPT_DATA_p:
                 case TokenizerState.s07_PLAINTEXT_p:
                 case TokenizerState.s05_RAWTEXT_p:
-                case TokenizerState.s68_CDATA_SECTION_i:
+                case TokenizerState.s68_CDATA_SECTION_p:
                 case (TokenizerState)ScriptDataLexerState.s22_SCRIPT_DATA_ESCAPED_p:
                 case (TokenizerState)ScriptDataLexerState.s20_SCRIPT_DATA_ESCAPE_START_p:
                 case (TokenizerState)ScriptDataLexerState.s21_SCRIPT_DATA_ESCAPE_START_DASH_p:
