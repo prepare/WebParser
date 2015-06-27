@@ -50,6 +50,26 @@ using HtmlParserSharp.Common;
 
 namespace HtmlParserSharp.Core
 {
+    public enum CommentLexerState
+    {
+        s45_MARKUP_DECLARATION_OPEN_i = 18, //comment, tag
+
+        s46_COMMENT_START_p = 32, //comment
+
+        s47_COMMENT_START_DASH_p = 33, //comment
+
+        s48_COMMENT_p = 34, //comment
+
+        s49_COMMENT_END_DASH_p = 35, //comment
+
+        s50_COMMENT_END_p = 36, //comment
+
+        s51_COMMENT_END_BANG_p = 37, //comment
+
+        MARKUP_DECLARATION_HYPHEN_p = 39, //comment
+
+        BOGUS_COMMENT_HYPHEN_p = 64,//comment
+    }
     class SubLexerComment : SubLexer
     {
         int index = 0;
@@ -96,7 +116,10 @@ namespace HtmlParserSharp.Core
                     break;
             }
         }
-
+        void EmitComment(int provisionalHyphens)
+        {
+            throw new NotImplementedException();
+        }
         /*@Inline*/
         void AdjustDoubleHyphenAndAppendToLongStrBufCarriageReturn()
         {
@@ -136,19 +159,17 @@ namespace HtmlParserSharp.Core
             }
             // ]NOCPP]
         }
-        void StateLoop3_Comment(TokenizerState state, TokenizerState returnState)
+        void StateLoop3_Comment(CommentLexerState state, CommentLexerState returnState)
         {
 
             for (; ; )
-            {   
-                //*************
+            {
+            //*************
             continueStateloop:
-                //*************
-
+                //************* 
                 switch (state)
                 {
-
-                    case TokenizerState.s45_MARKUP_DECLARATION_OPEN_i:
+                    case (CommentLexerState)TokenizerState.s45_MARKUP_DECLARATION_OPEN_i:
                         /*markupdeclarationopenloop:*/
                         {
                             char c;
@@ -185,7 +206,7 @@ namespace HtmlParserSharp.Core
                                     case '-':
                                         ClearLongStrBufAndAppend(c);
                                         //state = Transition(state, Tokenizer.MARKUP_DECLARATION_HYPHEN, reconsume, pos);
-                                        state = TokenizerState.MARKUP_DECLARATION_HYPHEN_p;
+                                        state = CommentLexerState.MARKUP_DECLARATION_HYPHEN_p;
                                         goto breakMarkupdeclarationopenloop;
                                     // goto continueStateloop;
                                     case 'd':
@@ -193,7 +214,11 @@ namespace HtmlParserSharp.Core
                                         ClearLongStrBufAndAppend(c);
                                         index = 0;
                                         //state = Transition(state, Tokenizer.MARKUP_DECLARATION_OCTYPE, reconsume, pos);
-                                        state = TokenizerState.MARKUP_DECLARATION_OCTYPE_i;
+
+                                        //state = TokenizerState.MARKUP_DECLARATION_OCTYPE_i;
+
+                                        SetInterLexerState(TokenizerState.MARKUP_DECLARATION_OCTYPE_i);
+
                                         goto continueStateloop;
                                     case '[':
                                         if (TokenListener.IsCDataSectionAllowed)
@@ -201,7 +226,8 @@ namespace HtmlParserSharp.Core
                                             ClearLongStrBufAndAppend(c);
                                             index = 0;
                                             //state = Transition(state, Tokenizer.CDATA_START, reconsume, pos);
-                                            state = TokenizerState.CDATA_START_i;
+                                            //state = TokenizerState.CDATA_START_i;
+                                            SetInterLexerState(TokenizerState.CDATA_START_i);
                                             goto continueStateloop;
                                         }
                                         else
@@ -213,7 +239,8 @@ namespace HtmlParserSharp.Core
                                         ErrBogusComment();
                                         ClearLongStrBuf();
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
-                                        state = TokenizerState.s44_BOGUS_COMMENT_i;
+
+                                        SetInterLexerState(TokenizerState.s44_BOGUS_COMMENT_i);
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto continueStateloop;
@@ -224,10 +251,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakMarkupdeclarationopenloop:
-                            goto case TokenizerState.MARKUP_DECLARATION_HYPHEN_p;
+                            goto case CommentLexerState.MARKUP_DECLARATION_HYPHEN_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.MARKUP_DECLARATION_HYPHEN_p:
+                    case CommentLexerState.MARKUP_DECLARATION_HYPHEN_p:
                         /*markupdeclarationhyphenloop:*/
                         {
                             char c;
@@ -240,13 +267,13 @@ namespace HtmlParserSharp.Core
                                     case '-':
                                         ClearLongStrBuf();
                                         //state = Transition(state, Tokenizer.COMMENT_START, reconsume, pos);
-                                        state = TokenizerState.s46_COMMENT_START_p;
+                                        state = CommentLexerState.s46_COMMENT_START_p;
                                         goto breakMarkupdeclarationhyphenloop;
                                     // goto continueStateloop;
                                     default:
                                         ErrBogusComment();
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
-                                        state = TokenizerState.s44_BOGUS_COMMENT_i;
+                                        SetInterLexerState(TokenizerState.s44_BOGUS_COMMENT_i);
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto continueStateloop;
@@ -256,11 +283,12 @@ namespace HtmlParserSharp.Core
                             //eof
                             goto breakStateloop;
                         //------------------------------------
+
                         breakMarkupdeclarationhyphenloop:
-                            goto case TokenizerState.s46_COMMENT_START_p;
+                            goto case CommentLexerState.s46_COMMENT_START_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s46_COMMENT_START_p:
+                    case CommentLexerState.s46_COMMENT_START_p:
                         /*commentstartloop:*/
                         {
                             char c;
@@ -276,7 +304,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         AppendLongStrBuf(c);
                                         //state = Transition(state, Tokenizer.COMMENT_START_DASH, reconsume, pos);
-                                        state = TokenizerState.s47_COMMENT_START_DASH_p;
+                                        state = CommentLexerState.s47_COMMENT_START_DASH_p;
                                         goto continueStateloop;
                                     case '>':
                                         /*
@@ -289,18 +317,18 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA_i;
 
+                                        SetInterLexerState(TokenizerState.s01_DATA_i);
                                         goto continueStateloop;
                                     case '\r':
                                         AppendLongStrBufCarriageReturn();
                                         // state = Transition(state, Tokenizer.COMMENT, reconsume, pos);
-                                        state = TokenizerState.s48_COMMENT_p;
+                                        state = CommentLexerState.s48_COMMENT_p;
                                         goto breakStateloop;
                                     case '\n':
                                         AppendLongStrBufLineFeed();
                                         //state = Transition(state, Tokenizer.COMMENT, reconsume, pos);
-                                        state = TokenizerState.s48_COMMENT_p;
+                                        state = CommentLexerState.s48_COMMENT_p;
 
                                         goto breakCommentstartloop;
                                     case '\u0000':
@@ -317,7 +345,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the comment state.
                                          */
                                         //state = Transition(state, Tokenizer.COMMENT, reconsume, pos);
-                                        state = TokenizerState.s48_COMMENT_p;
+                                        state = CommentLexerState.s48_COMMENT_p;
 
                                         goto breakCommentstartloop;
                                     // goto continueStateloop;
@@ -328,10 +356,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakCommentstartloop:
-                            goto case TokenizerState.s48_COMMENT_p;
+                            goto case CommentLexerState.s48_COMMENT_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s48_COMMENT_p:
+                    case CommentLexerState.s48_COMMENT_p:
                         /*commentloop:*/
                         {
                             char c;
@@ -347,7 +375,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         AppendLongStrBuf(c);
                                         //state = Transition(state, Tokenizer.COMMENT_END_DASH, reconsume, pos);
-                                        state = TokenizerState.s49_COMMENT_END_DASH_p;
+                                        state = CommentLexerState.s49_COMMENT_END_DASH_p;
                                         goto breakCommentloop;
                                     // goto continueStateloop;
                                     case '\r':
@@ -377,10 +405,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakCommentloop:
-                            goto case TokenizerState.s49_COMMENT_END_DASH_p;
+                            goto case CommentLexerState.s49_COMMENT_END_DASH_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s49_COMMENT_END_DASH_p:
+                    case CommentLexerState.s49_COMMENT_END_DASH_p:
                         /*commentenddashloop:*/
                         {
                             char c;
@@ -396,18 +424,18 @@ namespace HtmlParserSharp.Core
                                          */
                                         AppendLongStrBuf(c);
                                         //state = Transition(state, Tokenizer.COMMENT_END, reconsume, pos);
-                                        state = TokenizerState.s50_COMMENT_END_p;
+                                        state = CommentLexerState.s50_COMMENT_END_p;
                                         goto breakCommentenddashloop;
                                     // goto continueStateloop;
                                     case '\r':
                                         AppendLongStrBufCarriageReturn();
                                         //state = Transition(state, Tokenizer.COMMENT, reconsume, pos);
-                                        state = TokenizerState.s48_COMMENT_p;
+                                        state = CommentLexerState.s48_COMMENT_p;
                                         goto breakStateloop;
                                     case '\n':
                                         AppendLongStrBufLineFeed();
                                         //state = Transition(state, Tokenizer.COMMENT, reconsume, pos);
-                                        state = TokenizerState.s48_COMMENT_p;
+                                        state = CommentLexerState.s48_COMMENT_p;
                                         goto continueStateloop;
                                     case '\u0000':
                                         c = '\uFFFD';
@@ -424,7 +452,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the comment state.
                                          */
                                         //state = Transition(state, Tokenizer.COMMENT, reconsume, pos);
-                                        state = TokenizerState.s48_COMMENT_p;
+                                        state = CommentLexerState.s48_COMMENT_p;
                                         goto continueStateloop;
                                 }
                             }
@@ -433,10 +461,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakCommentenddashloop:
-                            goto case TokenizerState.s50_COMMENT_END_p;
+                            goto case CommentLexerState.s50_COMMENT_END_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.s50_COMMENT_END_p:
+                    case CommentLexerState.s50_COMMENT_END_p:
                         /*commentendloop:*/
                         {
                             char c;
@@ -455,7 +483,8 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA_i;
+                                        //state = TokenizerState.s01_DATA_i;
+                                        SetInterLexerState(TokenizerState.s01_DATA_i);
                                         goto continueStateloop;
                                     case '-':
                                         /* U+002D HYPHEN-MINUS (-) Parse error. */
@@ -471,18 +500,18 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         AdjustDoubleHyphenAndAppendToLongStrBufCarriageReturn();
                                         //state = Transition(state, Tokenizer.COMMENT, reconsume, pos);
-                                        state = TokenizerState.s48_COMMENT_p;
+                                        state = CommentLexerState.s48_COMMENT_p;
                                         goto breakStateloop;
                                     case '\n':
                                         AdjustDoubleHyphenAndAppendToLongStrBufLineFeed();
                                         //state = Transition(state, Tokenizer.COMMENT, reconsume, pos);
-                                        state = TokenizerState.s48_COMMENT_p;
+                                        state = CommentLexerState.s48_COMMENT_p;
                                         goto continueStateloop;
                                     case '!':
                                         ErrHyphenHyphenBang();
                                         AppendLongStrBuf(c);
                                         //state = Transition(state, Tokenizer.COMMENT_END_BANG, reconsume, pos);
-                                        state = TokenizerState.s51_COMMENT_END_BANG_p;
+                                        state = CommentLexerState.s51_COMMENT_END_BANG_p;
                                         goto continueStateloop;
                                     case '\u0000':
                                         c = '\uFFFD';
@@ -499,7 +528,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the comment state.
                                          */
                                         //state = Transition(state, Tokenizer.COMMENT, reconsume, pos);
-                                        state = TokenizerState.s48_COMMENT_p;
+                                        state = CommentLexerState.s48_COMMENT_p;
                                         goto continueStateloop;
                                 }
                             }
@@ -508,7 +537,7 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         }
                     // XXX reorder point
-                    case TokenizerState.s51_COMMENT_END_BANG_p:
+                    case CommentLexerState.s51_COMMENT_END_BANG_p:
                         {
                             char c;
                             while (reader.ReadNext(out c))
@@ -525,7 +554,8 @@ namespace HtmlParserSharp.Core
                                          * Switch to the data state.
                                          */
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA_i;
+                                        //state = TokenizerState.s01_DATA_i;
+                                        SetInterLexerState(TokenizerState.s01_DATA_i);
                                         goto continueStateloop;
                                     case '-':
                                         /*
@@ -538,7 +568,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the comment end dash state.
                                          */
                                         //state = Transition(state, Tokenizer.COMMENT_END_DASH, reconsume, pos);
-                                        state = TokenizerState.s49_COMMENT_END_DASH_p;
+                                        state = CommentLexerState.s49_COMMENT_END_DASH_p;
                                         goto continueStateloop;
                                     case '\r':
                                         AppendLongStrBufCarriageReturn();
@@ -563,7 +593,7 @@ namespace HtmlParserSharp.Core
                                          * Switch to the comment state.
                                          */
                                         //state = Transition(state, Tokenizer.COMMENT, reconsume, pos);
-                                        state = TokenizerState.s48_COMMENT_p;
+                                        state = CommentLexerState.s48_COMMENT_p;
                                         goto continueStateloop;
                                 }
                             }
@@ -572,7 +602,7 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         }
                     // XXX reorder point
-                    case TokenizerState.s47_COMMENT_START_DASH_p:
+                    case CommentLexerState.s47_COMMENT_START_DASH_p:
                         {
                             char c;
                             if (!reader.ReadNext(out c))
@@ -592,7 +622,7 @@ namespace HtmlParserSharp.Core
                                      */
                                     AppendLongStrBuf(c);
                                     //state = Transition(state, Tokenizer.COMMENT_END, reconsume, pos);
-                                    state = TokenizerState.s50_COMMENT_END_p;
+                                    state = CommentLexerState.s50_COMMENT_END_p;
                                     goto continueStateloop;
                                 case '>':
                                     ErrPrematureEndOfComment();
@@ -602,17 +632,18 @@ namespace HtmlParserSharp.Core
                                      * Switch to the data state.
                                      */
                                     //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                    state = TokenizerState.s01_DATA_i;
+
+                                    SetInterLexerState(TokenizerState.s01_DATA_i);
                                     goto continueStateloop;
                                 case '\r':
                                     AppendLongStrBufCarriageReturn();
                                     //state = Transition(state, Tokenizer.COMMENT, reconsume, pos);
-                                    state = TokenizerState.s48_COMMENT_p;
+                                    state = CommentLexerState.s48_COMMENT_p;
                                     goto breakStateloop;
                                 case '\n':
                                     AppendLongStrBufLineFeed();
                                     //state = Transition(state, Tokenizer.COMMENT, reconsume, pos);
-                                    state = TokenizerState.s48_COMMENT_p;
+                                    state = CommentLexerState.s48_COMMENT_p;
                                     goto continueStateloop;
                                 case '\u0000':
                                     c = '\uFFFD';
@@ -629,143 +660,13 @@ namespace HtmlParserSharp.Core
                                      * Switch to the comment state.
                                      */
                                     //state = Transition(state, Tokenizer.COMMENT, reconsume, pos);
-                                    state = TokenizerState.s48_COMMENT_p;
+                                    state = CommentLexerState.s48_COMMENT_p;
                                     goto continueStateloop;
                             }
                         }
-                    // XXX reorder point
-                    case TokenizerState.CDATA_START_i:
-                        {
-                            char c;
-                            while (reader.ReadNext(out c))
-                            {
-
-                                if (index < 6)
-                                { // CDATA_LSQB.Length
-                                    if (c == CDATA_LSQB[index])
-                                    {
-                                        AppendLongStrBuf(c);
-                                    }
-                                    else
-                                    {
-                                        ErrBogusComment();
-                                        //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
-                                        state = TokenizerState.s44_BOGUS_COMMENT_i;
-                                        //reconsume = true;
-                                        reader.StepBack();
-                                        goto continueStateloop;
-                                    }
-                                    index++;
-                                    continue;
-                                }
-                                else
-                                {
-                                    reader.StartCollect(); // start coalescing
-                                    //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
-                                    state = TokenizerState.s68_CDATA_SECTION_i;
-                                    //reconsume = true;
-                                    reader.StepBack();
-                                    goto case TokenizerState.s68_CDATA_SECTION_i;
-                                    //break; // FALL THROUGH goto continueStateloop;
-                                }
-                            }
-                            //-------------------------------
-                            //eof
-                            goto breakStateloop;
-                            //------------------------------------
-
-                        }
-                    // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
-                    case TokenizerState.s68_CDATA_SECTION_i:
-                        /*cdatasectionloop:*/
-                        {
-                            char c;
-                            while (reader.ReadNext(out c))
-                            {
-                                switch (c)
-                                {
-                                    case ']':
-                                        FlushChars();
-                                        //state = Transition(state, Tokenizer.CDATA_RSQB, reconsume, pos);
-                                        state = TokenizerState.CDATA_RSQB_i;
-                                        goto breakCdatasectionloop; // FALL THROUGH
-                                    case '\u0000':
-                                        EmitReplacementCharacter();
-                                        continue;
-                                    case '\r':
-                                        EmitCarriageReturn();
-                                        goto breakStateloop;
-                                    case '\n':
-                                    default:
-                                        continue;
-                                }
-                            }
-                            goto breakStateloop;
-                        //------------------------------------
-                        breakCdatasectionloop:
-                            goto case TokenizerState.CDATA_RSQB_i;
-                        }
-                    // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
-                    case TokenizerState.CDATA_RSQB_i:
-                        /*cdatarsqb:*/
-                        {
-                            char c;
-                            while (reader.ReadNext(out c))
-                            {
-                                switch (c)
-                                {
-                                    case ']':
-                                        //state = Transition(state, Tokenizer.CDATA_RSQB_RSQB, reconsume, pos);
-                                        state = TokenizerState.CDATA_RSQB_RSQB_i;
-                                        goto breakCdatarsqb;
-                                    default:
-                                        TokenListener.Characters(RSQB_RSQB, 0, 1);
-                                        reader.StartCollect();
-                                        //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
-                                        state = TokenizerState.s68_CDATA_SECTION_i;
-                                        //reconsume = true;
-                                        reader.StepBack();
-                                        goto continueStateloop;
-                                }
-                            }
-                            //-------------------------------
-                            //eof
-                            goto breakStateloop;
-                        //------------------------------------ 
-                        breakCdatarsqb:
-                            goto case TokenizerState.CDATA_RSQB_RSQB_i;
-                        }
-                    // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
-                    case TokenizerState.CDATA_RSQB_RSQB_i:
-                        {
-                            char c;
-                            if (!reader.ReadNext(out c))
-                            {
-                                goto breakStateloop;
-                            }
-                            switch (c)
-                            {
-                                case '>':
-                                    //cstart = pos + 1;
-                                    reader.SkipOneAndStartCollect();
-                                    //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                    state = TokenizerState.s01_DATA_i;
-                                    goto continueStateloop;
-                                default:
-                                    TokenListener.Characters(RSQB_RSQB, 0, 2);
-                                    reader.StartCollect();
-                                    //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
-                                    state = TokenizerState.s68_CDATA_SECTION_i;
-                                    reader.StepBack();
-                                    //reconsume = true;
-                                    goto continueStateloop;
-
-                            }
-                        }
-
                     // XXX reorder point
                     // BEGIN HOTSPOT WORKAROUND
-                    case TokenizerState.s44_BOGUS_COMMENT_i:
+                    case (CommentLexerState)TokenizerState.s44_BOGUS_COMMENT_i:
                         /*boguscommentloop:*/
                         {
                             char c;
@@ -795,12 +696,13 @@ namespace HtmlParserSharp.Core
                                     case '>':
                                         EmitComment(0);
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA_i;
+
+                                        SetInterLexerState(TokenizerState.s01_DATA_i);
                                         goto continueStateloop;
                                     case '-':
                                         AppendLongStrBuf(c);
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT_HYPHEN, reconsume, pos);
-                                        state = TokenizerState.BOGUS_COMMENT_HYPHEN_p;
+                                        state = CommentLexerState.BOGUS_COMMENT_HYPHEN_p;
                                         goto breakBoguscommentloop;
                                     case '\r':
                                         AppendLongStrBufCarriageReturn();
@@ -822,10 +724,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakBoguscommentloop:
-                            goto case TokenizerState.BOGUS_COMMENT_HYPHEN_p;
+                            goto case CommentLexerState.BOGUS_COMMENT_HYPHEN_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case TokenizerState.BOGUS_COMMENT_HYPHEN_p:
+                    case CommentLexerState.BOGUS_COMMENT_HYPHEN_p:
                         /*boguscommenthyphenloop:*/
                         {
                             char c;
@@ -840,7 +742,8 @@ namespace HtmlParserSharp.Core
                                         // ]NOCPP]
                                         EmitComment(0);
                                         //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                        state = TokenizerState.s01_DATA_i;
+                                        //state = TokenizerState.s01_DATA_i;
+                                        SetInterLexerState(TokenizerState.s01_DATA_i);
                                         goto continueStateloop;
                                     case '-':
                                         AppendSecondHyphenToBogusComment();
@@ -848,12 +751,14 @@ namespace HtmlParserSharp.Core
                                     case '\r':
                                         AppendLongStrBufCarriageReturn();
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
-                                        state = TokenizerState.s44_BOGUS_COMMENT_i;
+                                        //state = TokenizerState.s44_BOGUS_COMMENT_i;
+                                        SetInterLexerState(TokenizerState.s44_BOGUS_COMMENT_i);
                                         goto breakStateloop;
                                     case '\n':
                                         AppendLongStrBufLineFeed();
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
-                                        state = TokenizerState.s44_BOGUS_COMMENT_i;
+                                        //state = TokenizerState.s44_BOGUS_COMMENT_i;
+                                        SetInterLexerState(TokenizerState.s44_BOGUS_COMMENT_i);
                                         goto continueStateloop;
                                     case '\u0000':
                                         c = '\uFFFD';
@@ -862,7 +767,8 @@ namespace HtmlParserSharp.Core
                                     default:
                                         AppendLongStrBuf(c);
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
-                                        state = TokenizerState.s44_BOGUS_COMMENT_i;
+                                        //state = TokenizerState.s44_BOGUS_COMMENT_i;
+                                        SetInterLexerState(TokenizerState.s44_BOGUS_COMMENT_i);
                                         goto continueStateloop;
                                 }
                             //------------------------------------
@@ -884,10 +790,14 @@ namespace HtmlParserSharp.Core
              * if (prevCR && pos != endPos) { // why is this needed? pos--; col--; }
              */
             // Save locals
-            stateSave = state;
-            returnStateSave = returnState;
+            //stateSave = state;
+            //returnStateSave = returnState;
+            SaveStates(state, returnState);
         }
+        void SaveStates(CommentLexerState saveState, CommentLexerState returnStateSave)
+        {
 
+        }
     }
 
 }
