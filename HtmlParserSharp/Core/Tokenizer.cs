@@ -99,28 +99,11 @@ namespace HtmlParserSharp.Core
         //------------------
         s44_BOGUS_COMMENT_i = 17,//doctype,rawtext,tag
 
-        s45_MARKUP_DECLARATION_OPEN_i = 18, //comment, tag
-
-        s46_COMMENT_START_p = 32, //comment
-
-        s47_COMMENT_START_DASH_p = 33, //comment
-
-        s48_COMMENT_p = 34, //comment
-
-        s49_COMMENT_END_DASH_p = 35, //comment
-
-        s50_COMMENT_END_p = 36, //comment
-
-        s51_COMMENT_END_BANG_p = 37, //comment
-
-        MARKUP_DECLARATION_HYPHEN_p = 39, //comment
-        
-        BOGUS_COMMENT_HYPHEN_p = 64,//comment
+        s45_MARKUP_DECLARATION_OPEN_i = 18, //comment, tag 
 
         MARKUP_DECLARATION_OCTYPE_i = 40, //comment,doctype
         //------------------
-        //for doctype
-
+        //for doctype 
         s68_CDATA_SECTION_p = 56, //rawtext
         NON_DATA_END_TAG_NAME_i = 38, //scriptdata, rawtext
 
@@ -1419,7 +1402,8 @@ namespace HtmlParserSharp.Core
                     case TokenizerState.s44_BOGUS_COMMENT_i:
                         EmitComment(0, 0);
                         goto breakEofloop;
-                    case TokenizerState.BOGUS_COMMENT_HYPHEN_p:
+
+                    case (TokenizerState)CommentLexerState.BOGUS_COMMENT_HYPHEN_p:
                         // [NOCPP[
                         MaybeAppendSpaceToBogusComment();
                         // ]NOCPP]
@@ -1430,7 +1414,7 @@ namespace HtmlParserSharp.Core
                         ClearLongStrBuf();
                         EmitComment(0, 0);
                         goto breakEofloop;
-                    case TokenizerState.MARKUP_DECLARATION_HYPHEN_p:
+                    case (TokenizerState)CommentLexerState.MARKUP_DECLARATION_HYPHEN_p:
                         ErrBogusComment();
                         EmitComment(0, 0);
                         goto breakEofloop;
@@ -1468,8 +1452,8 @@ namespace HtmlParserSharp.Core
                             goto breakEofloop;
                         }
                         goto breakEofloop;
-                    case TokenizerState.s46_COMMENT_START_p:
-                    case TokenizerState.s48_COMMENT_p:
+                    case (TokenizerState)CommentLexerState.s46_COMMENT_START_p:
+                    case (TokenizerState)CommentLexerState.s48_COMMENT_p:
                         /*
                          * EOF Parse error.
                          */
@@ -1480,7 +1464,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s50_COMMENT_END_p:
+                    case (TokenizerState)CommentLexerState.s50_COMMENT_END_p:
                         ErrEofInComment();
                         /* Emit the comment token. */
                         EmitComment(2, 0);
@@ -1488,8 +1472,8 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s49_COMMENT_END_DASH_p:
-                    case TokenizerState.s47_COMMENT_START_DASH_p:
+                    case (TokenizerState)CommentLexerState.s49_COMMENT_END_DASH_p:
+                    case (TokenizerState)CommentLexerState.s47_COMMENT_START_DASH_p:
                         ErrEofInComment();
                         /* Emit the comment token. */
                         EmitComment(1, 0);
@@ -1497,7 +1481,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s51_COMMENT_END_BANG_p:
+                    case (TokenizerState)CommentLexerState.s51_COMMENT_END_BANG_p:
                         ErrEofInComment();
                         /* Emit the comment token. */
                         EmitComment(3, 0);
