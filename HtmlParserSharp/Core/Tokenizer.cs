@@ -50,6 +50,45 @@ using HtmlParserSharp.Common;
 
 namespace HtmlParserSharp.Core
 {
+    enum CharMode : byte
+    {
+        Others,
+        Numeric,
+        LowerAsciiLetter,
+        UpperAsciiLetter,
+        NewLine,
+        WhiteSpace,
+        NullChar,
+
+
+        /// <summary>
+        /// &gt;
+        /// </summary>
+        Gt,
+        /// <summary>
+        /// &lt;
+        /// </summary>
+        Lt,
+        /// <summary>
+        /// !
+        /// </summary>
+        Bang,
+        /// <summary>
+        /// ?
+        /// </summary>
+        Quest,
+        /// <summary>
+        /// /
+        /// </summary>
+        Slash,
+        /// <summary>
+        /// =
+        /// </summary>
+        Assign,
+
+
+        Eof
+    }
     //with html5 state 
     //review missing state
 

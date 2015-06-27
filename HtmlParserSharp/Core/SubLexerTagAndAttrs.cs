@@ -374,77 +374,56 @@ namespace HtmlParserSharp.Core
             }
             return new String(buf);
         }
-        void StateLoop3_Tag(SubLexerTagState state, SubLexerTagState returnState)
+        public TokenizerState OutputState
         {
+            get { return this.stateSave; }
+        }
+        public void StateLoop3_Tag(SubLexerTagState state, SubLexerTagState returnState)
+        {
+
+
+            char c2;
+            while (reader.ReadNext(out c2))
+            {
+                //read one char
+                //find mode
+                switch (state)
+                {
+                    case SubLexerTagState.s08_TAG_OPEN_p:
+                        {
+                            switch (c2)
+                            {
+                                case '!':
+                                    {
+                                    } break;
+                                case '?':
+                                    {
+                                    } break;
+                                case '/':
+                                    {
+                                    } break;
+                                default:
+                                    {
+
+
+                                    } break;
+                            }
+                        } break;
+                }
+            }
+
+
+
+
 
             for (; ; )
             {
             //*************
             continueStateloop:
-                //*************
-
+                //************* 
                 switch (state)
                 {
-                    case (SubLexerTagState)TokenizerState.s01_DATA_i:
-                        /*dataloop:*/
-                        {
-                            char c;
-                            while (reader.ReadNext(out c))
-                            {
-                                switch (c)
-                                {
-                                    case '&':
-                                        /*
-                                         * U+0026 AMPERSAND (&) Switch to the character
-                                         * reference in data state.
-                                         */
-                                        FlushChars();
-                                        ClearStrBufAndAppend(c);
-                                        SetAdditionalAndRememberAmpersandLocation('\u0000');
-                                        returnState = state;
-                                        //state = Transition(state, Tokenizer.CONSUME_CHARACTER_REFERENCE, reconsume, pos);
-                                        //state = TokenizerState.CONSUME_CHARACTER_REFERENCE_i;
-                                        SetInterLexerState(TokenizerState.CONSUME_CHARACTER_REFERENCE_i);
-                                        goto continueStateloop;
-                                    case '<':
-                                        /*
-                                         * U+003C LESS-THAN SIGN (<) Switch to the tag
-                                         * open state.
-                                         */
-                                        FlushChars();
 
-                                        //state = Transition(state, Tokenizer.TAG_OPEN, reconsume, pos);
-                                        state = SubLexerTagState.s08_TAG_OPEN_p;
-                                        goto breakDataloop; // FALL THROUGH continue
-                                    // stateloop;
-                                    case '\u0000':
-                                        EmitReplacementCharacter();
-                                        continue;
-                                    case '\r':
-                                        EmitCarriageReturn();
-                                        goto breakStateloop;
-                                    case '\n':
-                                    default:
-                                        /*
-                                         * Anything else Emit the input character as a
-                                         * character token.
-                                         * 
-                                         * Stay in the data state.
-                                         */
-                                        continue;
-                                }
-                            }
-
-
-                            //------------------------------------
-                            //eof
-                            goto breakStateloop;
-                        //------------
-                        breakDataloop:
-                            goto case SubLexerTagState.s08_TAG_OPEN_p;
-                            //------------      
-                        }
-                    // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
                     case SubLexerTagState.s08_TAG_OPEN_p:
                         /*tagopenloop:*/
                         {
@@ -1175,8 +1154,8 @@ namespace HtmlParserSharp.Core
                         }
                     // FALLTHRU DON'T REORDER
                     case (SubLexerTagState)TokenizerState.s43_SELF_CLOSING_START_TAG_i:
-                        {   
-                            
+                        {
+
                             char c;
                             if (!reader.ReadNext(out c))
                             {
@@ -2035,7 +2014,7 @@ namespace HtmlParserSharp.Core
                 }
             } // stateloop
 
-        breakStateloop:
+         breakStateloop:
             //FlushChars(buf, pos);
             FlushChars();
             /*
