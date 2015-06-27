@@ -76,10 +76,7 @@ namespace HtmlParserSharp.Core
         NON_DATA_END_TAG_NAME_i = 38, //scriptdata, rawtext 
 
         CONSUME_NCR_i = 47, //ncr->numeric character reference, used by ncr,text 
-        HEX_NCR_LOOP_p = 49,//ncr -> numeric character reference 
-        DECIMAL_NRC_LOOP_p = 50, //ncr 
-        HANDLE_NCR_VALUE_p = 51,//ncr 
-        HANDLE_NCR_VALUE_RECONSUME_p = 52,//ncr  
+
 
         CDATA_START_i = 55,//comment,rawtext
 
@@ -1795,8 +1792,8 @@ namespace HtmlParserSharp.Core
                              */
                         }
                     case TokenizerState.CONSUME_NCR_i:
-                    case TokenizerState.DECIMAL_NRC_LOOP_p:
-                    case TokenizerState.HEX_NCR_LOOP_p:
+                    case (TokenizerState)NCRState.DECIMAL_NRC_LOOP_p:
+                    case (TokenizerState)NCRState.HEX_NCR_LOOP_p:
                         /*
                          * If no characters match the range, then don't consume any
                          * characters (and unconsume the U+0023 NUMBER SIGN

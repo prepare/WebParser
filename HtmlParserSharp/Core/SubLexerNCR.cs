@@ -45,6 +45,13 @@ using HtmlParserSharp.Common;
 
 namespace HtmlParserSharp.Core
 {
+    public enum NCRState
+    {
+        HEX_NCR_LOOP_p = 49,//ncr -> numeric character reference 
+        DECIMAL_NRC_LOOP_p = 50, //ncr 
+        HANDLE_NCR_VALUE_p = 51,//ncr 
+        HANDLE_NCR_VALUE_RECONSUME_p = 52,//ncr  
+    }
     class SubLexerNCR : SubLexer
     {
         int value = 0;
@@ -71,7 +78,11 @@ namespace HtmlParserSharp.Core
         * The policy for vertical tab and form feed.
         */
         XmlViolationPolicy contentSpacePolicy = XmlViolationPolicy.AlterInfoset;
-        void EmitOrAppendTwo(char[] val, TokenizerState returnState)
+        void EmitOrAppendStrBuf(NCRState returnState)
+        {
+            throw new NotSupportedException();
+        }
+        void EmitOrAppendTwo(char[] val, NCRState returnState)
         {
             //TODO: review here=>   use != or == ?
             //if ((returnState & DATA_AND_RCDATA_MASK) != 0)
@@ -86,7 +97,7 @@ namespace HtmlParserSharp.Core
             }
         }
 
-        void EmitOrAppendOne(char[] val, TokenizerState returnState)
+        void EmitOrAppendOne(char[] val, NCRState returnState)
         {
             if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
             {
@@ -98,7 +109,7 @@ namespace HtmlParserSharp.Core
             }
         }
 
-        void HandleNcrValue(TokenizerState returnState)
+        void HandleNcrValue(NCRState returnState)
         {
             /*
              * If one or more characters match the range, then take them all and
@@ -204,8 +215,11 @@ namespace HtmlParserSharp.Core
             }
         }
 
+        void SaveStates(NCRState state, NCRState returnState)
+        {
 
-        void StateLoop3_NCR(TokenizerState state, TokenizerState returnState)
+        }
+        void StateLoop3_NCR(NCRState state, NCRState returnState)
         {
 
             /*
@@ -296,7 +310,7 @@ namespace HtmlParserSharp.Core
                 switch (state)
                 {
                     // XXX reorder point
-                    case TokenizerState.CONSUME_NCR_i:
+                    case (NCRState)TokenizerState.CONSUME_NCR_i:
                         {
                             char c;
                             if (!reader.ReadNext(out c))
@@ -334,8 +348,7 @@ namespace HtmlParserSharp.Core
                                      */
                                     AppendStrBuf(c);
                                     //state = Transition(state, Tokenizer.HEX_NCR_LOOP, reconsume, pos);
-                                    state = TokenizerState.HEX_NCR_LOOP_p;
-
+                                    state = NCRState.HEX_NCR_LOOP_p;
                                     goto continueStateloop;
                                 default:
                                     /*
@@ -347,7 +360,7 @@ namespace HtmlParserSharp.Core
                                      * interpret it as a decimal number.
                                      */
                                     //state = Transition(state, Tokenizer.DECIMAL_NRC_LOOP, reconsume, pos);
-                                    state = TokenizerState.DECIMAL_NRC_LOOP_p;
+                                    state = NCRState.DECIMAL_NRC_LOOP_p;
                                     //reconsume = true;
                                     reader.StepBack();
                                     // FALL THROUGH goto continueStateloop;
@@ -355,9 +368,9 @@ namespace HtmlParserSharp.Core
                             }
                             //------------------------------------
                             // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
-                            goto case TokenizerState.DECIMAL_NRC_LOOP_p;
+                            goto case NCRState.DECIMAL_NRC_LOOP_p;
                         }
-                    case TokenizerState.DECIMAL_NRC_LOOP_p:
+                    case NCRState.DECIMAL_NRC_LOOP_p:
                         /*decimalloop:*/
                         {
                             char c;
@@ -393,7 +406,7 @@ namespace HtmlParserSharp.Core
                                             reader.SkipOneAndStartCollect();
                                         }
                                         //state = Transition(state, Tokenizer.HANDLE_NCR_VALUE, reconsume, pos);
-                                        state = TokenizerState.HANDLE_NCR_VALUE_p;
+                                        state = NCRState.HANDLE_NCR_VALUE_p;
 
                                         // FALL THROUGH goto continueStateloop;
                                         goto breakDecimalloop;
@@ -451,7 +464,7 @@ namespace HtmlParserSharp.Core
                                             reader.StartCollect();
                                         }
                                         //state = Transition(state, Tokenizer.HANDLE_NCR_VALUE, reconsume, pos);
-                                        state = TokenizerState.HANDLE_NCR_VALUE_p;
+                                        state = NCRState.HANDLE_NCR_VALUE_p;
                                         //reconsume = true;
                                         reader.StepBack();
                                         // FALL THROUGH goto continueStateloop;
@@ -465,21 +478,20 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //-------------------------------------
                         breakDecimalloop:
-                            goto case TokenizerState.HANDLE_NCR_VALUE_p;
+                            goto case NCRState.HANDLE_NCR_VALUE_p;
                         }
                     // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
-                    case TokenizerState.HANDLE_NCR_VALUE_p:
+                    case NCRState.HANDLE_NCR_VALUE_p:
                         {
                             // WARNING previous state sets reconsume
                             // XXX inline this case TokenizerState.if the method size can take it
                             HandleNcrValue(returnState);
                             //state = Transition(state, returnState, reconsume, pos);
                             state = returnState;
-
                             goto continueStateloop;
                         }
                     // XXX reorder point
-                    case TokenizerState.HEX_NCR_LOOP_p:
+                    case NCRState.HEX_NCR_LOOP_p:
                         {
                             char c;
                             while (reader.ReadNext(out c))
@@ -528,7 +540,7 @@ namespace HtmlParserSharp.Core
                                             reader.SkipOneAndStartCollect();
                                         }
                                         //state = Transition(state, Tokenizer.HANDLE_NCR_VALUE, reconsume, pos);
-                                        state = TokenizerState.HANDLE_NCR_VALUE_p;
+                                        state = NCRState.HANDLE_NCR_VALUE_p;
                                         goto continueStateloop;
                                     }
                                     else
@@ -583,7 +595,8 @@ namespace HtmlParserSharp.Core
                                             reader.StartCollect();
                                         }
                                         //state = Transition(state, Tokenizer.HANDLE_NCR_VALUE, reconsume, pos);
-                                        state = TokenizerState.HANDLE_NCR_VALUE_p;
+                                        state = NCRState.HANDLE_NCR_VALUE_p;
+
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto continueStateloop;
@@ -606,8 +619,9 @@ namespace HtmlParserSharp.Core
              * if (prevCR && pos != endPos) { // why is this needed? pos--; col--; }
              */
             // Save locals
-            stateSave = state;
-            returnStateSave = returnState;
+            //stateSave = state;
+            //returnStateSave = returnState;
+            SaveStates(state, returnState);
         }
     }
 }
