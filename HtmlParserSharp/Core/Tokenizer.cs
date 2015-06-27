@@ -62,7 +62,7 @@ namespace HtmlParserSharp.Core
         //TODO: R04_CharacterReferenceInRcData(); 
         s05_RAWTEXT_p = 3, //rawtext
 
-        s06_SCRIPT_DATA_p = 2,//script data
+      
 
         s07_PLAINTEXT_p = 8,//rawtext
 
@@ -86,35 +86,35 @@ namespace HtmlParserSharp.Core
 
 
 
-        s17_SCRIPT_DATA_LESS_THAN_SIGN_p = 59,//script
-        //TODO: R18_ScriptDataEndTagOpen();
-        //TODO: R19_ScriptDataEndTagName
-        s20_SCRIPT_DATA_ESCAPE_START_p = 60,//script
-        s21_SCRIPT_DATA_ESCAPE_START_DASH_p = 61,//script
+        //s17_SCRIPT_DATA_LESS_THAN_SIGN_p = 59,//script
+        ////TODO: R18_ScriptDataEndTagOpen();
+        ////TODO: R19_ScriptDataEndTagName
+        //s20_SCRIPT_DATA_ESCAPE_START_p = 60,//script
+        //s21_SCRIPT_DATA_ESCAPE_START_DASH_p = 61,//script
 
-        s22_SCRIPT_DATA_ESCAPED_p = 4,//script
+        //s22_SCRIPT_DATA_ESCAPED_p = 4,//script
 
-        s23_SCRIPT_DATA_ESCAPED_DASH_p = 62,//script
+        //s23_SCRIPT_DATA_ESCAPED_DASH_p = 62,//script
 
-        s24_SCRIPT_DATA_ESCAPED_DASH_DASH_p = 63,//script
+        //s24_SCRIPT_DATA_ESCAPED_DASH_DASH_p = 63,//script
 
-        s25_SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_p = 66,//script
+        //s25_SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_p = 66,//script
 
-        //TODO: R26_ScriptDataEscapedEndTagOpen();
+        ////TODO: R26_ScriptDataEscapedEndTagOpen();
 
-        //TODO: R27_ScriptDataEscapedEndTagName();
+        ////TODO: R27_ScriptDataEscapedEndTagName();
 
-        s28_SCRIPT_DATA_DOUBLE_ESCAPE_START_p = 67,//script
+        //s28_SCRIPT_DATA_DOUBLE_ESCAPE_START_p = 67,//script
 
-        s29_SCRIPT_DATA_DOUBLE_ESCAPED_p = 68,//script
+        //s29_SCRIPT_DATA_DOUBLE_ESCAPED_p = 68,//script
 
-        s30_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_p = 70,//script
+        //s30_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_p = 70,//script
 
-        s31_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH_p = 71,//script
+        //s31_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH_p = 71,//script
 
-        s32_SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_p = 69,//script
+        //s32_SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_p = 69,//script
 
-        s33_SCRIPT_DATA_DOUBLE_ESCAPE_END_p = 72,//script
+        //s33_SCRIPT_DATA_DOUBLE_ESCAPE_END_p = 72,//script
 
         s34_BEFORE_ATTRIBUTE_NAME_i = 12, //rawtext, tag
         //------------------------------------------------------------
@@ -1126,23 +1126,23 @@ namespace HtmlParserSharp.Core
              */
             switch (state)
             {
-                case TokenizerState.s01_DATA_i:
+                case  TokenizerState.s01_DATA_i:
                 case TokenizerState.s03_RCDATA_p:
-                case TokenizerState.s06_SCRIPT_DATA_p:
+                case (TokenizerState)ScriptDataLexerState.s06_SCRIPT_DATA_p:
                 case TokenizerState.s07_PLAINTEXT_p:
                 case TokenizerState.s05_RAWTEXT_p:
                 case TokenizerState.s68_CDATA_SECTION_i:
-                case TokenizerState.s22_SCRIPT_DATA_ESCAPED_p:
-                case TokenizerState.s20_SCRIPT_DATA_ESCAPE_START_p:
-                case TokenizerState.s21_SCRIPT_DATA_ESCAPE_START_DASH_p:
-                case TokenizerState.s23_SCRIPT_DATA_ESCAPED_DASH_p:
-                case TokenizerState.s24_SCRIPT_DATA_ESCAPED_DASH_DASH_p:
-                case TokenizerState.s28_SCRIPT_DATA_DOUBLE_ESCAPE_START_p:
-                case TokenizerState.s29_SCRIPT_DATA_DOUBLE_ESCAPED_p:
-                case TokenizerState.s32_SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_p:
-                case TokenizerState.s30_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_p:
-                case TokenizerState.s31_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH_p:
-                case TokenizerState.s33_SCRIPT_DATA_DOUBLE_ESCAPE_END_p:
+                case (TokenizerState)ScriptDataLexerState.s22_SCRIPT_DATA_ESCAPED_p:
+                case (TokenizerState)ScriptDataLexerState.s20_SCRIPT_DATA_ESCAPE_START_p:
+                case (TokenizerState)ScriptDataLexerState.s21_SCRIPT_DATA_ESCAPE_START_DASH_p:
+                case (TokenizerState)ScriptDataLexerState.s23_SCRIPT_DATA_ESCAPED_DASH_p:
+                case (TokenizerState)ScriptDataLexerState.s24_SCRIPT_DATA_ESCAPED_DASH_DASH_p:
+                case (TokenizerState)ScriptDataLexerState.s28_SCRIPT_DATA_DOUBLE_ESCAPE_START_p:
+                case (TokenizerState)ScriptDataLexerState.s29_SCRIPT_DATA_DOUBLE_ESCAPED_p:
+                case (TokenizerState)ScriptDataLexerState.s32_SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_p:
+                case (TokenizerState)ScriptDataLexerState.s30_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_p:
+                case (TokenizerState)ScriptDataLexerState.s31_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH_p:
+                case (TokenizerState)ScriptDataLexerState.s33_SCRIPT_DATA_DOUBLE_ESCAPE_END_p:
                     cstart = start;
                     break;
                 default:
@@ -1356,8 +1356,8 @@ namespace HtmlParserSharp.Core
             {
                 switch (state)
                 {
-                    case TokenizerState.s17_SCRIPT_DATA_LESS_THAN_SIGN_p:
-                    case TokenizerState.s25_SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_p:
+                    case (TokenizerState)ScriptDataLexerState.s17_SCRIPT_DATA_LESS_THAN_SIGN_p:
+                    case (TokenizerState)ScriptDataLexerState.s25_SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_p:
                         /*
                          * Otherwise, emit a U+003C LESS-THAN SIGN character token
                          */
