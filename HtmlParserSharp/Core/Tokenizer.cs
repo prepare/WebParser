@@ -65,7 +65,7 @@ namespace HtmlParserSharp.Core
         CONSUME_CHARACTER_REFERENCE_i = 46, //tag,rawtext
 
         //------------------
-        s44_BOGUS_COMMENT_i = 17,//doctype,rawtext,tag
+        s44_BOGUS_COMMENT_i = 17,//doctype,rawtext,tag,comment
 
         s45_MARKUP_DECLARATION_OPEN_i = 18, //comment, tag 
 
