@@ -193,7 +193,7 @@ namespace HtmlParserSharp.Core
                                         ClearLongStrBufAndAppend(c);
                                         index = 0;
                                         //state = Transition(state, Tokenizer.MARKUP_DECLARATION_OCTYPE, reconsume, pos);
-                                        state = TokenizerState.MARKUP_DECLARATION_OCTYPE_p;
+                                        state = TokenizerState.MARKUP_DECLARATION_OCTYPE_i;
                                         goto continueStateloop;
                                     case '[':
                                         if (TokenListener.IsCDataSectionAllowed)

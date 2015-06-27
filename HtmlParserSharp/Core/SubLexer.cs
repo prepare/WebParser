@@ -523,6 +523,10 @@ namespace HtmlParserSharp.Core
             throw spe;*/
             throw new Exception(message); // TODO
         }
+        protected void SetInterLexerState(TokenizerState interLexerState)
+        {
 
+        }
+         
     }
 }

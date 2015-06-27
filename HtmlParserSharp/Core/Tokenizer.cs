@@ -160,44 +160,12 @@ namespace HtmlParserSharp.Core
         s51_COMMENT_END_BANG_p = 37, //comment
 
         MARKUP_DECLARATION_HYPHEN_p = 39, //comment
-        MARKUP_DECLARATION_OCTYPE_p = 40, //comment
+        MARKUP_DECLARATION_OCTYPE_i = 40, //comment
         BOGUS_COMMENT_HYPHEN_p = 64,//comment
         //------------------
         //for doctype
 
-        s52_DOCTYPE_p = 19, //doctype
 
-        s53_BEFORE_DOCTYPE_NAME_p = 20,//doctype
-
-        s54_DOCTYPE_NAME_p = 21,//doctype
-
-        s55_AFTER_DOCTYPE_NAME_p = 22,//doctype
-
-        s56_AFTER_DOCTYPE_PUBLIC_KEYWORD_p = 43,//doctype
-
-        s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER_p = 23,//doctype
-
-        s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_p = 24,//doctype
-
-        s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_p = 25,//doctype
-
-        s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER_p = 26,//doctype
-
-        s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS_p = 44,//doctype
-
-        s62_AFTER_DOCTYPE_SYSTEM_KEYWORD_p = 45,//doctype
-
-        s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER_p = 27,//doctype
-
-        s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_p = 28,//doctype
-
-        s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_p = 29,//doctype
-
-        s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER_p = 30,//doctype
-
-        s67_BOGUS_DOCTYPE_p = 31,//doctype
-        DOCTYPE_UBLIC_p = 41,//doctype
-        DOCTYPE_YSTEM_p = 42,//doctype
 
         s68_CDATA_SECTION_i = 56, //comment, rawtext
         NON_DATA_END_TAG_NAME_i = 38, //scriptdata, rawtext
@@ -223,6 +191,9 @@ namespace HtmlParserSharp.Core
         PROCESSING_INSTRUCTION_i = 73, //doctype, rawtext
         PROCESSING_INSTRUCTION_QUESTION_MARK_i = 74//doctype, rawtext
     }
+
+
+
 
     /// <summary>
     /// An implementation of
@@ -1515,7 +1486,7 @@ namespace HtmlParserSharp.Core
                         ErrBogusComment();
                         EmitComment(0, 0);
                         goto breakEofloop;
-                    case TokenizerState.MARKUP_DECLARATION_OCTYPE_p:
+                    case TokenizerState.MARKUP_DECLARATION_OCTYPE_i:
                         if (index < 6)
                         {
                             ErrBogusComment();
@@ -1586,8 +1557,8 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s52_DOCTYPE_p:
-                    case TokenizerState.s53_BEFORE_DOCTYPE_NAME_p:
+                    case (TokenizerState)DocTypeLexState.s52_DOCTYPE_p:
+                    case (TokenizerState)DocTypeLexState.s53_BEFORE_DOCTYPE_NAME_p:
                         ErrEofInDoctype();
                         /*
                          * Create a new DOCTYPE token. Set its force-quirks flag to
@@ -1602,7 +1573,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s54_DOCTYPE_NAME_p:
+                    case (TokenizerState)DocTypeLexState.s54_DOCTYPE_NAME_p:
                         ErrEofInDoctype();
                         StrBufToDoctypeName();
                         /*
@@ -1617,12 +1588,12 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.DOCTYPE_UBLIC_p:
-                    case TokenizerState.DOCTYPE_YSTEM_p:
-                    case TokenizerState.s55_AFTER_DOCTYPE_NAME_p:
-                    case TokenizerState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD_p:
-                    case TokenizerState.s62_AFTER_DOCTYPE_SYSTEM_KEYWORD_p:
-                    case TokenizerState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER_p:
+                    case (TokenizerState)DocTypeLexState.DOCTYPE_UBLIC_p:
+                    case (TokenizerState)DocTypeLexState.DOCTYPE_YSTEM_p:
+                    case (TokenizerState)DocTypeLexState.s55_AFTER_DOCTYPE_NAME_p:
+                    case (TokenizerState)DocTypeLexState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD_p:
+                    case (TokenizerState)DocTypeLexState.s62_AFTER_DOCTYPE_SYSTEM_KEYWORD_p:
+                    case (TokenizerState)DocTypeLexState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER_p:
                         ErrEofInDoctype();
                         /*
                          * Set the DOCTYPE token's force-quirks flag to on.
@@ -1636,8 +1607,8 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_p:
-                    case TokenizerState.s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_p:
+                    case (TokenizerState)DocTypeLexState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_p:
+                    case (TokenizerState)DocTypeLexState.s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_p:
                         /* EOF Parse error. */
                         ErrEofInPublicId();
                         /*
@@ -1653,9 +1624,9 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER_p:
-                    case TokenizerState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER_p:
-                    case TokenizerState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS_p:
+                    case (TokenizerState)DocTypeLexState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER_p:
+                    case (TokenizerState)DocTypeLexState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER_p:
+                    case (TokenizerState)DocTypeLexState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS_p:
                         ErrEofInDoctype();
                         /*
                          * Set the DOCTYPE token's force-quirks flag to on.
@@ -1669,8 +1640,8 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_p:
-                    case TokenizerState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_p:
+                    case (TokenizerState)DocTypeLexState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_p:
+                    case (TokenizerState)DocTypeLexState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_p:
                         /* EOF Parse error. */
                         ErrEofInSystemId();
                         /*
@@ -1686,7 +1657,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER_p:
+                    case (TokenizerState)DocTypeLexState.s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER_p:
                         ErrEofInDoctype();
                         /*
                          * Set the DOCTYPE token's force-quirks flag to on.
@@ -1700,7 +1671,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s67_BOGUS_DOCTYPE_p:
+                    case (TokenizerState)DocTypeLexState.s67_BOGUS_DOCTYPE_p:
                         /*
                          * Emit that DOCTYPE token.
                          */

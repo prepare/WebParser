@@ -45,6 +45,40 @@ using HtmlParserSharp.Common;
 
 namespace HtmlParserSharp.Core
 {
+    enum ScriptDataLexerState
+    {
+
+
+        s17_SCRIPT_DATA_LESS_THAN_SIGN_p = 59,//script
+        //TODO: R18_ScriptDataEndTagOpen();
+        //TODO: R19_ScriptDataEndTagName
+        s20_SCRIPT_DATA_ESCAPE_START_p = 60,//script
+        s21_SCRIPT_DATA_ESCAPE_START_DASH_p = 61,//script
+
+        s22_SCRIPT_DATA_ESCAPED_p = 4,//script
+
+        s23_SCRIPT_DATA_ESCAPED_DASH_p = 62,//script
+
+        s24_SCRIPT_DATA_ESCAPED_DASH_DASH_p = 63,//script
+
+        s25_SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_p = 66,//script
+
+        //TODO: R26_ScriptDataEscapedEndTagOpen();
+
+        //TODO: R27_ScriptDataEscapedEndTagName();
+
+        s28_SCRIPT_DATA_DOUBLE_ESCAPE_START_p = 67,//script
+
+        s29_SCRIPT_DATA_DOUBLE_ESCAPED_p = 68,//script
+
+        s30_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_p = 70,//script
+
+        s31_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH_p = 71,//script
+
+        s32_SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_p = 69,//script
+
+        s33_SCRIPT_DATA_DOUBLE_ESCAPE_END_p = 72,//script
+    }
     class SubLexerScriptData : SubLexer
     {
         int index;
