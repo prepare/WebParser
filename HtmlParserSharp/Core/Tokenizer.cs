@@ -55,33 +55,10 @@ namespace HtmlParserSharp.Core
 
     public enum TokenizerState : byte
     {
-        
-        s01_DATA_i = 128, //comment, doctype,rawtext,tag 
 
-        //TODO: 02_CharacterReferenceInData() 
-        s03_RCDATA_p = 129, //rawtext 
-        //TODO: R04_CharacterReferenceInRcData(); 
-        s05_RAWTEXT_p = 3, //rawtext 
-        s07_PLAINTEXT_p = 8,//rawtext 
-        s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p = 65, //rawtext
+        s01_DATA_i = 128, //comment, doctype,rawtext,tag  
 
         s34_BEFORE_ATTRIBUTE_NAME_i = 12, //rawtext, tag
-        //------------------------------------------------------------
-
-        //s35_ATTRIBUTE_NAME_p = 13, //tag
-
-        //s36_AFTER_ATTRIBUTE_NAME_p = 14, //tag
-
-        //s37_BEFORE_ATTRIBUTE_VALUE_p = 15, //tag
-
-        //s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED_p = 5, //tag
-
-        //s39_ATTRIBUTE_VALUE_SINGLE_QUOTED_p = 6, //tag 
-        //s40_ATTRIBUTE_VALUE_UNQUOTED_p = 7, //tag 
-        ////TODO: R41_CharacterReferenceInAttributeValue() 
-        //s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p = 16, //tag
-        //CHARACTER_REFERENCE_HILO_LOOKUP_p = 53,//tag,
-        //CHARACTER_REFERENCE_TAIL_p = 48, //tag
 
         //------------------
         s43_SELF_CLOSING_START_TAG_i = 54, //tag,rawtext 
@@ -95,23 +72,17 @@ namespace HtmlParserSharp.Core
         MARKUP_DECLARATION_OCTYPE_i = 40, //comment,doctype
         //------------------
         //for doctype 
-        s68_CDATA_SECTION_p = 56, //rawtext
-        NON_DATA_END_TAG_NAME_i = 38, //scriptdata, rawtext
 
+        NON_DATA_END_TAG_NAME_i = 38, //scriptdata, rawtext 
 
         CONSUME_NCR_i = 47, //ncr->numeric character reference, used by ncr,text 
         HEX_NCR_LOOP_p = 49,//ncr -> numeric character reference 
         DECIMAL_NRC_LOOP_p = 50, //ncr 
         HANDLE_NCR_VALUE_p = 51,//ncr 
-        HANDLE_NCR_VALUE_RECONSUME_p = 52,//ncr 
-
-
+        HANDLE_NCR_VALUE_RECONSUME_p = 52,//ncr  
 
         CDATA_START_i = 55,//comment,rawtext
-        CDATA_RSQB_p = 57,// rawtext
-        CDATA_RSQB_RSQB_p = 58,//rawtext 
-        PROCESSING_INSTRUCTION_p = 73, // rawtext
-        PROCESSING_INSTRUCTION_QUESTION_MARK_p = 74// rawtext
+
     }
 
 
@@ -1049,11 +1020,11 @@ namespace HtmlParserSharp.Core
             switch (state)
             {
                 case TokenizerState.s01_DATA_i:
-                case TokenizerState.s03_RCDATA_p:
+                case (TokenizerState)RawTextCDataRcRefState.s03_RCDATA_p:
                 case (TokenizerState)ScriptDataLexerState.s06_SCRIPT_DATA_p:
-                case TokenizerState.s07_PLAINTEXT_p:
-                case TokenizerState.s05_RAWTEXT_p:
-                case TokenizerState.s68_CDATA_SECTION_p:
+                case (TokenizerState)RawTextCDataRcRefState.s07_PLAINTEXT_p:
+                case (TokenizerState)RawTextCDataRcRefState.s05_RAWTEXT_p:
+                case (TokenizerState)RawTextCDataRcRefState.s68_CDATA_SECTION_p:
                 case (TokenizerState)ScriptDataLexerState.s22_SCRIPT_DATA_ESCAPED_p:
                 case (TokenizerState)ScriptDataLexerState.s20_SCRIPT_DATA_ESCAPE_START_p:
                 case (TokenizerState)ScriptDataLexerState.s21_SCRIPT_DATA_ESCAPE_START_DASH_p:
@@ -1308,7 +1279,7 @@ namespace HtmlParserSharp.Core
                          */
 
                         goto breakEofloop;
-                    case TokenizerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p:
+                    case (TokenizerState)RawTextCDataRcRefState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p:
                         /*
                          * Emit a U+003C LESS-THAN SIGN character token
                          */
@@ -1850,10 +1821,11 @@ namespace HtmlParserSharp.Core
                         HandleNcrValue(returnState);
                         state = returnState;
                         continue;
-                    case TokenizerState.CDATA_RSQB_p:
+
+                    case (TokenizerState)RawTextCDataRcRefState.CDATA_RSQB_p:
                         TokenListener.Characters(RSQB_RSQB, 0, 1);
                         goto breakEofloop;
-                    case TokenizerState.CDATA_RSQB_RSQB_p:
+                    case (TokenizerState)RawTextCDataRcRefState.CDATA_RSQB_RSQB_p:
                         TokenListener.Characters(RSQB_RSQB, 0, 2);
                         goto breakEofloop;
                     case TokenizerState.s01_DATA_i:
