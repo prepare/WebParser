@@ -74,7 +74,7 @@ namespace HtmlKit
                 switch (TokenizerState)
                 {
                     case HtmlTokenizerState.s01_Data: 
-                        R01_DataToken();
+                        R01_Data();
                         break;
                     case HtmlTokenizerState.s02_CharacterReferenceInData: 
                         R02_CharacterReferenceInData();

@@ -35,7 +35,7 @@ namespace HtmlKit
 		/// 8.2.4.1 Data state 
 		/// <see cref="http://www.w3.org/TR/html5/syntax.html#data-state"/> 
 		/// </summary>
-        void R01_DataToken()
+        void R01_Data()
         {
             char c;
             while (ReadNext(out c))

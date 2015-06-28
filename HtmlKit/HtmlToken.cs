@@ -482,7 +482,7 @@ namespace HtmlKit
                 if (Attributes[i].Value != null)
                 {
                     output.Write('=');
-                    HtmlUtils.HtmlEncodeAttribute(output, Attributes[i].Value);
+                    HtmlUtils.HtmlAttributeEncode(output, Attributes[i].Value);
                 }
             }
             if (IsEmptyElement)
