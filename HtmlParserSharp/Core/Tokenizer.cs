@@ -100,7 +100,7 @@ namespace HtmlParserSharp.Core
         MARKUP_DECLARATION_OCTYPE_i = 40, //doctype, comment
 
         //------------------
-        CONSUME_CHARACTER_REFERENCE_i = 46, //tag,cdata
+        CONSUME_CHARACTER_REFERENCE_i = 46, //tag,cdata ,enterpoint for character reference
         //------------------
         s44_BOGUS_COMMENT_i = 17,//doctype,cdata,tag,comment 
         //------------------

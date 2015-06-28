@@ -67,7 +67,7 @@ namespace HtmlParserSharp.Core
         //TODO: R41_CharacterReferenceInAttributeValue() 
         s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p = 16, //tag
         s43_SELF_CLOSING_START_TAG_p = 54, //tag,rawtext 
-        
+
 
         CHARACTER_REFERENCE_HILO_LOOKUP_p = 53,//tag,
         CHARACTER_REFERENCE_TAIL_p = 48, //tag
@@ -397,38 +397,98 @@ namespace HtmlParserSharp.Core
         {
             get { return this.stateSave; }
         }
-        public void StateLoop3_Tag(SubLexerTagState state, SubLexerTagState returnState)
+        void AppendToNameBuffer(char c)
+        {
+        }
+        void AppendToNameBufferFromUpperCase(char c)
+        {
+        }
+        void FlushNameBuffer()
         {
 
 
-            char c2;
-            CharMode charMode;
-            while (reader.ReadNext(out c2, out charMode))
-            {
-                //read one char
-                //find mode
-                switch (state)
-                {
-                    case SubLexerTagState.s08_TAG_OPEN_p:
-                        {
-                            switch (c2)
-                            {
-                                case '!':
-                                    {
-                                    } break;
-                                case '?':
-                                    {
-                                    } break;
-                                case '/':
-                                    {
-                                    } break;
-                                default:
-                                    {
-                                    } break;
-                            }
-                        } break;
-                }
-            }
+        }
+        public void StateLoop3_Tag(SubLexerTagState state, SubLexerTagState returnState)
+        {
+            //char c2;
+            //CharMode charMode;
+            //while (reader.ReadNext(out c2, out charMode))
+            //{
+            //    //read one char
+            //    //find mode
+            //    switch (state)
+            //    {
+            //        case SubLexerTagState.s08_TAG_OPEN_p:
+            //            {
+            //                switch (charMode)
+            //                {
+            //                    case CharMode.Bang://!
+            //                        SetInterLexerState(InterLexerState.s45_MARKUP_DECLARATION_OPEN_i);
+            //                        return;
+            //                    case CharMode.Quest: //?
+            //                        SetInterLexerState(InterLexerState.s44_BOGUS_COMMENT_i);
+            //                        return;
+            //                    case CharMode.Slash:// / 
+            //                        state = SubLexerTagState.s09_CLOSE_TAG_OPEN_p;
+            //                        break;
+            //                    case CharMode.UpperAsciiLetter:
+            //                        AppendToNameBufferFromUpperCase(c2);
+            //                        state = SubLexerTagState.s10_TAG_NAME_p;
+            //                        break;
+            //                    case CharMode.LowerAsciiLetter:
+            //                        AppendToNameBuffer(c2);
+            //                        state = SubLexerTagState.s10_TAG_NAME_p;
+            //                        break;
+            //                    default:
+            //                        {
+            //                            //error , unexpected character
+            //                        } break;
+            //                }
+            //            } break;
+            //        case SubLexerTagState.s10_TAG_NAME_p:
+            //            {
+            //                switch (charMode)
+            //                {
+
+            //                    case CharMode.NewLine:
+            //                    case CharMode.WhiteSpace:
+            //                        FlushNameBuffer();
+            //                        state = SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
+            //                        break;
+            //                    case CharMode.Slash:// / 
+            //                        FlushNameBuffer();
+            //                        state = SubLexerTagState.s43_SELF_CLOSING_START_TAG_p;
+            //                        break;
+            //                    case CharMode.Gt:
+            //                        FlushNameBuffer();
+            //                        state = EmitCurrentTagToken2(false);
+            //                        break;
+
+            //                    case CharMode.UpperAsciiLetter:
+            //                        AppendToNameBufferFromUpperCase(c2);
+            //                        break;
+            //                    case CharMode.Numeric:
+            //                    case CharMode.LowerAsciiLetter:
+            //                        AppendToNameBuffer(c2);
+            //                        break;
+            //                    default:
+            //                        {
+            //                        } break;
+            //                }
+            //            } break;
+            //        case SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p:
+            //            {
+
+            //            } break;
+            //        case SubLexerTagState.s43_SELF_CLOSING_START_TAG_p:
+            //            {
+            //            } break;
+            //        case SubLexerTagState.s35_ATTRIBUTE_NAME_p:
+            //            {
+
+            //            } break;
+            //    }
+            //}
 
 
             for (; ; )
@@ -1351,7 +1411,7 @@ namespace HtmlParserSharp.Core
                                         //state = Transition(state, Tokenizer.SELF_CLOSING_START_TAG, reconsume, pos);
                                         //state = TokenizerState.s43_SELF_CLOSING_START_TAG_i;
                                         state = SubLexerTagState.s43_SELF_CLOSING_START_TAG_p;
-                                  
+
                                         goto continueStateloop;
                                     case '=':
                                         /*
@@ -1465,7 +1525,7 @@ namespace HtmlParserSharp.Core
                                         //state = TokenizerState.CONSUME_CHARACTER_REFERENCE_i;
                                         SetInterLexerState(InterLexerState.CONSUME_CHARACTER_REFERENCE_i);
                                         //state = SubLexerTagState.CONSUME_CHARACTER_REFERENCE_i;
-                                        
+
                                         goto breakAttributevaluesinglequotedloop;
                                     // goto continueStateloop;
                                     case '\r':
