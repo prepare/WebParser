@@ -72,9 +72,262 @@ namespace HtmlParserSharp.Core
         CHARACTER_REFERENCE_HILO_LOOKUP_p = 53,//tag,
         CHARACTER_REFERENCE_TAIL_p = 48, //tag
     }
+
+
     class TagLexer
     {
 
+        enum TagState
+        {
+            VisitLt,
+            AfterLtQuest,
+            AfterLtBang,
+            TagNameOrAtttributeName,
+            WhiteSpaceCollecting,
+            AfterSlash,
+            AfterAssign,
+            CollectStringLiteral,
+            CollectAttribtueValue,
+            BeforeName,
+        }
+        TokenBufferReader reader = null;
+        void AppendToNameBuffer(char c)
+        {
+        }
+        void AppendToNameBufferFromUpperCase(char c)
+        {
+        }
+        void AppendToNameBufferWithReplaceChar()
+        {
+        }
+        void FlushNameBuffer()
+        {
+        }
+        void Emit()
+        {
+
+
+        }
+        void StateLoop3_Tag2()
+        {
+            //in tag mode*** 
+            TagState tagState = TagState.VisitLt;
+            char c2;
+            CharMode charMode;
+            while (reader.ReadNext(out c2, out charMode))
+            {
+                switch (tagState)
+                {
+
+                    case TagState.VisitLt:
+                        {
+                            switch (charMode)
+                            {
+                                case CharMode.Bang://!                                     
+                                    tagState = TagState.AfterLtBang;
+                                    break;
+                                case CharMode.Quest: //?                                     
+                                    Emit(); // emit <? token
+                                    tagState = TagState.AfterLtQuest;
+                                    break;
+                                case CharMode.Slash:// / 
+                                    Emit(); //emit </ token
+                                    //close tag
+                                    tagState = TagState.BeforeName;
+                                    break;
+                                //------------------------------------------------
+                                case CharMode.UpperAsciiLetter:
+                                    AppendToNameBufferFromUpperCase(c2);
+                                    tagState = TagState.TagNameOrAtttributeName;
+                                    break;
+                                case CharMode.LowerAsciiLetter:
+                                    AppendToNameBuffer(c2);
+                                    tagState = TagState.TagNameOrAtttributeName;
+                                    break;
+                                case CharMode.WhiteSpace:
+                                case CharMode.NewLine:
+                                    tagState = TagState.WhiteSpaceCollecting;
+                                    break;
+                                default:
+                                    {
+                                        //error , unexpected character
+                                    } break;
+                                //------------------------------------------------
+                            }
+                        } break;
+                    case TagState.BeforeName:
+                        {
+                            //inside tag ***
+                            switch (charMode)
+                            {
+                                case CharMode.UpperAsciiLetter:
+                                    AppendToNameBufferFromUpperCase(c2);
+                                    tagState = TagState.TagNameOrAtttributeName;
+                                    break;
+                                case CharMode.LowerAsciiLetter:
+                                    AppendToNameBuffer(c2);
+                                    tagState = TagState.TagNameOrAtttributeName;
+                                    break;
+                                case CharMode.WhiteSpace:
+                                case CharMode.NewLine:
+                                    tagState = TagState.WhiteSpaceCollecting;
+                                    break;
+                                default:
+                                    {
+                                        //error , unexpected character
+                                    } break;
+                            }
+
+                        } break;
+                    case TagState.TagNameOrAtttributeName:
+                        {
+                            switch (charMode)
+                            {
+                                case CharMode.UpperAsciiLetter:
+                                    AppendToNameBufferFromUpperCase(c2);
+                                    break;
+                                case CharMode.LowerAsciiLetter:
+                                    AppendToNameBuffer(c2);
+                                    break;
+                                case CharMode.WhiteSpace:
+                                case CharMode.NewLine:
+                                    Emit();
+                                    tagState = TagState.WhiteSpaceCollecting;
+                                    break;
+                                case CharMode.Slash:
+                                    Emit(); //emit collecting name
+                                    tagState = TagState.AfterSlash;
+                                    break;
+                                case CharMode.Assign:
+                                    Emit();
+                                    tagState = TagState.AfterAssign;
+                                    break;
+                                default:
+                                    {
+                                        //error , unexpected character
+                                    } break;
+                            }
+                        } break;
+                    case TagState.AfterAssign:
+                        {
+                            //html attribute value may start with ...
+                            switch (charMode)
+                            {
+                                case CharMode.Quote:
+                                    {
+                                        //collect string literal
+                                        tagState = TagState.CollectStringLiteral;
+                                    } break;
+                                case CharMode.DoubleQuote:
+                                    {
+                                        //collect string literal
+                                        tagState = TagState.CollectStringLiteral;
+                                    } break;
+                                case CharMode.Numeric:
+                                case CharMode.UpperAsciiLetter:
+                                case CharMode.LowerAsciiLetter:
+                                    {
+                                        //collect attribute value
+                                        tagState = TagState.CollectAttribtueValue;
+                                    } break;
+                                case CharMode.Ampersand:
+                                    {
+                                        //attribute value may start with &
+                                    } break;
+                                case CharMode.Sharp:
+                                    {
+                                        //attribtue value may start with # 
+                                    } break;
+                                case CharMode.WhiteSpace:
+                                case CharMode.NewLine:
+                                    {
+                                        //collecting whitespace
+                                        tagState = TagState.WhiteSpaceCollecting;
+                                    } break;
+                            }
+                        } break;
+                    case TagState.CollectAttribtueValue:
+                        {
+                            //terminate when found whitespace 
+                            //or escape character
+                            switch (charMode)
+                            {
+                                case CharMode.WhiteSpace:
+                                case CharMode.NewLine:
+                                    {
+                                        //stop collecting attr value
+                                        Emit();
+                                        tagState = TagState.WhiteSpaceCollecting;
+                                    } break;
+                                case CharMode.Gt:
+                                    {
+                                        Emit();
+                                        //exit from this sublexer ***
+                                        return;
+                                    }
+                                case CharMode.Slash:
+                                    {
+                                        Emit();//emit collecting value                                        
+                                        tagState = TagState.AfterSlash;
+                                    } break;
+                                default:
+                                    {
+                                        //continue collecting
+                                    } break;
+                            }
+                        } break;
+                    case TagState.WhiteSpaceCollecting:
+                        {
+                            switch (charMode)
+                            {
+                                case CharMode.WhiteSpace:
+                                case CharMode.NewLine:
+                                    break;
+                                default:
+                                    //exit from whitespace
+
+                                    break;
+                            }
+                        } break;
+                    case TagState.AfterLtQuest:
+                        {
+                            //<? 
+                            //processiing instruction  
+                            Emit();
+                            tagState = TagState.BeforeName;
+
+                        } break;
+                    case TagState.AfterLtBang:
+                        {
+                            //after <! 
+                            //html declaration 
+                            Emit();
+                            tagState = TagState.BeforeName;
+                        } break;
+                    case TagState.AfterSlash:
+                        {
+                            switch (charMode)
+                            {
+                                case CharMode.Gt:
+                                    {
+                                        //emit />
+
+
+                                    } break;
+                                default:
+                                    {
+                                        //exit 
+                                    } break;
+                            }
+                            //close current tag 
+                            //and enter data mode?      
+                        } break;
+                }
+            }
+            //---------
+            //eof
+
+        }
     }
 
     class SubLexerTagAndAttr : SubLexer
@@ -401,257 +654,8 @@ namespace HtmlParserSharp.Core
         public InterLexerState OutputState
         {
             get { return this.stateSave; }
-        }
-        void AppendToNameBuffer(char c)
-        {
-        }
-        void AppendToNameBufferFromUpperCase(char c)
-        {
-        }
-        void AppendToNameBufferWithReplaceChar()
-        {
-        }
-        void FlushNameBuffer()
-        {
-        }
-        enum TagState
-        {
-            VisitLt,
-            AfterLtQuest,
-            AfterLtBang,
-            TagNameOrAtttributeName,
-            WhiteSpaceCollecting,
-            AfterSlash,
-            AfterAssign,
-            CollectStringLiteral,
-            CollectAttribtueValue,
-            BeforeName, 
-        }
-        void Emit()
-        {
+        } 
 
-
-        }
-        void StateLoop3_Tag2()
-        {
-            //in tag mode*** 
-            TagState tagState = TagState.VisitLt;
-            char c2;
-            CharMode charMode;
-            while (reader.ReadNext(out c2, out charMode))
-            {
-                switch (tagState)
-                {
-
-                    case TagState.VisitLt:
-                        {
-                            switch (charMode)
-                            {
-                                case CharMode.Bang://!                                     
-                                    tagState = TagState.AfterLtBang;
-                                    break;
-                                case CharMode.Quest: //?                                     
-                                    Emit(); // emit <? token
-                                    tagState = TagState.AfterLtQuest;
-                                    break;
-                                case CharMode.Slash:// / 
-                                    Emit(); //emit </ token
-                                    //close tag
-                                    tagState = TagState.BeforeName;
-                                    break;
-                                //------------------------------------------------
-                                case CharMode.UpperAsciiLetter:
-                                    AppendToNameBufferFromUpperCase(c2);
-                                    tagState = TagState.TagNameOrAtttributeName;
-                                    break;
-                                case CharMode.LowerAsciiLetter:
-                                    AppendToNameBuffer(c2);
-                                    tagState = TagState.TagNameOrAtttributeName;
-                                    break;
-                                case CharMode.WhiteSpace:
-                                case CharMode.NewLine:
-                                    tagState = TagState.WhiteSpaceCollecting;
-                                    break;
-                                default:
-                                    {
-                                        //error , unexpected character
-                                    } break;
-                                //------------------------------------------------
-                            }
-                        } break;
-                    case TagState.BeforeName:
-                        {
-                            //inside tag ***
-                            switch (charMode)
-                            {
-                                case CharMode.UpperAsciiLetter:
-                                    AppendToNameBufferFromUpperCase(c2);
-                                    tagState = TagState.TagNameOrAtttributeName;
-                                    break;
-                                case CharMode.LowerAsciiLetter:
-                                    AppendToNameBuffer(c2);
-                                    tagState = TagState.TagNameOrAtttributeName;
-                                    break;
-                                case CharMode.WhiteSpace:
-                                case CharMode.NewLine:
-                                    tagState = TagState.WhiteSpaceCollecting;
-                                    break;
-                                default:
-                                    {
-                                        //error , unexpected character
-                                    } break;
-                            }
-
-                        } break;
-                    case TagState.TagNameOrAtttributeName:
-                        {
-                            switch (charMode)
-                            {
-                                case CharMode.UpperAsciiLetter:
-                                    AppendToNameBufferFromUpperCase(c2);
-                                    break;
-                                case CharMode.LowerAsciiLetter:
-                                    AppendToNameBuffer(c2);
-                                    break;
-                                case CharMode.WhiteSpace:
-                                case CharMode.NewLine:
-                                    Emit();
-                                    tagState = TagState.WhiteSpaceCollecting;
-                                    break;
-                                case CharMode.Slash:
-                                    Emit(); //emit collecting name
-                                    tagState = TagState.AfterSlash;
-                                    break;
-                                case CharMode.Assign:
-                                    Emit();
-                                    tagState = TagState.AfterAssign;
-                                    break;
-                                default:
-                                    {
-                                        //error , unexpected character
-                                    } break;
-                            }
-                        } break;
-                    case TagState.AfterAssign:
-                        {
-                            //html attribute value may start with ...
-                            switch (charMode)
-                            {
-                                case CharMode.Quote:
-                                    {
-                                        //collect string literal
-                                        tagState = TagState.CollectStringLiteral;
-                                    } break;
-                                case CharMode.DoubleQuote:
-                                    {
-                                        //collect string literal
-                                        tagState = TagState.CollectStringLiteral;
-                                    } break;
-                                case CharMode.Numeric:
-                                case CharMode.UpperAsciiLetter:
-                                case CharMode.LowerAsciiLetter:
-                                    {
-                                        //collect attribute value
-                                        tagState = TagState.CollectAttribtueValue;
-                                    } break;
-                                case CharMode.Ampersand:
-                                    {
-                                        //attribute value may start with &
-                                    } break;
-                                case CharMode.Sharp:
-                                    {
-                                        //attribtue value may start with # 
-                                    } break;
-                                case CharMode.WhiteSpace:
-                                case CharMode.NewLine:
-                                    {
-                                        //collecting whitespace
-                                        tagState = TagState.WhiteSpaceCollecting;
-                                    } break;
-                            }
-                        } break;
-                    case TagState.CollectAttribtueValue:
-                        {
-                            //terminate when found whitespace 
-                            //or escape character
-                            switch (charMode)
-                            {
-                                case CharMode.WhiteSpace:
-                                case CharMode.NewLine:
-                                    {
-                                        //stop collecting attr value
-                                        Emit();
-                                        tagState = TagState.WhiteSpaceCollecting;
-                                    } break;
-                                case CharMode.Gt:
-                                    {
-                                        Emit();
-                                        //exit from this sublexer ***
-                                        return;
-                                    }
-                                case CharMode.Slash:
-                                    {
-                                        Emit();//emit collecting value                                        
-                                        tagState = TagState.AfterSlash;
-                                    } break;
-                                default:
-                                    {
-                                        //continue collecting
-                                    } break;
-                            }
-                        } break;
-                    case TagState.WhiteSpaceCollecting:
-                        {
-                            switch (charMode)
-                            {
-                                case CharMode.WhiteSpace:
-                                case CharMode.NewLine:
-                                    break;
-                                default:
-                                    //exit from whitespace
-
-                                    break;
-                            }
-                        } break;
-                    case TagState.AfterLtQuest:
-                        {
-                            //<? 
-                            //processiing instruction  
-                            Emit();
-                            tagState = TagState.BeforeName;
-
-                        } break;
-                    case TagState.AfterLtBang:
-                        {
-                            //after <! 
-                            //html declaration 
-                            Emit();
-                            tagState = TagState.BeforeName;
-                        } break;
-                    case TagState.AfterSlash:
-                        {
-                            switch (charMode)
-                            {
-                                case CharMode.Gt:
-                                    {
-                                        //emit />
-
-
-                                    } break;
-                                default:
-                                    {
-                                        //exit 
-                                    } break;
-                            }
-                            //close current tag 
-                            //and enter data mode?      
-                        } break;
-                }
-            }
-            //---------
-            //eof
-
-        }
         public void StateLoop3_Tag(SubLexerTagState state, SubLexerTagState returnState)
         {
 
