@@ -354,7 +354,7 @@ namespace HtmlParserSharp.Core
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.CONSUME_CHARACTER_REFERENCE, reconsume, pos);
                                         //state = TokenizerState.CONSUME_CHARACTER_REFERENCE_i;
-                                        SetInterLexerState(TokenizerState.CONSUME_CHARACTER_REFERENCE_i);
+                                        SetInterLexerState(TokenizerState.CONSUME_CHARACTER_REFERENCE_i); 
                                         goto continueStateloop;
                                     case '<':
                                         /*

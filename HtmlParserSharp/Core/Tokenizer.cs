@@ -95,12 +95,8 @@ namespace HtmlParserSharp.Core
     public enum TokenizerState : byte
     {
 
-        s01_DATA_i = 128, //comment, doctype,rawtext,tag  
-
-        
-
+        s01_DATA_i = 128, //comment, doctype,rawtext,tag   
         //------------------
-        s43_SELF_CLOSING_START_TAG_i = 54, //tag,rawtext 
         CONSUME_CHARACTER_REFERENCE_i = 46, //tag,rawtext
 
         //------------------
@@ -1360,7 +1356,7 @@ namespace HtmlParserSharp.Core
                         goto breakEofloop;
                     case (TokenizerState)SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p:
                     case (TokenizerState)SubLexerTagState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p:
-                    case TokenizerState.s43_SELF_CLOSING_START_TAG_i:
+                    case (TokenizerState)SubLexerTagState.s43_SELF_CLOSING_START_TAG_p:
                         /* EOF Parse error. */
                         ErrEofWithoutGt();
                         /*
