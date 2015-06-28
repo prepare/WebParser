@@ -47,7 +47,7 @@ namespace HtmlParserSharp.Core
 {
     public enum ScriptDataLexerState
     {
-        
+
         s06_SCRIPT_DATA_p = 2,//script data ,TODO: review again!, interstate or private
         s17_SCRIPT_DATA_LESS_THAN_SIGN_p = 59,//script
         //TODO: R18_ScriptDataEndTagOpen();
@@ -83,6 +83,8 @@ namespace HtmlParserSharp.Core
     {
         int index;
         static readonly char[] SCRIPT_ARR = "script".ToCharArray();
+
+        
         void StateLoop3_ScriptData(ScriptDataLexerState state, ScriptDataLexerState returnState)
         {
 

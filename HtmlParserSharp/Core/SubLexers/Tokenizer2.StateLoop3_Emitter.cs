@@ -45,7 +45,7 @@ using HtmlParserSharp.Common;
 
 namespace HtmlParserSharp.Core
 {
-    partial class Tokenizer
+    partial class Tokenizer2
     {
         TokenBufferReader reader = null;
         void FlushChars()
@@ -73,7 +73,7 @@ namespace HtmlParserSharp.Core
         {
             throw new NotImplementedException();
         }
-        TokenizerState EmitCurrentTagToken(bool isSelfClosing)
+        InterLexerState EmitCurrentTagToken(bool isSelfClosing)
         {
             throw new NotImplementedException();
         }

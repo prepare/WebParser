@@ -94,6 +94,22 @@ namespace HtmlParserSharp.Core
                         columnNumber++;
                         charMode = CharMode.Quest;
                         return true;
+                    case '#':
+                        columnNumber++;
+                        charMode = CharMode.Sharp;
+                        return true;
+                    case '&':
+                        columnNumber++;
+                        charMode = CharMode.Ampersand;
+                        return true;
+                    case '"':
+                        columnNumber++;
+                        charMode = CharMode.DoubleQuote;
+                        return true;
+                    case '\'':
+                        columnNumber++;
+                        charMode = CharMode.Quote;
+                        return true;
                     case '=':
                         columnNumber++;
                         charMode = CharMode.Assign;
@@ -181,7 +197,7 @@ namespace HtmlParserSharp.Core
                         charMode = CharMode.Others;
                         columnNumber++;
                         return true;
-                } 
+                }
             }
             else
             {
