@@ -50,9 +50,37 @@ using HtmlParserSharp.Common;
 
 namespace HtmlParserSharp.Core
 {
-    partial class Tokenizer
+    public enum CDataLexerState
     {
-        void StateLoop3_RawText_CData_RcRef(TokenizerState state, TokenizerState returnState)
+        s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p = 65, //
+        //TODO: 02_CharacterReferenceInData() 
+        s03_RCDATA_p = 129,  
+        //TODO: R04_CharacterReferenceInRcData(); 
+        s05_RAWTEXT_p = 3, 
+        s07_PLAINTEXT_p = 8, 
+        s68_CDATA_SECTION_p = 56,  
+        CDATA_RSQB_p = 57, 
+        CDATA_RSQB_RSQB_p = 58, 
+
+        PROCESSING_INSTRUCTION_p = 73,  
+        PROCESSING_INSTRUCTION_QUESTION_MARK_p = 74 
+    }
+    class SubLexerCData : SubLexer
+    {   
+        int index;
+        bool endTag; //TODO: review shared endTag with other sublexer? 
+        ElementName tagName; //TODO: review shared tagName with other sublexer? 
+        char additional;
+       
+      
+        CDataLexerState EmitCurrentTagToken2(bool isSelfClosing)
+        {
+            throw new NotImplementedException();
+        }
+        void SaveStates(CDataLexerState state, CDataLexerState returnState)
+        {
+        }
+        void StateLoop3_RawText_CData_RcRef(CDataLexerState state, CDataLexerState returnState)
         {
 
             /*
@@ -134,15 +162,15 @@ namespace HtmlParserSharp.Core
             /*stateloop:*/
             for (; ; )
             {
-                 
+
                 //*************
             continueStateloop:
                 //*************
 
                 switch (state)
-                {   
+                {
                     // XXX reorder point
-                    case TokenizerState.CDATA_START:
+                    case (CDataLexerState)InterLexerState.CDATA_START_i:
                         {
                             char c;
                             while (reader.ReadNext(out c))
@@ -150,7 +178,7 @@ namespace HtmlParserSharp.Core
 
                                 if (index < 6)
                                 { // CDATA_LSQB.Length
-                                    if (c == Tokenizer.CDATA_LSQB[index])
+                                    if (c == CDATA_LSQB[index])
                                     {
                                         AppendLongStrBuf(c);
                                     }
@@ -158,7 +186,8 @@ namespace HtmlParserSharp.Core
                                     {
                                         ErrBogusComment();
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
-                                        state = TokenizerState.s44_BOGUS_COMMENT;
+                                        //state = TokenizerState.s44_BOGUS_COMMENT_i;
+                                        SetInterLexerState(InterLexerState.s44_BOGUS_COMMENT_i);
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto continueStateloop;
@@ -170,10 +199,10 @@ namespace HtmlParserSharp.Core
                                 {
                                     reader.StartCollect(); // start coalescing
                                     //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
-                                    state = TokenizerState.s68_CDATA_SECTION;
+                                    state = CDataLexerState.s68_CDATA_SECTION_p;
                                     //reconsume = true;
                                     reader.StepBack();
-                                    goto case TokenizerState.s68_CDATA_SECTION;
+                                    goto case CDataLexerState.s68_CDATA_SECTION_p;
                                     //break; // FALL THROUGH goto continueStateloop;
                                 }
                             }
@@ -184,9 +213,10 @@ namespace HtmlParserSharp.Core
 
                         }
                     // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
-                    case TokenizerState.s68_CDATA_SECTION:
+                    case CDataLexerState.s68_CDATA_SECTION_p:
                         /*cdatasectionloop:*/
                         {
+
                             char c;
                             while (reader.ReadNext(out c))
                             {
@@ -195,7 +225,7 @@ namespace HtmlParserSharp.Core
                                     case ']':
                                         FlushChars();
                                         //state = Transition(state, Tokenizer.CDATA_RSQB, reconsume, pos);
-                                        state = TokenizerState.CDATA_RSQB;
+                                        state = CDataLexerState.CDATA_RSQB_p;
                                         goto breakCdatasectionloop; // FALL THROUGH
                                     case '\u0000':
                                         EmitReplacementCharacter();
@@ -211,10 +241,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakCdatasectionloop:
-                            goto case TokenizerState.CDATA_RSQB;
+                            goto case CDataLexerState.CDATA_RSQB_p;
                         }
                     // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
-                    case TokenizerState.CDATA_RSQB:
+                    case CDataLexerState.CDATA_RSQB_p:
                         /*cdatarsqb:*/
                         {
                             char c;
@@ -224,13 +254,13 @@ namespace HtmlParserSharp.Core
                                 {
                                     case ']':
                                         //state = Transition(state, Tokenizer.CDATA_RSQB_RSQB, reconsume, pos);
-                                        state = TokenizerState.CDATA_RSQB_RSQB;
+                                        state = CDataLexerState.CDATA_RSQB_RSQB_p;
                                         goto breakCdatarsqb;
                                     default:
-                                        TokenListener.Characters(Tokenizer.RSQB_RSQB, 0, 1);
+                                        TokenListener.Characters(RSQB_RSQB, 0, 1);
                                         reader.StartCollect();
                                         //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
-                                        state = TokenizerState.s68_CDATA_SECTION;
+                                        state = CDataLexerState.s68_CDATA_SECTION_p;
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto continueStateloop;
@@ -241,10 +271,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------ 
                         breakCdatarsqb:
-                            goto case TokenizerState.CDATA_RSQB_RSQB;
+                            goto case CDataLexerState.CDATA_RSQB_RSQB_p;
                         }
                     // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
-                    case TokenizerState.CDATA_RSQB_RSQB:
+                    case CDataLexerState.CDATA_RSQB_RSQB_p:
                         {
                             char c;
                             if (!reader.ReadNext(out c))
@@ -257,23 +287,26 @@ namespace HtmlParserSharp.Core
                                     //cstart = pos + 1;
                                     reader.SkipOneAndStartCollect();
                                     //state = Transition(state, Tokenizer.DATA, reconsume, pos);
-                                    state = TokenizerState.s01_DATA;
+                                    //state = TokenizerState.s01_DATA_i;
+                                    SetInterLexerState(InterLexerState.s01_DATA_i);
                                     goto continueStateloop;
                                 default:
-                                    TokenListener.Characters(Tokenizer.RSQB_RSQB, 0, 2);
+                                    TokenListener.Characters(RSQB_RSQB, 0, 2);
                                     reader.StartCollect();
                                     //state = Transition(state, Tokenizer.CDATA_SECTION, reconsume, pos);
-                                    state = TokenizerState.s68_CDATA_SECTION;
+                                    state = CDataLexerState.s68_CDATA_SECTION_p;
+
                                     reader.StepBack();
                                     //reconsume = true;
                                     goto continueStateloop;
 
                             }
-                        } 
+                        }
                     // XXX reorder point
-                    case TokenizerState.s07_PLAINTEXT:
+                    case CDataLexerState.s07_PLAINTEXT_p:
                         /*plaintextloop:*/
                         {
+
                             char c;
                             while (reader.ReadNext(out c))
                             {
@@ -299,9 +332,9 @@ namespace HtmlParserSharp.Core
                             //------------------------------------
                             //eof
                             goto breakStateloop;
-                        } 
+                        }
                     // XXX reorder point
-                    case TokenizerState.s03_RCDATA:
+                    case CDataLexerState.s03_RCDATA_p:
                         /*rcdataloop:*/
                         {
                             char c;
@@ -321,7 +354,8 @@ namespace HtmlParserSharp.Core
                                         additional = '\u0000';
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.CONSUME_CHARACTER_REFERENCE, reconsume, pos);
-                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE;
+                                        //state = TokenizerState.CONSUME_CHARACTER_REFERENCE_i;
+                                        SetInterLexerState(InterLexerState.CONSUME_CHARACTER_REFERENCE_i); 
                                         goto continueStateloop;
                                     case '<':
                                         /*
@@ -332,7 +366,8 @@ namespace HtmlParserSharp.Core
                                         FlushChars();
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.RAWTEXT_RCDATA_LESS_THAN_SIGN, reconsume, pos);
-                                        state = TokenizerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN;
+
+                                        state = CDataLexerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p;
                                         goto continueStateloop;
                                     case '\u0000':
                                         EmitReplacementCharacter();
@@ -352,223 +387,8 @@ namespace HtmlParserSharp.Core
                             //------------------------------------
                             //eof
                             goto breakStateloop;
-                        }
-                    // XXX reorder point
-                    case TokenizerState.s05_RAWTEXT:
-                        /*rawtextloop:*/
-                        {
-                            char c;
-                            while (reader.ReadNext(out c))
-                            {
-
-                                switch (c)
-                                {
-                                    case '<':
-                                        /*
-                                         * U+003C LESS-THAN SIGN (<) Switch to the
-                                         * RAWTEXT less-than sign state.
-                                         */
-                                        FlushChars();
-
-                                        returnState = state;
-                                        //state = Transition(state, Tokenizer.RAWTEXT_RCDATA_LESS_THAN_SIGN, reconsume, pos);
-                                        state = TokenizerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN;
-                                        goto breakRawtextloop;
-                                    // FALL THRU goto continueStateloop;
-                                    case '\u0000':
-                                        EmitReplacementCharacter();
-                                        continue;
-                                    case '\r':
-                                        EmitCarriageReturn();
-                                        goto breakStateloop;
-                                    case '\n':
-                                    default:
-                                        /*
-                                         * Emit the current input character as a
-                                         * character token. Stay in the RAWTEXT state.
-                                         */
-                                        continue;
-                                }
-                            }
-                            //------------------------------------
-                            //eof
-                            goto breakStateloop;
-                        //------------------------------------
-                        breakRawtextloop:
-                            goto case TokenizerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN;
-                        }
-                    // XXX fallthru don't reorder
-                    case TokenizerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN:
-                        /*rawtextrcdatalessthansignloop:*/
-                        {
-                            char c;
-                            while (reader.ReadNext(out c))
-                            {
-                                switch (c)
-                                {
-                                    case '/':
-                                        /*
-                                         * U+002F SOLIDUS (/) Set the temporary buffer
-                                         * to the empty string. Switch to the script
-                                         * data end tag open state.
-                                         */
-                                        index = 0;
-                                        ClearStrBuf();
-                                        //state = Transition(state, Tokenizer.NON_DATA_END_TAG_NAME, reconsume, pos);
-                                        state = TokenizerState.NON_DATA_END_TAG_NAME;
-                                        goto breakRawtextrcdatalessthansignloop;
-                                    // FALL THRU goto continueStateloop;
-                                    default:
-                                        /*
-                                         * Otherwise, emit a U+003C LESS-THAN SIGN
-                                         * character token
-                                         */
-                                        TokenListener.Characters(Tokenizer.LT_GT, 0, 1);
-                                        /*
-                                         * and reconsume the current input character in
-                                         * the data state.
-                                         */
-                                        reader.StartCollect();
-                                        //state = Transition(state, returnState, reconsume, pos);
-                                        state = returnState;
-                                        //reconsume = true;
-                                        reader.StepBack();
-                                        goto continueStateloop;
-                                }
-                            }
-                            //------------------------------------
-                            //eof
-                            goto breakStateloop;
-                        //------------------------------------
-                        breakRawtextrcdatalessthansignloop:
-                            goto case TokenizerState.NON_DATA_END_TAG_NAME;
-                        }
-                    // XXX fall thru. don't reorder.
-                    case TokenizerState.NON_DATA_END_TAG_NAME:
-                        {
-                            char c;
-                            while (reader.ReadNext(out c))
-                            {
-
-                                /*
-                                 * ASSERT! when entering this state, set index to 0 and
-                                 * call clearStrBuf() assert (contentModelElement !=
-                                 * null); Let's implement the above without lookahead.
-                                 * strBuf is the 'temporary buffer'.
-                                 */
-                                if (index < endTagExpectationAsArray.Length)
-                                {
-                                    char e = endTagExpectationAsArray[index];
-                                    char folded = c;
-                                    if (c >= 'A' && c <= 'Z')
-                                    {
-                                        folded += (char)0x20;
-                                    }
-                                    if (folded != e)
-                                    {
-
-                                        ErrHtml4LtSlashInRcdata(folded);
-                                        TokenListener.Characters(Tokenizer.LT_SOLIDUS,
-                                                0, 2);
-                                        EmitStrBuf();
-                                        reader.StartCollect();
-                                        //state = Transition(state, returnState, reconsume, pos);
-                                        state = returnState;
-                                        //reconsume = true;
-                                        reader.StepBack();
-                                        goto continueStateloop;
-                                    }
-                                    AppendStrBuf(c);
-                                    index++;
-                                    continue;
-                                }
-                                else
-                                {
-                                    endTag = true;
-                                    // XXX replace contentModelElement with different
-                                    // type
-                                    tagName = endTagExpectation;
-                                    switch (c)
-                                    {
-                                        case '\r':
-                                            SilentCarriageReturn();
-                                            //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
-                                            state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
-
-                                            goto breakStateloop;
-                                        case '\n':
-                                        case ' ':
-                                        case '\t':
-                                        case '\u000C':
-                                            /*
-                                             * U+0009 CHARACTER TABULATION U+000A LINE
-                                             * FEED (LF) U+000C FORM FEED (FF) U+0020
-                                             * SPACE If the current end tag token is an
-                                             * appropriate end tag token, then switch to
-                                             * the before attribute name state.
-                                             */
-                                            //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
-                                            state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME;
-                                            goto continueStateloop;
-                                        case '/':
-                                            /*
-                                             * U+002F SOLIDUS (/) If the current end tag
-                                             * token is an appropriate end tag token,
-                                             * then switch to the self-closing start tag
-                                             * state.
-                                             */
-                                            //state = Transition(state, Tokenizer.SELF_CLOSING_START_TAG, reconsume, pos);
-                                            state = TokenizerState.s43_SELF_CLOSING_START_TAG;
-                                            goto continueStateloop;
-                                        case '>':
-                                            /*
-                                             * U+003E GREATER-THAN SIGN (>) If the
-                                             * current end tag token is an appropriate
-                                             * end tag token, then emit the current tag
-                                             * token and switch to the data state.
-                                             */
-                                            //state = Transition(state, EmitCurrentTagToken(false, pos), reconsume, pos);
-                                            state = EmitCurrentTagToken(false);
-                                            if (shouldSuspend)
-                                            {
-                                                goto breakStateloop;
-                                            }
-                                            goto continueStateloop;
-                                        default:
-                                            /*
-                                             * Emit a U+003C LESS-THAN SIGN character
-                                             * token, a U+002F SOLIDUS character token,
-                                             * a character token for each of the
-                                             * characters in the temporary buffer (in
-                                             * the order they were added to the buffer),
-                                             * and reconsume the current input character
-                                             * in the RAWTEXT state.
-                                             */
-                                            // [NOCPP[
-                                            ErrWarnLtSlashInRcdata();
-                                            // ]NOCPP]
-                                            TokenListener.Characters(LT_SOLIDUS, 0, 2);
-                                            EmitStrBuf();
-                                            if (c == '\u0000')
-                                            {
-                                                EmitReplacementCharacter();
-                                            }
-                                            else
-                                            {
-                                                reader.StartCollect(); // don't drop the
-                                                // character
-                                            }
-                                            //state = Transition(state, returnState, reconsume, pos);
-                                            state = returnState;
-                                            goto continueStateloop;
-                                    }
-                                }
-                            }
-                            //------------------------------------
-                            //eof
-                            goto breakStateloop;
                         } 
-                    case TokenizerState.PROCESSING_INSTRUCTION:
+                    case CDataLexerState.PROCESSING_INSTRUCTION_p:
                         //processinginstructionloop: 
                         {
                             char c;
@@ -578,7 +398,7 @@ namespace HtmlParserSharp.Core
                                 {
                                     case '?':
                                         //state = Transition(state,Tokenizer.PROCESSING_INSTRUCTION_QUESTION_MARK,reconsume, pos);
-                                        state = TokenizerState.PROCESSING_INSTRUCTION_QUESTION_MARK;
+                                        state = CDataLexerState.PROCESSING_INSTRUCTION_QUESTION_MARK_p;
 
                                         break;
                                     // continue stateloop;
@@ -591,7 +411,7 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         }
                     //breakProcessingInstructionLoop: 
-                    case TokenizerState.PROCESSING_INSTRUCTION_QUESTION_MARK:
+                    case CDataLexerState.PROCESSING_INSTRUCTION_QUESTION_MARK_p:
                         {
                             char c;
                             if (!reader.ReadNext(out c))
@@ -604,11 +424,13 @@ namespace HtmlParserSharp.Core
                             {
                                 case '>':
                                     //state = Transition(state, Tokenizer.DATA,reconsume, pos);
-                                    state = TokenizerState.s01_DATA;
+                                    //state = TokenizerState.s01_DATA_i;
+                                    SetInterLexerState(InterLexerState.s01_DATA_i);
                                     continue;
                                 default:
                                     //state = Transition(state,Tokenizer.PROCESSING_INSTRUCTION,reconsume, pos);
-                                    state = TokenizerState.PROCESSING_INSTRUCTION;
+
+                                    state = CDataLexerState.PROCESSING_INSTRUCTION_p;
                                     continue;
                             }
 
@@ -624,8 +446,9 @@ namespace HtmlParserSharp.Core
              * if (prevCR && pos != endPos) { // why is this needed? pos--; col--; }
              */
             // Save locals
-            stateSave = state;
-            returnStateSave = returnState;
+            SaveStates(state, returnState);
+            //stateSave = state;
+            //returnStateSave = returnState;
         }
 
     }

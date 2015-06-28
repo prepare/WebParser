@@ -320,6 +320,11 @@ namespace HtmlParserSharp.Core
         {
             return ErrorEvent == null ? Location.Empty : new Location(this.tokenizer.LineNumber, this.tokenizer.ColumnNumber);
         }
+
+        public void StartTokenization(Tokenizer2 self)
+        {
+            throw new NotImplementedException();
+        }
         public void StartTokenization(Tokenizer self)
         {
             tokenizer = self;
