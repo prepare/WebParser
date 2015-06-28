@@ -96,15 +96,13 @@ namespace HtmlParserSharp.Core
     {
 
         s01_DATA_i = 128, //comment, doctype,cdata,tag   
+        s45_MARKUP_DECLARATION_OPEN_i = 18, //tag ,comment,  
+        MARKUP_DECLARATION_OCTYPE_i = 40, //doctype, comment
+
         //------------------
         CONSUME_CHARACTER_REFERENCE_i = 46, //tag,cdata
-
         //------------------
-        s44_BOGUS_COMMENT_i = 17,//doctype,cdata,tag,comment
-
-        s45_MARKUP_DECLARATION_OPEN_i = 18, //comment, tag 
-
-        MARKUP_DECLARATION_OCTYPE_i = 40, //comment,doctype
+        s44_BOGUS_COMMENT_i = 17,//doctype,cdata,tag,comment 
         //------------------
         //for doctype  
         NON_DATA_END_TAG_NAME_i = 38, //scriptdata, tag  

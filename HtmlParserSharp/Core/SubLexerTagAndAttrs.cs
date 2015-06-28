@@ -2027,7 +2027,7 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakRawtextrcdatalessthansignloop:
-                            goto case (CDataLexerState)InterLexerState.NON_DATA_END_TAG_NAME_i;
+                            goto case (SubLexerTagState)InterLexerState.NON_DATA_END_TAG_NAME_i;
                         }
                     // XXX fall thru. don't reorder.
                     case (SubLexerTagState)InterLexerState.NON_DATA_END_TAG_NAME_i:
