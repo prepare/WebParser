@@ -83,7 +83,8 @@
     <Compile Include="LayoutFarm.WebLexer\CssLexer.cs" />
     <Compile Include="LayoutFarm.WebLexer\dbugLexerReport.cs" />
     <Compile Include="LayoutFarm.WebLexer\HtmlLexer.cs" />
-    <Compile Include="LayoutFarm.WebLexer\HtmlLexer_dbug.cs" />
+    <Compile Include="LayoutFarm.WebLexer\MyHtmlLexer.cs" />
+    <Compile Include="LayoutFarm.WebLexer\MyHtmlLexer_dbug.cs" />
     <Compile Include="LayoutFarm.WebLexer\TextSnapshot.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
