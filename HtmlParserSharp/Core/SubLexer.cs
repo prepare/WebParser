@@ -315,14 +315,7 @@ namespace HtmlParserSharp.Core
         {
         }
 
-        protected void ErrLtGt()
-        {
-        }
-
-        protected void ErrProcessingInstruction()
-        {
-        }
-
+        
         protected void ErrUnescapedAmpersandInterpretedAsCharacterReference()
         {
         }

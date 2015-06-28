@@ -53,6 +53,7 @@ namespace HtmlParserSharp.Core
         s09_CLOSE_TAG_OPEN_p = 10, //tag 
         s10_TAG_NAME_p = 11, //tag 
 
+        s34_BEFORE_ATTRIBUTE_NAME_p = 12, //rawtext, tag
         s35_ATTRIBUTE_NAME_p = 13, //tag
 
         s36_AFTER_ATTRIBUTE_NAME_p = 14, //tag
@@ -70,13 +71,20 @@ namespace HtmlParserSharp.Core
     }
     class SubLexerTagAndAttr : SubLexer
     {
+        ElementName endTagExpectation = null;
+        /// <summary>
+        /// UTF-16 code unit array containing less than and solidus for emitting
+        /// those characters on certain parse errors.
+        /// </summary>
+        static readonly char[] LT_SOLIDUS = { '<', '/' };
+        char[] endTagExpectationAsArray; // not @Auto! 
         int entCol;
         int hi;
         int lo;
         int candidate;
         bool endTag;
         int strBufMark;
-
+        int index = 0;
         char firstCharKey;
 
         bool newAttributesEachTime;
@@ -104,6 +112,14 @@ namespace HtmlParserSharp.Core
         /// </summary>
         AttributeName attributeName = null;
         char additional;
+
+        void ErrProcessingInstruction()
+        {
+        }
+        void ErrLtGt()
+        {
+        }
+
         void SetAdditionalAndRememberAmpersandLocation(char add)
         {
             additional = add;
@@ -383,7 +399,8 @@ namespace HtmlParserSharp.Core
 
 
             char c2;
-            while (reader.ReadNext(out c2))
+            CharMode charMode;
+            while (reader.ReadNext(out c2, out charMode))
             {
                 //read one char
                 //find mode
@@ -404,16 +421,11 @@ namespace HtmlParserSharp.Core
                                     } break;
                                 default:
                                     {
-
-
                                     } break;
                             }
                         } break;
                 }
             }
-
-
-
 
 
             for (; ; )
@@ -581,8 +593,8 @@ namespace HtmlParserSharp.Core
                                         SilentCarriageReturn();
                                         StrBufToElementNameString();
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
-                                        //state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
-                                        SetInterLexerState(TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i);
+                                        state = SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
+                                        
                                         goto breakStateloop;
                                     case '\n':
                                     case ' ':
@@ -595,7 +607,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         StrBufToElementNameString();
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
-                                        SetInterLexerState(TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i);
+                                        state = SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
                                         goto breakTagnameloop;
                                     // goto continueStateloop;
                                     case '/':
@@ -659,10 +671,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakTagnameloop:
-                            goto case (SubLexerTagState)TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
+                            goto case SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
                         }
                     // FALLTHRU DON'T REORDER
-                    case (SubLexerTagState)TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i:
+                    case SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p:
                         /*beforeattributenameloop:*/
                         {
 
@@ -1088,7 +1100,7 @@ namespace HtmlParserSharp.Core
                                         SilentCarriageReturn();
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
                                         //state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
-                                        SetInterLexerState(TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i);
+                                        state = SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
                                         goto breakStateloop;
                                     case '\n':
                                     case ' ':
@@ -1101,7 +1113,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
                                         //state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
-                                        SetInterLexerState(TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i);
+                                        state = SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
                                         goto continueStateloop;
                                     case '/':
                                         /*
@@ -1110,7 +1122,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         //state = Transition(state, Tokenizer.SELF_CLOSING_START_TAG, reconsume, pos);
                                         //state = TokenizerState.s43_SELF_CLOSING_START_TAG_i;
-                                        SetInterLexerState(TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i);
+                                        state = SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
                                         goto breakAfterattributevaluequotedloop;
                                     // goto continueStateloop;
                                     case '>':
@@ -1139,7 +1151,7 @@ namespace HtmlParserSharp.Core
                                          */
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
                                         //state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
-                                        SetInterLexerState(TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i);
+                                        state = SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto continueStateloop;
@@ -1195,12 +1207,14 @@ namespace HtmlParserSharp.Core
                                      */
                                     //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
                                     //state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
-                                    SetInterLexerState(TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i);
+
+                                    state = SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
                                     reader.StepBack();
                                     //reconsume = true;
                                     goto continueStateloop;
                             }
                         }
+
                     // XXX reorder point
                     case SubLexerTagState.s40_ATTRIBUTE_VALUE_UNQUOTED_p:
                         {
@@ -1215,7 +1229,7 @@ namespace HtmlParserSharp.Core
                                         AddAttributeWithValue();
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
                                         //state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
-                                        SetInterLexerState(TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i);
+                                        state = SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
                                         goto breakStateloop;
                                     case '\n':
                                     case ' ':
@@ -1229,7 +1243,7 @@ namespace HtmlParserSharp.Core
                                         AddAttributeWithValue();
                                         //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
                                         //state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
-                                        SetInterLexerState(TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i);
+                                        state = SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
                                         goto continueStateloop;
                                     case '&':
                                         /*
@@ -1912,6 +1926,225 @@ namespace HtmlParserSharp.Core
                                  */
                             }
 
+                        }
+                    // XXX reorder point
+                    case (SubLexerTagState)RawTextCDataRcRefState.s05_RAWTEXT_p:
+                        /*rawtextloop:*/
+                        {
+                            char c;
+                            while (reader.ReadNext(out c))
+                            {
+
+                                switch (c)
+                                {
+                                    case '<':
+                                        /*
+                                         * U+003C LESS-THAN SIGN (<) Switch to the
+                                         * RAWTEXT less-than sign state.
+                                         */
+                                        FlushChars();
+
+                                        returnState = state;
+                                        //state = Transition(state, Tokenizer.RAWTEXT_RCDATA_LESS_THAN_SIGN, reconsume, pos);
+                                        state = (SubLexerTagState)RawTextCDataRcRefState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p;
+                                        goto breakRawtextloop;
+                                    // FALL THRU goto continueStateloop;
+                                    case '\u0000':
+                                        EmitReplacementCharacter();
+                                        continue;
+                                    case '\r':
+                                        EmitCarriageReturn();
+                                        goto breakStateloop;
+                                    case '\n':
+                                    default:
+                                        /*
+                                         * Emit the current input character as a
+                                         * character token. Stay in the RAWTEXT state.
+                                         */
+                                        continue;
+                                }
+                            }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
+                        //------------------------------------
+                        breakRawtextloop:
+                            goto case (SubLexerTagState)RawTextCDataRcRefState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p;
+                        }
+                    // XXX fallthru don't reorder
+                    case (SubLexerTagState)RawTextCDataRcRefState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p:
+                        /*rawtextrcdatalessthansignloop:*/
+                        {
+
+                            char c;
+                            while (reader.ReadNext(out c))
+                            {
+                                switch (c)
+                                {
+                                    case '/':
+                                        /*
+                                         * U+002F SOLIDUS (/) Set the temporary buffer
+                                         * to the empty string. Switch to the script
+                                         * data end tag open state.
+                                         */
+                                        index = 0;
+                                        ClearStrBuf();
+                                        //state = Transition(state, Tokenizer.NON_DATA_END_TAG_NAME, reconsume, pos);
+                                        //state = TokenizerState.NON_DATA_END_TAG_NAME_i;
+                                        SetInterLexerState(TokenizerState.NON_DATA_END_TAG_NAME_i);
+                                        goto breakRawtextrcdatalessthansignloop;
+                                    // FALL THRU goto continueStateloop;
+                                    default:
+                                        /*
+                                         * Otherwise, emit a U+003C LESS-THAN SIGN
+                                         * character token
+                                         */
+                                        TokenListener.Characters(LT_GT, 0, 1);
+                                        /*
+                                         * and reconsume the current input character in
+                                         * the data state.
+                                         */
+                                        reader.StartCollect();
+                                        //state = Transition(state, returnState, reconsume, pos);
+                                        state = returnState;
+                                        //reconsume = true;
+                                        reader.StepBack();
+                                        goto continueStateloop;
+                                }
+                            }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
+                        //------------------------------------
+                        breakRawtextrcdatalessthansignloop:
+                            goto case (RawTextCDataRcRefState)TokenizerState.NON_DATA_END_TAG_NAME_i;
+                        }
+                    // XXX fall thru. don't reorder.
+                    case (SubLexerTagState)TokenizerState.NON_DATA_END_TAG_NAME_i:
+                        {
+                            char c;
+                            while (reader.ReadNext(out c))
+                            {
+
+                                /*
+                                 * ASSERT! when entering this state, set index to 0 and
+                                 * call clearStrBuf() assert (contentModelElement !=
+                                 * null); Let's implement the above without lookahead.
+                                 * strBuf is the 'temporary buffer'.
+                                 */
+                                if (index < endTagExpectationAsArray.Length)
+                                {
+                                    char e = endTagExpectationAsArray[index];
+                                    char folded = c;
+                                    if (c >= 'A' && c <= 'Z')
+                                    {
+                                        folded += (char)0x20;
+                                    }
+                                    if (folded != e)
+                                    {
+
+                                        ErrHtml4LtSlashInRcdata(folded);
+                                        TokenListener.Characters(LT_SOLIDUS,
+                                                0, 2);
+                                        EmitStrBuf();
+                                        reader.StartCollect();
+                                        //state = Transition(state, returnState, reconsume, pos);
+                                        state = returnState;
+                                        //reconsume = true;
+                                        reader.StepBack();
+                                        goto continueStateloop;
+                                    }
+                                    AppendStrBuf(c);
+                                    index++;
+                                    continue;
+                                }
+                                else
+                                {
+                                    endTag = true;
+                                    // XXX replace contentModelElement with different
+                                    // type
+                                    tagName = endTagExpectation;
+                                    switch (c)
+                                    {
+                                        case '\r':
+                                            SilentCarriageReturn();
+                                            //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
+                                            //state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
+                                            state = SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
+                                            goto breakStateloop;
+                                        case '\n':
+                                        case ' ':
+                                        case '\t':
+                                        case '\u000C':
+                                            /*
+                                             * U+0009 CHARACTER TABULATION U+000A LINE
+                                             * FEED (LF) U+000C FORM FEED (FF) U+0020
+                                             * SPACE If the current end tag token is an
+                                             * appropriate end tag token, then switch to
+                                             * the before attribute name state.
+                                             */
+                                            //state = Transition(state, Tokenizer.BEFORE_ATTRIBUTE_NAME, reconsume, pos);
+                                            //state = TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i;
+                                            state = SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
+                                            goto continueStateloop;
+                                        case '/':
+                                            /*
+                                             * U+002F SOLIDUS (/) If the current end tag
+                                             * token is an appropriate end tag token,
+                                             * then switch to the self-closing start tag
+                                             * state.
+                                             */
+                                            //state = Transition(state, Tokenizer.SELF_CLOSING_START_TAG, reconsume, pos);
+                                            //state = TokenizerState.s43_SELF_CLOSING_START_TAG_i;
+                                            SetInterLexerState(TokenizerState.s43_SELF_CLOSING_START_TAG_i);
+                                            goto continueStateloop;
+                                        case '>':
+                                            /*
+                                             * U+003E GREATER-THAN SIGN (>) If the
+                                             * current end tag token is an appropriate
+                                             * end tag token, then emit the current tag
+                                             * token and switch to the data state.
+                                             */
+                                            //state = Transition(state, EmitCurrentTagToken(false, pos), reconsume, pos);
+                                            state = EmitCurrentTagToken2(false);
+                                            if (shouldSuspend)
+                                            {
+                                                goto breakStateloop;
+                                            }
+                                            goto continueStateloop;
+                                        default:
+                                            /*
+                                             * Emit a U+003C LESS-THAN SIGN character
+                                             * token, a U+002F SOLIDUS character token,
+                                             * a character token for each of the
+                                             * characters in the temporary buffer (in
+                                             * the order they were added to the buffer),
+                                             * and reconsume the current input character
+                                             * in the RAWTEXT state.
+                                             */
+                                            // [NOCPP[
+                                            ErrWarnLtSlashInRcdata();
+                                            // ]NOCPP]
+                                            TokenListener.Characters(LT_SOLIDUS, 0, 2);
+                                            EmitStrBuf();
+                                            if (c == '\u0000')
+                                            {
+                                                EmitReplacementCharacter();
+                                            }
+                                            else
+                                            {
+                                                reader.StartCollect(); // don't drop the
+                                                // character
+                                            }
+                                            //state = Transition(state, returnState, reconsume, pos);
+                                            state = returnState;
+                                            goto continueStateloop;
+                                    }
+                                }
+                            }
+                            //------------------------------------
+                            //eof
+                            goto breakStateloop;
                         }
                     // XXX reorder point
                     case SubLexerTagState.s09_CLOSE_TAG_OPEN_p:

@@ -97,7 +97,7 @@ namespace HtmlParserSharp.Core
 
         s01_DATA_i = 128, //comment, doctype,rawtext,tag  
 
-        s34_BEFORE_ATTRIBUTE_NAME_i = 12, //rawtext, tag
+        
 
         //------------------
         s43_SELF_CLOSING_START_TAG_i = 54, //tag,rawtext 
@@ -110,15 +110,10 @@ namespace HtmlParserSharp.Core
 
         MARKUP_DECLARATION_OCTYPE_i = 40, //comment,doctype
         //------------------
-        //for doctype 
-
-        NON_DATA_END_TAG_NAME_i = 38, //scriptdata, rawtext 
-
-        CONSUME_NCR_i = 47, //ncr->numeric character reference, used by ncr,text 
-
-
-        CDATA_START_i = 55,//comment,rawtext
-
+        //for doctype  
+        NON_DATA_END_TAG_NAME_i = 38, //scriptdata, rawtext  
+        CONSUME_NCR_i = 47, //ncr->numeric character reference, used by ncr,text  
+        CDATA_START_i = 55,//comment,rawtext 
     }
 
 
@@ -1363,7 +1358,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s34_BEFORE_ATTRIBUTE_NAME_i:
+                    case (TokenizerState)SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p:
                     case (TokenizerState)SubLexerTagState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p:
                     case TokenizerState.s43_SELF_CLOSING_START_TAG_i:
                         /* EOF Parse error. */
