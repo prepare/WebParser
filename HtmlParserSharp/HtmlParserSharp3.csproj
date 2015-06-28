@@ -73,7 +73,7 @@
     <Compile Include="Core\SubLexerDocType.cs" />
     <Compile Include="Core\Tokenizer.StateLoop3_Emitter.cs" />
     <Compile Include="Core\SubLexerNCR.cs" />
-    <Compile Include="Core\SubLexerRawTextCDataRcRef.cs" />
+    <Compile Include="Core\SubLexerCData.cs" />
     <Compile Include="Core\SubLexerScriptData.cs" />
     <Compile Include="Core\SubLexerTagAndAttrs.cs" />
     <Compile Include="Core\TreeBuilder.cs" />

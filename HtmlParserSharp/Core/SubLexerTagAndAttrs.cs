@@ -1938,7 +1938,7 @@ namespace HtmlParserSharp.Core
 
                         }
                     // XXX reorder point
-                    case (SubLexerTagState)RawTextCDataRcRefState.s05_RAWTEXT_p:
+                    case (SubLexerTagState)CDataLexerState.s05_RAWTEXT_p:
                         /*rawtextloop:*/
                         {
                             char c;
@@ -1956,7 +1956,7 @@ namespace HtmlParserSharp.Core
 
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.RAWTEXT_RCDATA_LESS_THAN_SIGN, reconsume, pos);
-                                        state = (SubLexerTagState)RawTextCDataRcRefState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p;
+                                        state = (SubLexerTagState)CDataLexerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p;
                                         goto breakRawtextloop;
                                     // FALL THRU goto continueStateloop;
                                     case '\u0000':
@@ -1979,10 +1979,10 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakRawtextloop:
-                            goto case (SubLexerTagState)RawTextCDataRcRefState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p;
+                            goto case (SubLexerTagState)CDataLexerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p;
                         }
                     // XXX fallthru don't reorder
-                    case (SubLexerTagState)RawTextCDataRcRefState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p:
+                    case (SubLexerTagState)CDataLexerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p:
                         /*rawtextrcdatalessthansignloop:*/
                         {
 
@@ -2027,7 +2027,7 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //------------------------------------
                         breakRawtextrcdatalessthansignloop:
-                            goto case (RawTextCDataRcRefState)InterLexerState.NON_DATA_END_TAG_NAME_i;
+                            goto case (CDataLexerState)InterLexerState.NON_DATA_END_TAG_NAME_i;
                         }
                     // XXX fall thru. don't reorder.
                     case (SubLexerTagState)InterLexerState.NON_DATA_END_TAG_NAME_i:

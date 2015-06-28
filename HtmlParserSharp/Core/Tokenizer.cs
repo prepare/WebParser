@@ -95,21 +95,21 @@ namespace HtmlParserSharp.Core
     public enum InterLexerState : byte
     {
 
-        s01_DATA_i = 128, //comment, doctype,rawtext,tag   
+        s01_DATA_i = 128, //comment, doctype,cdata,tag   
         //------------------
-        CONSUME_CHARACTER_REFERENCE_i = 46, //tag,rawtext
+        CONSUME_CHARACTER_REFERENCE_i = 46, //tag,cdata
 
         //------------------
-        s44_BOGUS_COMMENT_i = 17,//doctype,rawtext,tag,comment
+        s44_BOGUS_COMMENT_i = 17,//doctype,cdata,tag,comment
 
         s45_MARKUP_DECLARATION_OPEN_i = 18, //comment, tag 
 
         MARKUP_DECLARATION_OCTYPE_i = 40, //comment,doctype
         //------------------
         //for doctype  
-        NON_DATA_END_TAG_NAME_i = 38, //scriptdata, rawtext  
-        CONSUME_NCR_i = 47, //ncr->numeric character reference, used by ncr,text  
-        CDATA_START_i = 55,//comment,rawtext 
+        NON_DATA_END_TAG_NAME_i = 38, //scriptdata, tag  
+        CONSUME_NCR_i = 47, //ncr->numeric character reference, used by ncr,tag
+        CDATA_START_i = 55,//comment,cdata 
     }
 
 
@@ -1047,11 +1047,11 @@ namespace HtmlParserSharp.Core
             switch (state)
             {
                 case InterLexerState.s01_DATA_i:
-                case (InterLexerState)RawTextCDataRcRefState.s03_RCDATA_p:
+                case (InterLexerState)CDataLexerState.s03_RCDATA_p:
                 case (InterLexerState)ScriptDataLexerState.s06_SCRIPT_DATA_p:
-                case (InterLexerState)RawTextCDataRcRefState.s07_PLAINTEXT_p:
-                case (InterLexerState)RawTextCDataRcRefState.s05_RAWTEXT_p:
-                case (InterLexerState)RawTextCDataRcRefState.s68_CDATA_SECTION_p:
+                case (InterLexerState)CDataLexerState.s07_PLAINTEXT_p:
+                case (InterLexerState)CDataLexerState.s05_RAWTEXT_p:
+                case (InterLexerState)CDataLexerState.s68_CDATA_SECTION_p:
                 case (InterLexerState)ScriptDataLexerState.s22_SCRIPT_DATA_ESCAPED_p:
                 case (InterLexerState)ScriptDataLexerState.s20_SCRIPT_DATA_ESCAPE_START_p:
                 case (InterLexerState)ScriptDataLexerState.s21_SCRIPT_DATA_ESCAPE_START_DASH_p:
@@ -1306,7 +1306,7 @@ namespace HtmlParserSharp.Core
                          */
 
                         goto breakEofloop;
-                    case (InterLexerState)RawTextCDataRcRefState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p:
+                    case (InterLexerState)CDataLexerState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p:
                         /*
                          * Emit a U+003C LESS-THAN SIGN character token
                          */
@@ -1849,10 +1849,10 @@ namespace HtmlParserSharp.Core
                         state = returnState;
                         continue;
 
-                    case (InterLexerState)RawTextCDataRcRefState.CDATA_RSQB_p:
+                    case (InterLexerState)CDataLexerState.CDATA_RSQB_p:
                         TokenListener.Characters(RSQB_RSQB, 0, 1);
                         goto breakEofloop;
-                    case (InterLexerState)RawTextCDataRcRefState.CDATA_RSQB_RSQB_p:
+                    case (InterLexerState)CDataLexerState.CDATA_RSQB_RSQB_p:
                         TokenListener.Characters(RSQB_RSQB, 0, 2);
                         goto breakEofloop;
                     case InterLexerState.s01_DATA_i:

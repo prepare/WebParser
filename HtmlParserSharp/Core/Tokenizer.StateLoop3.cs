@@ -59,7 +59,7 @@ namespace HtmlParserSharp.Core
             var subLexerScriptData = new SubLexerScriptData();
             var subLexerNCR = new SubLexerNCR();
             var subLexerDocType = new SubLexerDocType();
-            var subLexerRawText = new SubLexerRawTextCDataRcRef();
+            var subLexerRawText = new SubLexerCData();
 
 
             for (; ; )
