@@ -8,7 +8,7 @@ using LayoutFarm.WebLexer;
 namespace LayoutFarm.WebDom.Parser
 {
 #if DEBUG
-    partial class MyHtmlLexer
+    partial class HtmlLexer
     {
 
         dbugLexerReport dbug_LexerReport;
