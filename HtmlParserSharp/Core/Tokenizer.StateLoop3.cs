@@ -52,7 +52,7 @@ namespace HtmlParserSharp.Core
 {
     partial class Tokenizer
     {
-        void StateLoop3(TokenizerState state, TokenizerState returnState)
+        void StateLoop3(InterLexerState state, InterLexerState returnState)
         {
             var subLexerTagAndAttr = new SubLexerTagAndAttr();
             var subLexerComment = new SubLexerComment();
@@ -69,7 +69,7 @@ namespace HtmlParserSharp.Core
                 //************* 
                 switch (state)
                 {
-                    case TokenizerState.s01_DATA_i:
+                    case InterLexerState.s01_DATA_i:
                         /*dataloop:*/
                         {
                             char c;
@@ -88,7 +88,7 @@ namespace HtmlParserSharp.Core
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.CONSUME_CHARACTER_REFERENCE, reconsume, pos);
 
-                                        state = TokenizerState.CONSUME_CHARACTER_REFERENCE_i;
+                                        state = InterLexerState.CONSUME_CHARACTER_REFERENCE_i;
                                         goto continueStateloop;
                                     case '<':
                                         /*

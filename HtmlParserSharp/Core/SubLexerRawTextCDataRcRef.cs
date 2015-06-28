@@ -169,7 +169,7 @@ namespace HtmlParserSharp.Core
                 switch (state)
                 {
                     // XXX reorder point
-                    case (RawTextCDataRcRefState)TokenizerState.CDATA_START_i:
+                    case (RawTextCDataRcRefState)InterLexerState.CDATA_START_i:
                         {
                             char c;
                             while (reader.ReadNext(out c))
@@ -186,7 +186,7 @@ namespace HtmlParserSharp.Core
                                         ErrBogusComment();
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
                                         //state = TokenizerState.s44_BOGUS_COMMENT_i;
-                                        SetInterLexerState(TokenizerState.s44_BOGUS_COMMENT_i);
+                                        SetInterLexerState(InterLexerState.s44_BOGUS_COMMENT_i);
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto continueStateloop;
@@ -287,7 +287,7 @@ namespace HtmlParserSharp.Core
                                     reader.SkipOneAndStartCollect();
                                     //state = Transition(state, Tokenizer.DATA, reconsume, pos);
                                     //state = TokenizerState.s01_DATA_i;
-                                    SetInterLexerState(TokenizerState.s01_DATA_i);
+                                    SetInterLexerState(InterLexerState.s01_DATA_i);
                                     goto continueStateloop;
                                 default:
                                     TokenListener.Characters(RSQB_RSQB, 0, 2);
@@ -354,7 +354,7 @@ namespace HtmlParserSharp.Core
                                         returnState = state;
                                         //state = Transition(state, Tokenizer.CONSUME_CHARACTER_REFERENCE, reconsume, pos);
                                         //state = TokenizerState.CONSUME_CHARACTER_REFERENCE_i;
-                                        SetInterLexerState(TokenizerState.CONSUME_CHARACTER_REFERENCE_i); 
+                                        SetInterLexerState(InterLexerState.CONSUME_CHARACTER_REFERENCE_i); 
                                         goto continueStateloop;
                                     case '<':
                                         /*
@@ -424,7 +424,7 @@ namespace HtmlParserSharp.Core
                                 case '>':
                                     //state = Transition(state, Tokenizer.DATA,reconsume, pos);
                                     //state = TokenizerState.s01_DATA_i;
-                                    SetInterLexerState(TokenizerState.s01_DATA_i);
+                                    SetInterLexerState(InterLexerState.s01_DATA_i);
                                     continue;
                                 default:
                                     //state = Transition(state,Tokenizer.PROCESSING_INSTRUCTION,reconsume, pos);

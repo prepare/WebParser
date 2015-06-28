@@ -238,7 +238,7 @@ namespace HtmlParserSharp.Core
                                         ClearStrBuf();
                                         //state = Transition(state, Tokenizer.NON_DATA_END_TAG_NAME, reconsume, pos);
 
-                                        SetInterLexerState(TokenizerState.NON_DATA_END_TAG_NAME_i);
+                                        SetInterLexerState(InterLexerState.NON_DATA_END_TAG_NAME_i);
                                         goto continueStateloop;
                                     case '!':
                                         TokenListener.Characters(LT_GT, 0, 1);
@@ -551,7 +551,7 @@ namespace HtmlParserSharp.Core
                                         returnState = ScriptDataLexerState.s22_SCRIPT_DATA_ESCAPED_p;
 
                                         //state = Transition(state, Tokenizer.NON_DATA_END_TAG_NAME, reconsume, pos);
-                                        SetInterLexerState(TokenizerState.NON_DATA_END_TAG_NAME_i);
+                                        SetInterLexerState(InterLexerState.NON_DATA_END_TAG_NAME_i);
                                         goto continueStateloop;
                                     case 'S':
                                     case 's':

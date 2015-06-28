@@ -168,7 +168,7 @@ namespace HtmlParserSharp.Core
 
         void SetInterStateToData()
         {
-            SetInterLexerState(TokenizerState.s01_DATA_i);
+            SetInterLexerState(InterLexerState.s01_DATA_i);
         }
         void SaveStates(DocTypeLexState state, DocTypeLexState returnState)
         {
@@ -264,7 +264,7 @@ namespace HtmlParserSharp.Core
                 {
 
                     // XXX reorder point
-                    case (DocTypeLexState)TokenizerState.MARKUP_DECLARATION_OCTYPE_i:
+                    case (DocTypeLexState)InterLexerState.MARKUP_DECLARATION_OCTYPE_i:
                         /*markupdeclarationdoctypeloop:*/
                         {
                             char c;
@@ -287,7 +287,7 @@ namespace HtmlParserSharp.Core
                                         ErrBogusComment();
                                         //state = Transition(state, Tokenizer.BOGUS_COMMENT, reconsume, pos);
                                         //state = TokenizerState.s44_BOGUS_COMMENT_i;
-                                        SetInterLexerState(TokenizerState.s44_BOGUS_COMMENT_i);
+                                        SetInterLexerState(InterLexerState.s44_BOGUS_COMMENT_i);
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto continueStateloop;

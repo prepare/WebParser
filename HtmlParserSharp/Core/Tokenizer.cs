@@ -92,7 +92,7 @@ namespace HtmlParserSharp.Core
     //with html5 state 
     //review missing state
 
-    public enum TokenizerState : byte
+    public enum InterLexerState : byte
     {
 
         s01_DATA_i = 128, //comment, doctype,rawtext,tag   
@@ -217,9 +217,9 @@ namespace HtmlParserSharp.Core
         /// </summary>
         bool lastCR;
 
-        TokenizerState stateSave;
+        InterLexerState stateSave;
 
-        TokenizerState returnStateSave;
+        InterLexerState returnStateSave;
 
         int index;
 
@@ -470,11 +470,11 @@ namespace HtmlParserSharp.Core
          * @param endTagExpectation
          *            the expected end tag for transitioning back to normal
          */
-        public void SetStateAndEndTagExpectation(TokenizerState specialTokenizerState,
+        public void SetStateAndEndTagExpectation(InterLexerState specialTokenizerState,
                 [Local] String endTagExpectation)
         {
             this.stateSave = specialTokenizerState;
-            if (specialTokenizerState == TokenizerState.s01_DATA_i)
+            if (specialTokenizerState == InterLexerState.s01_DATA_i)
             {
                 return;
             }
@@ -492,7 +492,7 @@ namespace HtmlParserSharp.Core
          * @param endTagExpectation
          *            the expected end tag for transitioning back to normal
          */
-        public void SetStateAndEndTagExpectation(TokenizerState specialTokenizerState,
+        public void SetStateAndEndTagExpectation(InterLexerState specialTokenizerState,
                 ElementName endTagExpectation)
         {
             this.stateSave = specialTokenizerState;
@@ -1026,8 +1026,8 @@ namespace HtmlParserSharp.Core
 
         public bool TokenizeBuffer(UTF16Buffer buffer)
         {
-            TokenizerState state = stateSave;
-            TokenizerState returnState = returnStateSave;
+            InterLexerState state = stateSave;
+            InterLexerState returnState = returnStateSave;
             char c = '\u0000';
             shouldSuspend = false;
             lastCR = false;
@@ -1046,23 +1046,23 @@ namespace HtmlParserSharp.Core
              */
             switch (state)
             {
-                case TokenizerState.s01_DATA_i:
-                case (TokenizerState)RawTextCDataRcRefState.s03_RCDATA_p:
-                case (TokenizerState)ScriptDataLexerState.s06_SCRIPT_DATA_p:
-                case (TokenizerState)RawTextCDataRcRefState.s07_PLAINTEXT_p:
-                case (TokenizerState)RawTextCDataRcRefState.s05_RAWTEXT_p:
-                case (TokenizerState)RawTextCDataRcRefState.s68_CDATA_SECTION_p:
-                case (TokenizerState)ScriptDataLexerState.s22_SCRIPT_DATA_ESCAPED_p:
-                case (TokenizerState)ScriptDataLexerState.s20_SCRIPT_DATA_ESCAPE_START_p:
-                case (TokenizerState)ScriptDataLexerState.s21_SCRIPT_DATA_ESCAPE_START_DASH_p:
-                case (TokenizerState)ScriptDataLexerState.s23_SCRIPT_DATA_ESCAPED_DASH_p:
-                case (TokenizerState)ScriptDataLexerState.s24_SCRIPT_DATA_ESCAPED_DASH_DASH_p:
-                case (TokenizerState)ScriptDataLexerState.s28_SCRIPT_DATA_DOUBLE_ESCAPE_START_p:
-                case (TokenizerState)ScriptDataLexerState.s29_SCRIPT_DATA_DOUBLE_ESCAPED_p:
-                case (TokenizerState)ScriptDataLexerState.s32_SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_p:
-                case (TokenizerState)ScriptDataLexerState.s30_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_p:
-                case (TokenizerState)ScriptDataLexerState.s31_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH_p:
-                case (TokenizerState)ScriptDataLexerState.s33_SCRIPT_DATA_DOUBLE_ESCAPE_END_p:
+                case InterLexerState.s01_DATA_i:
+                case (InterLexerState)RawTextCDataRcRefState.s03_RCDATA_p:
+                case (InterLexerState)ScriptDataLexerState.s06_SCRIPT_DATA_p:
+                case (InterLexerState)RawTextCDataRcRefState.s07_PLAINTEXT_p:
+                case (InterLexerState)RawTextCDataRcRefState.s05_RAWTEXT_p:
+                case (InterLexerState)RawTextCDataRcRefState.s68_CDATA_SECTION_p:
+                case (InterLexerState)ScriptDataLexerState.s22_SCRIPT_DATA_ESCAPED_p:
+                case (InterLexerState)ScriptDataLexerState.s20_SCRIPT_DATA_ESCAPE_START_p:
+                case (InterLexerState)ScriptDataLexerState.s21_SCRIPT_DATA_ESCAPE_START_DASH_p:
+                case (InterLexerState)ScriptDataLexerState.s23_SCRIPT_DATA_ESCAPED_DASH_p:
+                case (InterLexerState)ScriptDataLexerState.s24_SCRIPT_DATA_ESCAPED_DASH_DASH_p:
+                case (InterLexerState)ScriptDataLexerState.s28_SCRIPT_DATA_DOUBLE_ESCAPE_START_p:
+                case (InterLexerState)ScriptDataLexerState.s29_SCRIPT_DATA_DOUBLE_ESCAPED_p:
+                case (InterLexerState)ScriptDataLexerState.s32_SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_p:
+                case (InterLexerState)ScriptDataLexerState.s30_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_p:
+                case (InterLexerState)ScriptDataLexerState.s31_SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH_p:
+                case (InterLexerState)ScriptDataLexerState.s33_SCRIPT_DATA_DOUBLE_ESCAPE_END_p:
                     cstart = start;
                     break;
                 default:
@@ -1160,7 +1160,7 @@ namespace HtmlParserSharp.Core
         }
 
 
-        void HandleNcrValue(TokenizerState returnState)
+        void HandleNcrValue(InterLexerState returnState)
         {
             /*
              * If one or more characters match the range, then take them all and
@@ -1268,16 +1268,16 @@ namespace HtmlParserSharp.Core
 
         public void Eof()
         {
-            TokenizerState state = stateSave;
-            TokenizerState returnState = returnStateSave;
+            InterLexerState state = stateSave;
+            InterLexerState returnState = returnStateSave;
 
             /*eofloop:*/
             for (; ; )
             {
                 switch (state)
                 {
-                    case (TokenizerState)ScriptDataLexerState.s17_SCRIPT_DATA_LESS_THAN_SIGN_p:
-                    case (TokenizerState)ScriptDataLexerState.s25_SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_p:
+                    case (InterLexerState)ScriptDataLexerState.s17_SCRIPT_DATA_LESS_THAN_SIGN_p:
+                    case (InterLexerState)ScriptDataLexerState.s25_SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_p:
                         /*
                          * Otherwise, emit a U+003C LESS-THAN SIGN character token
                          */
@@ -1287,7 +1287,7 @@ namespace HtmlParserSharp.Core
                          * state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)SubLexerTagState.s08_TAG_OPEN_p:
+                    case (InterLexerState)SubLexerTagState.s08_TAG_OPEN_p:
                         /*
                          * The behavior of this state depends on the content model
                          * flag.
@@ -1306,7 +1306,7 @@ namespace HtmlParserSharp.Core
                          */
 
                         goto breakEofloop;
-                    case (TokenizerState)RawTextCDataRcRefState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p:
+                    case (InterLexerState)RawTextCDataRcRefState.s11_RAWTEXT_RCDATA_LESS_THAN_SIGN_p:
                         /*
                          * Emit a U+003C LESS-THAN SIGN character token
                          */
@@ -1316,7 +1316,7 @@ namespace HtmlParserSharp.Core
                          * state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.NON_DATA_END_TAG_NAME_i:
+                    case InterLexerState.NON_DATA_END_TAG_NAME_i:
                         /*
                          * Emit a U+003C LESS-THAN SIGN character token, a U+002F
                          * SOLIDUS character token,
@@ -1333,7 +1333,7 @@ namespace HtmlParserSharp.Core
                          * state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)SubLexerTagState.s09_CLOSE_TAG_OPEN_p:
+                    case (InterLexerState)SubLexerTagState.s09_CLOSE_TAG_OPEN_p:
                         /* EOF Parse error. */
                         ErrEofAfterLt();
                         /*
@@ -1345,7 +1345,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)SubLexerTagState.s10_TAG_NAME_p:
+                    case (InterLexerState)SubLexerTagState.s10_TAG_NAME_p:
                         /*
                          * EOF Parse error.
                          */
@@ -1354,16 +1354,16 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p:
-                    case (TokenizerState)SubLexerTagState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p:
-                    case (TokenizerState)SubLexerTagState.s43_SELF_CLOSING_START_TAG_p:
+                    case (InterLexerState)SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p:
+                    case (InterLexerState)SubLexerTagState.s42__AFTER_ATTRIBUTE_VALUE_QUOTED_p:
+                    case (InterLexerState)SubLexerTagState.s43_SELF_CLOSING_START_TAG_p:
                         /* EOF Parse error. */
                         ErrEofWithoutGt();
                         /*
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)SubLexerTagState.s35_ATTRIBUTE_NAME_p:
+                    case (InterLexerState)SubLexerTagState.s35_ATTRIBUTE_NAME_p:
 
                         /*
                              * EOF Parse error.
@@ -1373,43 +1373,43 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)SubLexerTagState.s36_AFTER_ATTRIBUTE_NAME_p:
-                    case (TokenizerState)SubLexerTagState.s37_BEFORE_ATTRIBUTE_VALUE_p:
+                    case (InterLexerState)SubLexerTagState.s36_AFTER_ATTRIBUTE_NAME_p:
+                    case (InterLexerState)SubLexerTagState.s37_BEFORE_ATTRIBUTE_VALUE_p:
                         /* EOF Parse error. */
                         ErrEofWithoutGt();
                         /*
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)SubLexerTagState.s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED_p:
-                    case (TokenizerState)SubLexerTagState.s39_ATTRIBUTE_VALUE_SINGLE_QUOTED_p:
-                    case (TokenizerState)SubLexerTagState.s40_ATTRIBUTE_VALUE_UNQUOTED_p:
+                    case (InterLexerState)SubLexerTagState.s38_ATTRIBUTE_VALUE_DOUBLE_QUOTED_p:
+                    case (InterLexerState)SubLexerTagState.s39_ATTRIBUTE_VALUE_SINGLE_QUOTED_p:
+                    case (InterLexerState)SubLexerTagState.s40_ATTRIBUTE_VALUE_UNQUOTED_p:
                         /* EOF Parse error. */
                         ErrEofInAttributeValue();
                         /*
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.s44_BOGUS_COMMENT_i:
+                    case InterLexerState.s44_BOGUS_COMMENT_i:
                         EmitComment(0, 0);
                         goto breakEofloop;
 
-                    case (TokenizerState)CommentLexerState.BOGUS_COMMENT_HYPHEN_p:
+                    case (InterLexerState)CommentLexerState.BOGUS_COMMENT_HYPHEN_p:
                         // [NOCPP[
                         MaybeAppendSpaceToBogusComment();
                         // ]NOCPP]
                         EmitComment(0, 0);
                         goto breakEofloop;
-                    case TokenizerState.s45_MARKUP_DECLARATION_OPEN_i:
+                    case InterLexerState.s45_MARKUP_DECLARATION_OPEN_i:
                         ErrBogusComment();
                         ClearLongStrBuf();
                         EmitComment(0, 0);
                         goto breakEofloop;
-                    case (TokenizerState)CommentLexerState.MARKUP_DECLARATION_HYPHEN_p:
+                    case (InterLexerState)CommentLexerState.MARKUP_DECLARATION_HYPHEN_p:
                         ErrBogusComment();
                         EmitComment(0, 0);
                         goto breakEofloop;
-                    case TokenizerState.MARKUP_DECLARATION_OCTYPE_i:
+                    case InterLexerState.MARKUP_DECLARATION_OCTYPE_i:
                         if (index < 6)
                         {
                             ErrBogusComment();
@@ -1443,8 +1443,8 @@ namespace HtmlParserSharp.Core
                             goto breakEofloop;
                         }
                         goto breakEofloop;
-                    case (TokenizerState)CommentLexerState.s46_COMMENT_START_p:
-                    case (TokenizerState)CommentLexerState.s48_COMMENT_p:
+                    case (InterLexerState)CommentLexerState.s46_COMMENT_START_p:
+                    case (InterLexerState)CommentLexerState.s48_COMMENT_p:
                         /*
                          * EOF Parse error.
                          */
@@ -1455,7 +1455,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)CommentLexerState.s50_COMMENT_END_p:
+                    case (InterLexerState)CommentLexerState.s50_COMMENT_END_p:
                         ErrEofInComment();
                         /* Emit the comment token. */
                         EmitComment(2, 0);
@@ -1463,8 +1463,8 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)CommentLexerState.s49_COMMENT_END_DASH_p:
-                    case (TokenizerState)CommentLexerState.s47_COMMENT_START_DASH_p:
+                    case (InterLexerState)CommentLexerState.s49_COMMENT_END_DASH_p:
+                    case (InterLexerState)CommentLexerState.s47_COMMENT_START_DASH_p:
                         ErrEofInComment();
                         /* Emit the comment token. */
                         EmitComment(1, 0);
@@ -1472,7 +1472,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)CommentLexerState.s51_COMMENT_END_BANG_p:
+                    case (InterLexerState)CommentLexerState.s51_COMMENT_END_BANG_p:
                         ErrEofInComment();
                         /* Emit the comment token. */
                         EmitComment(3, 0);
@@ -1480,8 +1480,8 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)DocTypeLexState.s52_DOCTYPE_p:
-                    case (TokenizerState)DocTypeLexState.s53_BEFORE_DOCTYPE_NAME_p:
+                    case (InterLexerState)DocTypeLexState.s52_DOCTYPE_p:
+                    case (InterLexerState)DocTypeLexState.s53_BEFORE_DOCTYPE_NAME_p:
                         ErrEofInDoctype();
                         /*
                          * Create a new DOCTYPE token. Set its force-quirks flag to
@@ -1496,7 +1496,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)DocTypeLexState.s54_DOCTYPE_NAME_p:
+                    case (InterLexerState)DocTypeLexState.s54_DOCTYPE_NAME_p:
                         ErrEofInDoctype();
                         StrBufToDoctypeName();
                         /*
@@ -1511,12 +1511,12 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)DocTypeLexState.DOCTYPE_UBLIC_p:
-                    case (TokenizerState)DocTypeLexState.DOCTYPE_YSTEM_p:
-                    case (TokenizerState)DocTypeLexState.s55_AFTER_DOCTYPE_NAME_p:
-                    case (TokenizerState)DocTypeLexState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD_p:
-                    case (TokenizerState)DocTypeLexState.s62_AFTER_DOCTYPE_SYSTEM_KEYWORD_p:
-                    case (TokenizerState)DocTypeLexState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER_p:
+                    case (InterLexerState)DocTypeLexState.DOCTYPE_UBLIC_p:
+                    case (InterLexerState)DocTypeLexState.DOCTYPE_YSTEM_p:
+                    case (InterLexerState)DocTypeLexState.s55_AFTER_DOCTYPE_NAME_p:
+                    case (InterLexerState)DocTypeLexState.s56_AFTER_DOCTYPE_PUBLIC_KEYWORD_p:
+                    case (InterLexerState)DocTypeLexState.s62_AFTER_DOCTYPE_SYSTEM_KEYWORD_p:
+                    case (InterLexerState)DocTypeLexState.s57_BEFORE_DOCTYPE_PUBLIC_IDENTIFIER_p:
                         ErrEofInDoctype();
                         /*
                          * Set the DOCTYPE token's force-quirks flag to on.
@@ -1530,8 +1530,8 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)DocTypeLexState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_p:
-                    case (TokenizerState)DocTypeLexState.s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_p:
+                    case (InterLexerState)DocTypeLexState.s58_DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_p:
+                    case (InterLexerState)DocTypeLexState.s59_DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_p:
                         /* EOF Parse error. */
                         ErrEofInPublicId();
                         /*
@@ -1547,9 +1547,9 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)DocTypeLexState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER_p:
-                    case (TokenizerState)DocTypeLexState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER_p:
-                    case (TokenizerState)DocTypeLexState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS_p:
+                    case (InterLexerState)DocTypeLexState.s60_AFTER_DOCTYPE_PUBLIC_IDENTIFIER_p:
+                    case (InterLexerState)DocTypeLexState.s63_BEFORE_DOCTYPE_SYSTEM_IDENTIFIER_p:
+                    case (InterLexerState)DocTypeLexState.s61_BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS_p:
                         ErrEofInDoctype();
                         /*
                          * Set the DOCTYPE token's force-quirks flag to on.
@@ -1563,8 +1563,8 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)DocTypeLexState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_p:
-                    case (TokenizerState)DocTypeLexState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_p:
+                    case (InterLexerState)DocTypeLexState.s64_DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_p:
+                    case (InterLexerState)DocTypeLexState.s65_DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_p:
                         /* EOF Parse error. */
                         ErrEofInSystemId();
                         /*
@@ -1580,7 +1580,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)DocTypeLexState.s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER_p:
+                    case (InterLexerState)DocTypeLexState.s66_AFTER_DOCTYPE_SYSTEM_IDENTIFIER_p:
                         ErrEofInDoctype();
                         /*
                          * Set the DOCTYPE token's force-quirks flag to on.
@@ -1594,7 +1594,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case (TokenizerState)DocTypeLexState.s67_BOGUS_DOCTYPE_p:
+                    case (InterLexerState)DocTypeLexState.s67_BOGUS_DOCTYPE_p:
                         /*
                          * Emit that DOCTYPE token.
                          */
@@ -1603,7 +1603,7 @@ namespace HtmlParserSharp.Core
                          * Reconsume the EOF character in the data state.
                          */
                         goto breakEofloop;
-                    case TokenizerState.CONSUME_CHARACTER_REFERENCE_i:
+                    case InterLexerState.CONSUME_CHARACTER_REFERENCE_i:
                         /*
                          * Unlike the definition is the spec, this state does not
                          * return a value and never requires the caller to
@@ -1625,12 +1625,12 @@ namespace HtmlParserSharp.Core
                         EmitOrAppendStrBuf(returnState);
                         state = returnState;
                         continue;
-                    case (TokenizerState)SubLexerTagState.CHARACTER_REFERENCE_HILO_LOOKUP_p:
+                    case (InterLexerState)SubLexerTagState.CHARACTER_REFERENCE_HILO_LOOKUP_p:
                         ErrNoNamedCharacterMatch();
                         EmitOrAppendStrBuf(returnState);
                         state = returnState;
                         continue;
-                    case (TokenizerState)SubLexerTagState.CHARACTER_REFERENCE_TAIL_p:
+                    case (InterLexerState)SubLexerTagState.CHARACTER_REFERENCE_TAIL_p:
                         /*outer:*/
                         for (; ; )
                         {
@@ -1821,9 +1821,9 @@ namespace HtmlParserSharp.Core
                              * I'm âˆ‰ I tell you.
                              */
                         }
-                    case TokenizerState.CONSUME_NCR_i:
-                    case (TokenizerState)NCRState.DECIMAL_NRC_LOOP_p:
-                    case (TokenizerState)NCRState.HEX_NCR_LOOP_p:
+                    case InterLexerState.CONSUME_NCR_i:
+                    case (InterLexerState)NCRState.DECIMAL_NRC_LOOP_p:
+                    case (InterLexerState)NCRState.HEX_NCR_LOOP_p:
                         /*
                          * If no characters match the range, then don't consume any
                          * characters (and unconsume the U+0023 NUMBER SIGN
@@ -1849,13 +1849,13 @@ namespace HtmlParserSharp.Core
                         state = returnState;
                         continue;
 
-                    case (TokenizerState)RawTextCDataRcRefState.CDATA_RSQB_p:
+                    case (InterLexerState)RawTextCDataRcRefState.CDATA_RSQB_p:
                         TokenListener.Characters(RSQB_RSQB, 0, 1);
                         goto breakEofloop;
-                    case (TokenizerState)RawTextCDataRcRefState.CDATA_RSQB_RSQB_p:
+                    case (InterLexerState)RawTextCDataRcRefState.CDATA_RSQB_RSQB_p:
                         TokenListener.Characters(RSQB_RSQB, 0, 2);
                         goto breakEofloop;
-                    case TokenizerState.s01_DATA_i:
+                    case InterLexerState.s01_DATA_i:
                     default:
                         goto breakEofloop;
                 }
@@ -1960,7 +1960,7 @@ namespace HtmlParserSharp.Core
         {
             this.strBuffer = new StringBuilder();
             this.longStrBuffer = new StringBuilder();
-            stateSave = TokenizerState.s01_DATA_i;
+            stateSave = InterLexerState.s01_DATA_i;
             // line = 1; XXX line numbers
             lastCR = false;
             index = 0;

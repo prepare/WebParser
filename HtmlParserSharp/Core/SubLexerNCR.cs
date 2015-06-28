@@ -310,7 +310,7 @@ namespace HtmlParserSharp.Core
                 switch (state)
                 {
                     // XXX reorder point
-                    case (NCRState)TokenizerState.CONSUME_NCR_i:
+                    case (NCRState)InterLexerState.CONSUME_NCR_i:
                         {
                             char c;
                             if (!reader.ReadNext(out c))
