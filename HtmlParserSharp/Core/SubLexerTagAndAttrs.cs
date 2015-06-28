@@ -410,85 +410,86 @@ namespace HtmlParserSharp.Core
         }
         public void StateLoop3_Tag(SubLexerTagState state, SubLexerTagState returnState)
         {
-            //char c2;
-            //CharMode charMode;
-            //while (reader.ReadNext(out c2, out charMode))
-            //{
-            //    //read one char
-            //    //find mode
-            //    switch (state)
-            //    {
-            //        case SubLexerTagState.s08_TAG_OPEN_p:
-            //            {
-            //                switch (charMode)
-            //                {
-            //                    case CharMode.Bang://!
-            //                        SetInterLexerState(InterLexerState.s45_MARKUP_DECLARATION_OPEN_i);
-            //                        return;
-            //                    case CharMode.Quest: //?
-            //                        SetInterLexerState(InterLexerState.s44_BOGUS_COMMENT_i);
-            //                        return;
-            //                    case CharMode.Slash:// / 
-            //                        state = SubLexerTagState.s09_CLOSE_TAG_OPEN_p;
-            //                        break;
-            //                    case CharMode.UpperAsciiLetter:
-            //                        AppendToNameBufferFromUpperCase(c2);
-            //                        state = SubLexerTagState.s10_TAG_NAME_p;
-            //                        break;
-            //                    case CharMode.LowerAsciiLetter:
-            //                        AppendToNameBuffer(c2);
-            //                        state = SubLexerTagState.s10_TAG_NAME_p;
-            //                        break;
-            //                    default:
-            //                        {
-            //                            //error , unexpected character
-            //                        } break;
-            //                }
-            //            } break;
-            //        case SubLexerTagState.s10_TAG_NAME_p:
-            //            {
-            //                switch (charMode)
-            //                {
 
-            //                    case CharMode.NewLine:
-            //                    case CharMode.WhiteSpace:
-            //                        FlushNameBuffer();
-            //                        state = SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
-            //                        break;
-            //                    case CharMode.Slash:// / 
-            //                        FlushNameBuffer();
-            //                        state = SubLexerTagState.s43_SELF_CLOSING_START_TAG_p;
-            //                        break;
-            //                    case CharMode.Gt:
-            //                        FlushNameBuffer();
-            //                        state = EmitCurrentTagToken2(false);
-            //                        break;
+            char c2;
+            CharMode charMode;
+            while (reader.ReadNext(out c2, out charMode))
+            {
+                //read one char
+                //find mode
+                switch (state)
+                {
+                    case SubLexerTagState.s08_TAG_OPEN_p:
+                        {
+                            switch (charMode)
+                            {
+                                case CharMode.Bang://!
+                                    SetInterLexerState(InterLexerState.s45_MARKUP_DECLARATION_OPEN_i);
+                                    return;
+                                case CharMode.Quest: //?
+                                    SetInterLexerState(InterLexerState.s44_BOGUS_COMMENT_i);
+                                    return;
+                                case CharMode.Slash:// / 
+                                    state = SubLexerTagState.s09_CLOSE_TAG_OPEN_p;
+                                    break;
+                                case CharMode.UpperAsciiLetter:
+                                    AppendToNameBufferFromUpperCase(c2);
+                                    state = SubLexerTagState.s10_TAG_NAME_p;
+                                    break;
+                                case CharMode.LowerAsciiLetter:
+                                    AppendToNameBuffer(c2);
+                                    state = SubLexerTagState.s10_TAG_NAME_p;
+                                    break;
+                                default:
+                                    {
+                                        //error , unexpected character
+                                    } break;
+                            }
+                        } break;
+                    case SubLexerTagState.s10_TAG_NAME_p:
+                        {
+                            switch (charMode)
+                            {
 
-            //                    case CharMode.UpperAsciiLetter:
-            //                        AppendToNameBufferFromUpperCase(c2);
-            //                        break;
-            //                    case CharMode.Numeric:
-            //                    case CharMode.LowerAsciiLetter:
-            //                        AppendToNameBuffer(c2);
-            //                        break;
-            //                    default:
-            //                        {
-            //                        } break;
-            //                }
-            //            } break;
-            //        case SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p:
-            //            {
+                                case CharMode.NewLine:
+                                case CharMode.WhiteSpace:
+                                    FlushNameBuffer();
+                                    state = SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p;
+                                    break;
+                                case CharMode.Slash:// / 
+                                    FlushNameBuffer();
+                                    state = SubLexerTagState.s43_SELF_CLOSING_START_TAG_p;
+                                    break;
+                                case CharMode.Gt:
+                                    FlushNameBuffer();
+                                    state = EmitCurrentTagToken2(false);
+                                    break;
 
-            //            } break;
-            //        case SubLexerTagState.s43_SELF_CLOSING_START_TAG_p:
-            //            {
-            //            } break;
-            //        case SubLexerTagState.s35_ATTRIBUTE_NAME_p:
-            //            {
+                                case CharMode.UpperAsciiLetter:
+                                    AppendToNameBufferFromUpperCase(c2);
+                                    break;
+                                case CharMode.Numeric:
+                                case CharMode.LowerAsciiLetter:
+                                    AppendToNameBuffer(c2);
+                                    break;
+                                default:
+                                    {
+                                    } break;
+                            }
+                        } break;
+                    case SubLexerTagState.s34_BEFORE_ATTRIBUTE_NAME_p:
+                        {
 
-            //            } break;
-            //    }
-            //}
+                        } break;
+                    case SubLexerTagState.s43_SELF_CLOSING_START_TAG_p:
+                        {
+                        } break;
+                    case SubLexerTagState.s35_ATTRIBUTE_NAME_p:
+                        {
+
+                        } break;
+                }
+            }
 
 
             for (; ; )

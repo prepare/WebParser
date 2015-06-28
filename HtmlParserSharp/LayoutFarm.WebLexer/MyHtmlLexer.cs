@@ -107,12 +107,20 @@ namespace LayoutFarm.WebDom.Parser
                                         RaiseStateChanged(HtmlLexerEvent.VisitOpenSlashAngle, i, 1);
                                         currentState = 5;//collect node name 
                                     } break;
+                                case ' ':
+                                case '\r':
+                                case '\n':
+                                case '\t':
+                                case '\f':
+                                    {
+                                        //inside tag whitespace mode
+                                        //?
+                                    } break;
                                 default:
                                     {
                                         currentState = 5;
                                         //clear prev buffer 
                                         //then start collect node name
-
                                         AppendBuffer(c, i);
                                     } break;
                             }
@@ -250,6 +258,7 @@ namespace LayoutFarm.WebDom.Parser
                     case 11:
                         {
                             //open_angle, exlcimation
+                            //html5 : html declaration
                             switch (c)
                             {
                                 case '-':
@@ -272,13 +281,14 @@ namespace LayoutFarm.WebDom.Parser
                                     } break;
                                 case '[':
                                     {
+                                        //cdata
                                         // <![
                                         //
                                         currentState = 10;//not implement,just skip
                                     } break;
                                 default:
                                     {
-                                        //doc type?
+                                        //check if doctype declaration 
                                         if (char.IsLetter(sourceBuffer[i + 1]))
                                         {
 
