@@ -36,14 +36,7 @@ namespace LayoutFarm.WebDom.Parser
         CommentContent
     }
 
-    enum HtmlLexState
-    {
-        Init,
-        AfterOpenAngle
-
-
-    }
-
+    
     public delegate void HtmlLexerEventHandler(HtmlLexerEvent lexEvent, int startIndex, int len);
 
     public sealed partial class HtmlLexer

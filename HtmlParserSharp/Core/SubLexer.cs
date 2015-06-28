@@ -51,8 +51,8 @@ namespace HtmlParserSharp.Core
     abstract class SubLexer
     {
         protected bool shouldSuspend;
-        protected TokenizerState stateSave;
-        protected TokenizerState returnStateSave;
+        protected InterLexerState stateSave;
+        protected InterLexerState returnStateSave;
         public event EventHandler<ParserErrorEventArgs> ErrorEvent;
         protected const byte DATA_AND_RCDATA_MASK = (byte)0xF0;
        
@@ -107,7 +107,7 @@ namespace HtmlParserSharp.Core
 
             AppendLongStrBuf(this.strBuffer);
         }
-        protected void EmitOrAppendStrBuf(TokenizerState returnState)
+        protected void EmitOrAppendStrBuf(InterLexerState returnState)
         {
             //if ((returnState & DATA_AND_RCDATA_MASK) != 0)
             if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
@@ -154,7 +154,7 @@ namespace HtmlParserSharp.Core
         {
             throw new NotImplementedException();
         }
-        protected TokenizerState EmitCurrentTagToken(bool isSelfClosing)
+        protected InterLexerState EmitCurrentTagToken(bool isSelfClosing)
         {
             throw new NotImplementedException();
         }
@@ -315,14 +315,7 @@ namespace HtmlParserSharp.Core
         {
         }
 
-        protected void ErrLtGt()
-        {
-        }
-
-        protected void ErrProcessingInstruction()
-        {
-        }
-
+        
         protected void ErrUnescapedAmpersandInterpretedAsCharacterReference()
         {
         }
@@ -523,7 +516,7 @@ namespace HtmlParserSharp.Core
             throw spe;*/
             throw new Exception(message); // TODO
         }
-        protected void SetInterLexerState(TokenizerState interLexerState)
+        protected void SetInterLexerState(InterLexerState interLexerState)
         {
 
         }

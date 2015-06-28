@@ -41,7 +41,7 @@ namespace HtmlParserSharp.Core
 {
     partial class Tokenizer
     {
-        void EmitOrAppendStrBuf(TokenizerState returnState)
+        void EmitOrAppendStrBuf(InterLexerState returnState)
         {
             //if ((returnState & DATA_AND_RCDATA_MASK) != 0)
             if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
@@ -53,11 +53,11 @@ namespace HtmlParserSharp.Core
                 EmitStrBuf();
             }
         }
-        TokenizerState EmitCurrentTagToken(bool selfClosing, int pos)
+        InterLexerState EmitCurrentTagToken(bool selfClosing, int pos)
         {
             cstart = pos + 1;
             MaybeErrSlashInEndTag(selfClosing);
-            stateSave = TokenizerState.s01_DATA_i;
+            stateSave = InterLexerState.s01_DATA_i;
             HtmlAttributes attrs = attributes ?? HtmlAttributes.EMPTY_ATTRIBUTES;
 
             if (endTag)
@@ -155,7 +155,7 @@ namespace HtmlParserSharp.Core
         }
 
 
-        void EmitOrAppendTwo(char[] val, TokenizerState returnState)
+        void EmitOrAppendTwo(char[] val, InterLexerState returnState)
         {
             //TODO: review here=>   use != or == ?
             //if ((returnState & DATA_AND_RCDATA_MASK) != 0)
@@ -170,7 +170,7 @@ namespace HtmlParserSharp.Core
             }
         }
 
-        void EmitOrAppendOne(char[] val, TokenizerState returnState)
+        void EmitOrAppendOne(char[] val, InterLexerState returnState)
         {
             if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
             {

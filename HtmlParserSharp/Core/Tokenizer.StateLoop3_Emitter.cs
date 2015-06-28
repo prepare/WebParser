@@ -73,7 +73,7 @@ namespace HtmlParserSharp.Core
         {
             throw new NotImplementedException();
         }
-        TokenizerState EmitCurrentTagToken(bool isSelfClosing)
+        InterLexerState EmitCurrentTagToken(bool isSelfClosing)
         {
             throw new NotImplementedException();
         }
