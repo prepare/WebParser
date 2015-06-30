@@ -1193,12 +1193,15 @@ namespace HtmlParserSharp.Core
 
             // [NOCPP[
             //pos = StateLoop(state, c, pos, buffer.Buffer, false, returnState, buffer.End);
+            this.reader = new TokenBufferReader(buffer.Buffer);
             StateLoop3(state, returnState);
+            pos = reader.CurrentIndex;
+
             // ]NOCPP]
-            if (pos == buffer.End)
+            if (pos + 1 == buffer.End)
             {
                 // exiting due to end of buffer
-                buffer.Start = pos;
+                buffer.Start = pos + 1;
             }
             else
             {

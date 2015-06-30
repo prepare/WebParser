@@ -84,7 +84,101 @@ namespace HtmlParserSharp.Core
         int index;
         static readonly char[] SCRIPT_ARR = "script".ToCharArray();
 
-        
+        enum LexState
+        {
+            Text,
+            AfterLt,
+            AfterLtBang,
+            ScriptDataEscapeDash,
+            ScriptDataEscapeDashDash,
+            ScriptDataDoubleEscapeLessThan,
+
+        }
+        void LexScriptData()
+        {
+
+            char c2;
+            LexState lexState = LexState.Text;
+            while (reader.ReadNext(out c2))
+            {
+                switch (lexState)
+                {
+                    case LexState.Text:
+                        {
+                            switch (c2)
+                            {
+                                case '<':
+                                    {
+                                        lexState = LexState.AfterLt;
+                                    } break;
+                            }
+                        } break;
+                    case LexState.AfterLt:
+                        {
+                            switch (c2)
+                            {
+                                case '!':
+                                    {
+                                        lexState = LexState.AfterLtBang;
+                                    } break;
+                            }
+                        } break;
+                    case LexState.AfterLtBang:
+                        {
+                            switch (c2)
+                            {
+                                case '-':
+                                    {
+                                        lexState = LexState.ScriptDataEscapeDash;
+                                    } break;
+                            }
+
+                        } break;
+                    case LexState.ScriptDataEscapeDash:
+                        {
+                            switch (c2)
+                            {
+                                case '-':
+                                    {
+                                        lexState = LexState.ScriptDataEscapeDashDash;
+                                    } break;
+                            }
+                        } break;
+                    case LexState.ScriptDataEscapeDashDash:
+                        {
+                            switch (c2)
+                            {
+                                default:
+                                    {
+                                    } break;
+                                case '<':
+                                    {
+                                        //script data double escape !
+                                        lexState = LexState.ScriptDataDoubleEscapeLessThan;
+                                    } break;
+                            }
+                        } break;
+                    case LexState.ScriptDataDoubleEscapeLessThan:
+                        {
+                            switch (c2)
+                            {
+                                case '/':
+                                    {
+                                    } break;
+                                case 's':
+                                case 'S':
+                                    {
+                                        //may be <script 
+                                    } break;
+                                default:
+                                    {
+                                    } break;
+                            }
+                        } break;
+                }
+            }
+        }
+
         void StateLoop3_ScriptData(ScriptDataLexerState state, ScriptDataLexerState returnState)
         {
 
@@ -627,7 +721,7 @@ namespace HtmlParserSharp.Core
                                         goto continueStateloop;
                                     }
                                     index++;
-                                    continue;
+                                    continue;//read next char
                                 }
                                 switch (c)
                                 {

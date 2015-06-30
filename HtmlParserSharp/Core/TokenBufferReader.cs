@@ -11,14 +11,17 @@ namespace HtmlParserSharp.Core
     {
         int index = -1;
         int totalLength = 0;
+        int readLimit = 0;
         char[] buffer;
         int lineNumber;
         int columnNumber;
+        int cstart = 0;
 
         public TokenBufferReader(char[] buffer)
         {
             this.buffer = buffer;
             this.totalLength = buffer.Length;
+            readLimit = this.totalLength - 1;
             this.index = -1;
 
             this.columnNumber = 1;//init at column 1
@@ -28,10 +31,11 @@ namespace HtmlParserSharp.Core
         {
             get { return this.index; }
         }
+
         public bool ReadNext(out char c)
         {
-            //1. move 
-            if (index < totalLength)
+            //1. move  
+            if (index < readLimit)
             {
                 c = buffer[++index];
                 switch (c)
@@ -225,12 +229,29 @@ namespace HtmlParserSharp.Core
         }
         public void StartCollect()
         {
-            //this.cstart = this.index
+            this.cstart = this.index;
         }
         public void SkipOneAndStartCollect()
         {
-            //this.cstart = this.index
+            this.cstart = this.index;
         }
+        internal int CollectionLength
+        {
+            get { return index - cstart; }
+        }
+        internal int CollectionStart
+        {
+            get { return cstart; }
+        }
+        internal char[] InternalBuffer
+        {
+            get { return buffer; }
+        }
+        internal void ResetMarker()
+        {
+            this.cstart = this.index + 1;
+        }
+
     }
 
 }

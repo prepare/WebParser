@@ -55,7 +55,13 @@ namespace HtmlParserSharp.Core
             //    TokenListener.Characters(buf, cstart, pos - cstart);
             //}
             //cstart = int.MaxValue;
-            throw new NotImplementedException();
+            if (reader.CollectionLength > 0)
+            {
+                TokenListener.Characters(reader.InternalBuffer,
+                    reader.CollectionStart,
+                    reader.CollectionLength);
+            }
+            reader.ResetMarker();
         }
         void EmitPlaintextReplacementCharacter()
         {
@@ -63,7 +69,9 @@ namespace HtmlParserSharp.Core
         }
         void EmitReplacementCharacter()
         {
-            throw new NotImplementedException();
+            FlushChars();
+            TokenListener.ZeroOriginatingReplacementCharacter();
+            
         }
         void EmitCarriageReturn()
         {
@@ -75,12 +83,37 @@ namespace HtmlParserSharp.Core
         }
         TokenizerState EmitCurrentTagToken(bool isSelfClosing)
         {
-            throw new NotImplementedException();
+            //cstart = pos + 1;
+            reader.ResetMarker();
+            MaybeErrSlashInEndTag(isSelfClosing);
+            stateSave = TokenizerState.s01_DATA;
+            HtmlAttributes attrs = attributes ?? HtmlAttributes.EMPTY_ATTRIBUTES;
+
+            if (endTag)
+            {
+                /*
+                 * When an end tag token is emitted, the content model flag must be
+                 * switched to the PCDATA state.
+                 */
+                MaybeErrAttributesOnEndTag(attrs);
+                TokenListener.EndTag(tagName);
+            }
+            else
+            {
+                TokenListener.StartTag(tagName, attrs, isSelfClosing);
+            }
+            tagName = null;
+            ResetAttributes();
+            /*
+             * The token handler may have called setStateAndEndTagExpectation
+             * and changed stateSave since the start of this method.
+             */
+            return stateSave;
         }
         void EmitComment(int provisionalHyphens)
         {
             throw new NotImplementedException();
         }
-       
+
     }
 }

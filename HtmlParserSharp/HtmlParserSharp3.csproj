@@ -36,6 +36,24 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HtmlKit\ForNet20.cs" />
+    <Compile Include="HtmlKit\HtmlAttribute.cs" />
+    <Compile Include="HtmlKit\HtmlAttributeCollection.cs" />
+    <Compile Include="HtmlKit\HtmlAttributeId.cs" />
+    <Compile Include="HtmlKit\HtmlEntityDecoder.cs" />
+    <Compile Include="HtmlKit\HtmlEntityDecoder.g.cs">
+      <DependentUpon>HtmlEntityDecoder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HtmlKit\HtmlNamespace.cs" />
+    <Compile Include="HtmlKit\HtmlTagId.cs" />
+    <Compile Include="HtmlKit\HtmlToken.cs" />
+    <Compile Include="HtmlKit\HtmlTokenizer.cs" />
+    <Compile Include="HtmlKit\HtmlTokenizerState.cs" />
+    <Compile Include="HtmlKit\HtmlTokenKind.cs" />
+    <Compile Include="HtmlKit\HtmlUtils.cs" />
+    <Compile Include="HtmlKit\HtmlWriter.cs" />
+    <Compile Include="HtmlKit\HtmlWriterState.cs" />
+    <Compile Include="HtmlKit\ICharArray.cs" />
     <Compile Include="Common\Attributes.cs" />
     <Compile Include="Common\DoctypeExpectation.cs" />
     <Compile Include="Common\DocumentMode.cs" />

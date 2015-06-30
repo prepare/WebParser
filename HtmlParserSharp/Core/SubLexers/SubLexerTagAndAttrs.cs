@@ -104,8 +104,7 @@ namespace HtmlParserSharp.Core
         {
         }
         void Emit()
-        {
-
+        { 
 
         }
         void StateLoop3_Tag2()

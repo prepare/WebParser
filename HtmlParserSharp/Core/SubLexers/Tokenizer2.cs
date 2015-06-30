@@ -49,7 +49,7 @@ using HtmlParserSharp.Common;
 
 
 namespace HtmlParserSharp.Core
-{   
+{
 
     /// <summary>
     /// An implementation of

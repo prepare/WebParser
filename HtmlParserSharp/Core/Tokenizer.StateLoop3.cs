@@ -136,8 +136,6 @@ namespace HtmlParserSharp.Core
             /*stateloop:*/
             for (; ; )
             {
-
-
                 //*************
             continueStateloop:
                 //*************
