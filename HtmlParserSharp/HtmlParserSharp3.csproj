@@ -47,8 +47,6 @@
     <Compile Include="Core\AttributeName.cs" />
     <Compile Include="Core\AttributeName.Generated.cs" />
     <Compile Include="Core\AttributeName.static.cs" />
-<<<<<<< HEAD
-=======
     <Compile Include="Core\SubLexers\InterLexerState.cs" />
     <Compile Include="Core\SubLexers\SubLexer.cs" />
     <Compile Include="Core\SubLexers\SubLexerCData.cs" />
@@ -62,7 +60,6 @@
     <Compile Include="Core\SubLexers\Tokenizer2.ErrHandling.cs" />
     <Compile Include="Core\SubLexers\Tokenizer2.StateLoop3.cs" />
     <Compile Include="Core\SubLexers\Tokenizer2.StateLoop3_Emitter.cs" />
->>>>>>> origin/v_dev
     <Compile Include="Core\TokenBufferReader.cs" />
     <Compile Include="Core\CharsetState.cs" />
     <Compile Include="Core\CoalescingTreeBuilder.cs" />

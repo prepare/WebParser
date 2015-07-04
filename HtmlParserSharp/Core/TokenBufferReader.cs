@@ -37,13 +37,6 @@ namespace HtmlParserSharp.Core
                 switch (c)
                 {
                     case '\n':
-<<<<<<< HEAD
-                        {
-                            //reset 
-                            this.lineNumber++;
-                            this.columnNumber = 1;//reset
-                        } break;
-=======
                         //reset 
                         this.lineNumber++;
                         this.columnNumber = 1;//reset
@@ -51,7 +44,6 @@ namespace HtmlParserSharp.Core
                     default:
                         this.columnNumber++;
                         break;
->>>>>>> origin/v_dev
                 }
                 return true;
             }
@@ -61,8 +53,6 @@ namespace HtmlParserSharp.Core
                 return false;
             }
         }
-<<<<<<< HEAD
-=======
         /// <summary>
         /// read next and analyze char group
         /// </summary>
@@ -216,7 +206,6 @@ namespace HtmlParserSharp.Core
                 return false;
             }
         }
->>>>>>> origin/v_dev
         public bool Peek(out char c)
         {
             if (index < totalLength)
