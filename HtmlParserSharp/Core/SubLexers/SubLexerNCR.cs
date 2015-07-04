@@ -45,9 +45,181 @@ using HtmlParserSharp.Common;
 
 namespace HtmlParserSharp.Core
 {
-    partial class Tokenizer
+    public enum NCRState
     {
-        void StateLoop3_NCR(TokenizerState state, TokenizerState returnState)
+        HEX_NCR_LOOP_p = 49,//ncr -> numeric character reference 
+        DECIMAL_NRC_LOOP_p = 50, //ncr 
+        HANDLE_NCR_VALUE_p = 51,//ncr 
+        HANDLE_NCR_VALUE_RECONSUME_p = 52,//ncr  
+    }
+    class SubLexerNCR : SubLexer
+    {
+        int value = 0;
+        int index = 0;
+        int prevValue = 0;
+        bool seenDigits;
+        char[] bmpChar = new char[1];
+        char[] astralChar = new char[2];
+        /// <summary>
+        /// Magic value for UTF-16 operations.
+        /// </summary>
+        const int LEAD_OFFSET = (0xD800 - (0x10000 >> 10));
+        /// <summary>
+        /// Array version of U+FFFD.
+        /// </summary>
+        static readonly char[] REPLACEMENT_CHARACTER = { '\uFFFD' };
+        // [NOCPP[
+
+        /// <summary>
+        /// Array version of space.
+        /// </summary>
+        static readonly char[] SPACE = { ' ' };
+        /**
+        * The policy for vertical tab and form feed.
+        */
+        XmlViolationPolicy contentSpacePolicy = XmlViolationPolicy.AlterInfoset;
+        void EmitOrAppendStrBuf(NCRState returnState)
+        {
+            throw new NotSupportedException();
+        }
+        void EmitOrAppendTwo(char[] val, NCRState returnState)
+        {
+            //TODO: review here=>   use != or == ?
+            //if ((returnState & DATA_AND_RCDATA_MASK) != 0)
+            if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
+            {
+                AppendLongStrBuf(val[0]);
+                AppendLongStrBuf(val[1]);
+            }
+            else
+            {
+                TokenListener.Characters(val, 0, 2);
+            }
+        }
+
+        void EmitOrAppendOne(char[] val, NCRState returnState)
+        {
+            if (((byte)returnState & DATA_AND_RCDATA_MASK) == 0)
+            {
+                AppendLongStrBuf(val[0]);
+            }
+            else
+            {
+                TokenListener.Characters(val, 0, 1);
+            }
+        }
+
+        void HandleNcrValue(NCRState returnState)
+        {
+            /*
+             * If one or more characters match the range, then take them all and
+             * interpret the string of characters as a number (either hexadecimal or
+             * decimal as appropriate).
+             */
+            if (value <= 0xFFFF)
+            {
+                if (value >= 0x80 && value <= 0x9f)
+                {
+                    /*
+                     * If that number is one of the numbers in the first column of
+                     * the following table, then this is a parse error.
+                     */
+                    ErrNcrInC1Range();
+                    /*
+                     * Find the row with that number in the first column, and return
+                     * a character token for the Unicode character given in the
+                     * second column of that row.
+                     */
+                    char[] val = NamedCharacters.WINDOWS_1252[value - 0x80];
+                    EmitOrAppendOne(val, returnState);
+                    // [NOCPP[
+                }
+                else if (value == 0xC
+                      && contentSpacePolicy != XmlViolationPolicy.Allow)
+                {
+                    if (contentSpacePolicy == XmlViolationPolicy.AlterInfoset)
+                    {
+                        EmitOrAppendOne(SPACE, returnState);
+                    }
+                    else if (contentSpacePolicy == XmlViolationPolicy.Fatal)
+                    {
+                        Fatal("A character reference expanded to a form feed which is not legal XML 1.0 white space.");
+                    }
+                    // ]NOCPP]
+                }
+                else if (value == 0x0)
+                {
+                    ErrNcrZero();
+                    EmitOrAppendOne(REPLACEMENT_CHARACTER, returnState);
+                }
+                else if ((value & 0xF800) == 0xD800)
+                {
+                    ErrNcrSurrogate();
+                    EmitOrAppendOne(REPLACEMENT_CHARACTER, returnState);
+                }
+                else
+                {
+                    /*
+                     * Otherwise, return a character token for the Unicode character
+                     * whose code point is that number.
+                     */
+                    char ch = (char)value;
+                    // [NOCPP[
+                    if (value == 0x0D)
+                    {
+                        ErrNcrCr();
+                    }
+                    else if ((value <= 0x0008) || (value == 0x000B)
+                          || (value >= 0x000E && value <= 0x001F))
+                    {
+                        ch = ErrNcrControlChar(ch);
+                    }
+                    else if (value >= 0xFDD0 && value <= 0xFDEF)
+                    {
+                        ErrNcrUnassigned();
+                    }
+                    else if ((value & 0xFFFE) == 0xFFFE)
+                    {
+                        ch = ErrNcrNonCharacter(ch);
+                    }
+                    else if (value >= 0x007F && value <= 0x009F)
+                    {
+                        ErrNcrControlChar();
+                    }
+                    else
+                    {
+                        MaybeWarnPrivateUse(ch);
+                    }
+                    // ]NOCPP]
+                    bmpChar[0] = ch;
+                    EmitOrAppendOne(bmpChar, returnState);
+                }
+            }
+            else if (value <= 0x10FFFF)
+            {
+                // [NOCPP[
+                MaybeWarnPrivateUseAstral();
+                if ((value & 0xFFFE) == 0xFFFE)
+                {
+                    ErrAstralNonCharacter(value);
+                }
+                // ]NOCPP]
+                astralChar[0] = (char)(LEAD_OFFSET + (value >> 10));
+                astralChar[1] = (char)(0xDC00 + (value & 0x3FF));
+                EmitOrAppendTwo(astralChar, returnState);
+            }
+            else
+            {
+                ErrNcrOutOfRange();
+                EmitOrAppendOne(REPLACEMENT_CHARACTER, returnState);
+            }
+        }
+
+        void SaveStates(NCRState state, NCRState returnState)
+        {
+
+        }
+        void StateLoop3_NCR(NCRState state, NCRState returnState)
         {
 
             /*
@@ -126,10 +298,10 @@ namespace HtmlParserSharp.Core
              * at the beginning or end of the loop (which doesn't matter in for(;;) loops)
              */
 
+
             /*stateloop:*/
             for (; ; )
             {
-
 
                 //*************
             continueStateloop:
@@ -138,7 +310,7 @@ namespace HtmlParserSharp.Core
                 switch (state)
                 {
                     // XXX reorder point
-                    case TokenizerState.CONSUME_NCR:
+                    case (NCRState)InterLexerState.CONSUME_NCR_i:
                         {
                             char c;
                             if (!reader.ReadNext(out c))
@@ -176,8 +348,7 @@ namespace HtmlParserSharp.Core
                                      */
                                     AppendStrBuf(c);
                                     //state = Transition(state, Tokenizer.HEX_NCR_LOOP, reconsume, pos);
-                                    state = TokenizerState.HEX_NCR_LOOP;
-
+                                    state = NCRState.HEX_NCR_LOOP_p;
                                     goto continueStateloop;
                                 default:
                                     /*
@@ -189,7 +360,7 @@ namespace HtmlParserSharp.Core
                                      * interpret it as a decimal number.
                                      */
                                     //state = Transition(state, Tokenizer.DECIMAL_NRC_LOOP, reconsume, pos);
-                                    state = TokenizerState.DECIMAL_NRC_LOOP;
+                                    state = NCRState.DECIMAL_NRC_LOOP_p;
                                     //reconsume = true;
                                     reader.StepBack();
                                     // FALL THROUGH goto continueStateloop;
@@ -197,9 +368,9 @@ namespace HtmlParserSharp.Core
                             }
                             //------------------------------------
                             // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
-                            goto case TokenizerState.DECIMAL_NRC_LOOP;
+                            goto case NCRState.DECIMAL_NRC_LOOP_p;
                         }
-                    case TokenizerState.DECIMAL_NRC_LOOP:
+                    case NCRState.DECIMAL_NRC_LOOP_p:
                         /*decimalloop:*/
                         {
                             char c;
@@ -235,7 +406,7 @@ namespace HtmlParserSharp.Core
                                             reader.SkipOneAndStartCollect();
                                         }
                                         //state = Transition(state, Tokenizer.HANDLE_NCR_VALUE, reconsume, pos);
-                                        state = TokenizerState.HANDLE_NCR_VALUE;
+                                        state = NCRState.HANDLE_NCR_VALUE_p;
 
                                         // FALL THROUGH goto continueStateloop;
                                         goto breakDecimalloop;
@@ -293,7 +464,7 @@ namespace HtmlParserSharp.Core
                                             reader.StartCollect();
                                         }
                                         //state = Transition(state, Tokenizer.HANDLE_NCR_VALUE, reconsume, pos);
-                                        state = TokenizerState.HANDLE_NCR_VALUE;
+                                        state = NCRState.HANDLE_NCR_VALUE_p;
                                         //reconsume = true;
                                         reader.StepBack();
                                         // FALL THROUGH goto continueStateloop;
@@ -307,21 +478,20 @@ namespace HtmlParserSharp.Core
                             goto breakStateloop;
                         //-------------------------------------
                         breakDecimalloop:
-                            goto case TokenizerState.HANDLE_NCR_VALUE;
+                            goto case NCRState.HANDLE_NCR_VALUE_p;
                         }
                     // WARNING FALLTHRU case TokenizerState.TRANSITION: DON'T REORDER
-                    case TokenizerState.HANDLE_NCR_VALUE:
+                    case NCRState.HANDLE_NCR_VALUE_p:
                         {
                             // WARNING previous state sets reconsume
                             // XXX inline this case TokenizerState.if the method size can take it
                             HandleNcrValue(returnState);
                             //state = Transition(state, returnState, reconsume, pos);
                             state = returnState;
-
                             goto continueStateloop;
                         }
                     // XXX reorder point
-                    case TokenizerState.HEX_NCR_LOOP:
+                    case NCRState.HEX_NCR_LOOP_p:
                         {
                             char c;
                             while (reader.ReadNext(out c))
@@ -370,7 +540,7 @@ namespace HtmlParserSharp.Core
                                             reader.SkipOneAndStartCollect();
                                         }
                                         //state = Transition(state, Tokenizer.HANDLE_NCR_VALUE, reconsume, pos);
-                                        state = TokenizerState.HANDLE_NCR_VALUE;
+                                        state = NCRState.HANDLE_NCR_VALUE_p;
                                         goto continueStateloop;
                                     }
                                     else
@@ -425,7 +595,8 @@ namespace HtmlParserSharp.Core
                                             reader.StartCollect();
                                         }
                                         //state = Transition(state, Tokenizer.HANDLE_NCR_VALUE, reconsume, pos);
-                                        state = TokenizerState.HANDLE_NCR_VALUE;
+                                        state = NCRState.HANDLE_NCR_VALUE_p;
+
                                         //reconsume = true;
                                         reader.StepBack();
                                         goto continueStateloop;
@@ -448,8 +619,9 @@ namespace HtmlParserSharp.Core
              * if (prevCR && pos != endPos) { // why is this needed? pos--; col--; }
              */
             // Save locals
-            stateSave = state;
-            returnStateSave = returnState;
-        } 
+            //stateSave = state;
+            //returnStateSave = returnState;
+            SaveStates(state, returnState);
+        }
     }
 }

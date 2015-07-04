@@ -42,7 +42,11 @@ namespace HtmlParserSharp.Common
         /// </summary>
         /// <param name="self">The Tokenizer.</param>
         void StartTokenization(Tokenizer self);
+<<<<<<< HEAD
 
+=======
+        void StartTokenization(Tokenizer2 self);
+>>>>>>> origin/v_dev
         /// <summary>
         /// If this handler implementation cares about comments, return <code>true</code>.
         /// If not, return <code>false</code>
